@@ -1,6 +1,11 @@
 # ICC710 - Comprensión del contexto social
 Proyecto: Tu Salud (Salud mental en contextos educativos)
 
+Integrantes=
+Líder técnico / integración: José Rivera
+Frontend: Ignacio Arancibia
+Backend: Fernando Jelvez
+
 Salud Mental en Contextos Educativos
 Objetivo General
 Desarrollar un sistema capaz de identificar y analizar patrones de comportamiento de alerta
@@ -26,3 +31,5 @@ JUSTIFICACIÓN PROYECTO
 Enfocado a un entorno escolar, dedicado a ayudar en la detección de alteraciones en la salud mental de los estudiantes.
 La salud mental de los estudiantes es una preocupación mayor dentro del contexto educativo, múltiples estudios demuestran un aumento en la percepción del deterioro en la salud mental en Chile.
 Debido a estos motivos se tomó la decisión de seguir esta problemática de cerca y crear un proyecto que pueda aportar para la recolección de datos en el ambiente escolar mediante una encuesta/formulario que ayude a reconocer y recopilar los principales problemas que surgen en los colegios, y con esto, poder realizar una apta y correcta derivación con una entidad que pueda orientar al usuario.
+
+ANEXO ESTUDIOS = (https://www.frontiersin.org/journals/education/articles/10.3389/feduc.2024.1407021/full)
