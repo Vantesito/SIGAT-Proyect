@@ -1,5 +1,5 @@
 # ICC710 - Comprensión del contexto social
-Proyecto: Tu Salud (Salud mental en contextos educativos)
+Proyecto: PsyLink (Salud mental en contextos educativos)
 
 Integrantes=
 Líder técnico / integración: José Rivera
