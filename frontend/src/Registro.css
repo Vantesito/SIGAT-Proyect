@@ -1,0 +1,103 @@
+.registro-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #cde4fa;
+  padding: 20px;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Tarjeta blanca central con la línea superior de acento */
+.registro-card {
+  background-color: #ffffff;
+  padding: 40px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  border-top: 4px solid #008080;
+}
+
+/* Títulos y textos */
+.registro-card h2 {
+  color: #1a202c;
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 1.4rem;
+  font-weight: bold;
+}
+
+.registro-card p {
+  color: #718096;
+  font-size: 0.85rem;
+  margin-bottom: 30px;
+}
+
+/* Contenedores de los inputs */
+.input-group-med {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  margin-bottom: 16px;
+}
+
+.input-group-med label {
+  font-size: 0.8rem;
+  font-weight: 700; 
+  color: #2d3748;
+  margin-bottom: 6px;
+}
+
+.input-group-med input {
+  padding: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  background-color: #ffffff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Efecto al seleccionar un input */
+.input-group-med input:focus {
+  outline: none;
+  border-color: #008080;
+  box-shadow: 0 0 0 2px rgba(0, 128, 128, 0.15);
+}
+
+/* Botón principal verde/teal */
+.btn-submit-med {
+  width: 100%;
+  background-color: #008080;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.2s ease;
+}
+
+.btn-submit-med:hover {
+  background-color: #006666;
+}
+
+/* Volver al login */
+.btn-back-med {
+  background: none;
+  border: none;
+  color: #008080;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 25px;
+  text-decoration: underline;
+}
+
+.btn-back-med:hover {
+  color: #005959;
+}
