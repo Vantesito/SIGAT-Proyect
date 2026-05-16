@@ -1,13 +1,13 @@
-package com.psylink.backend;
+package com.example.sigat;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class BackendApplication {
+public class SigatApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(BackendApplication.class, args);
+		SpringApplication.run(SigatApplication.class, args);
 	}
 
 }

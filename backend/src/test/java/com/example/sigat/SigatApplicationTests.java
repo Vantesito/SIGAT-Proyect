@@ -1,10 +1,10 @@
-package com.psylink.backend;
+package com.example.sigat;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class BackendApplicationTests {
+class SigatApplicationTests {
 
 	@Test
 	void contextLoads() {
