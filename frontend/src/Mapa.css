@@ -1,0 +1,283 @@
+/* Estructura general del dashboard */
+.mapa-dashboard {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  background-color: #f0f4f8;
+}
+
+/* Sidebar */
+.mapa-sidebar {
+  width: 300px;
+  background-color: #ffffff;
+  padding: 30px;
+  box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  z-index: 10;
+}
+
+.mapa-sidebar h2 {
+  color: #008080;
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+.stats-card {
+  background-color: #e6f2f2;
+  padding: 15px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.stats-card span {
+  font-size: 0.8rem;
+  color: #4a5568;
+  text-transform: uppercase;
+}
+
+.stats-card strong {
+  font-size: 1.5rem;
+  color: #005959;
+}
+
+.privacy-note {
+  font-size: 0.75rem;
+  color: #718096;
+  font-style: italic;
+  margin-top: auto;
+}
+
+.btn-add-data {
+  background-color: #008080;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.btn-logout {
+  background-color: rgb(255, 0, 0);
+  color: #ffffff;
+  border: none;
+  padding: 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.btn-add-data:hover {
+  background-color: #005959;
+}
+
+/* ESTILOS DEL MAPA SIMULADO */
+.mapa-container {
+  flex: 1;
+  position: relative;
+  background-color: #e2e8f0; 
+  overflow: hidden;
+}
+
+.mock-map {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+/* Patrón de cuadrícula para simular cuadras/calles */
+.mock-map-grid {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: 
+    linear-gradient(#cbd5e0 1px, transparent 1px),
+    linear-gradient(90deg, #cbd5e0 1px, transparent 1px);
+  background-size: 50px 50px; /* Tamaño de los cuadrantes */
+  opacity: 0.6;
+}
+
+/* Puntos de calor */
+.heat-spot {
+  position: absolute;
+  border-radius: 50%;
+  transform: translate(-50%, -50%); /* Asegura que el centro del círculo esté en la coordenada exacta */
+  filter: blur(12px); /* Difuminación bordes */
+  pointer-events: none; /* Click a través de los puntos */
+  animation: pulseHeat 4s infinite alternate ease-in-out; /* PAnimación de pulso */
+}
+
+/* Animación puntos de calor*/
+@keyframes pulseHeat {
+  0% { opacity: 0.85; transform: translate(-50%, -50%) scale(0.95); }
+  100% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
+}
+
+/* Etiqueta flotante informativa */
+.mock-map-label {
+  position: absolute;
+  bottom: 24px;
+  right: 24px;
+  background-color: rgba(255, 255, 255, 0.95);
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  color: #2d3748;
+  font-weight: bold;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  border-left: 4px solid #008080;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px); /* Efecto de desenfoque al fondo */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  width: 90%;
+  max-width: 450px;
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+  overflow: hidden;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.modal-header {
+  background-color: #008080;
+  color: white;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.btn-close {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.8rem;
+  cursor: pointer;
+}
+
+.modal-form {
+  padding: 25px;
+}
+
+.form-group {
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #4a5568;
+  margin-bottom: 6px;
+}
+
+.form-group input, .form-group select {
+  padding: 10px;
+  border: 1px solid #cbd5e0;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.form-group small {
+  margin-top: 5px;
+  color: #a0aec0;
+  font-size: 0.75rem;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 25px;
+}
+
+.btn-cancel {
+  flex: 1;
+  background: #edf2f7;
+  border: none;
+  padding: 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  color: #4a5568;
+}
+
+.btn-save {
+  flex: 2;
+  background: #008080;
+  border: none;
+  padding: 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  color: white;
+}
+
+.btn-save:hover {
+  background-color: #005959;
+}
+
+/* CARGA MASIVA */
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.btn-batch-data {
+  background-color: transparent;
+  color: #008080;
+  border: 2px solid #008080;
+  padding: 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s ease;
+}
+
+.btn-batch-data:hover {
+  background-color: #e6f2f2; /* Fondo muy suave al pasar el mouse */
+}
+
+/* Estilo para el input de archivo (Excel) */
+.file-upload-group input[type="file"] {
+  padding: 20px;
+  border: 2px dashed #cbd5e0;
+  background-color: #f8fafc;  
+  border-radius: 8px;
+  text-align: center;
+  cursor: pointer;
+  color: #4a5568;
+}
+
+.file-upload-group input[type="file"]:hover {
+  border-color: #2b6cb0;
+  background-color: #ebf8ff;
+}
+
