@@ -1,19 +1,22 @@
 package com.psylink.backend.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name="user")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Integer user_id;
-    String user_email;
-    String user_password;
+    @Column(name = "id")
+    Long user_id;
+    @Column(name = "email")
+    String email;
+    @Column(name = "password")
+    String password;
+    @Column(name = "name")
+    String name;
 }
