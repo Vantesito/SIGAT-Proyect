@@ -16,9 +16,25 @@ El sistema garantiza la anonimización de los datos, registrando la ubicación d
 -Filtros Avanzados: Capacidad de segmentar la búsqueda de datos por tipo de enfermedad y ciudad.  
 -Visualización Espacial Avanzada: Mapas de calor interactivos e independientes de proveedores privativos, utilizando capas dinámicas para mostrar la densidad de casos y brotes geográficos.   
 
+#Documentación
+- La documentación se encontrará dentro de cada carpeta (Frontend / Backend) en su respectivo apartado 
+
 # Tecnologías Utilizadas
 -Frontend: React  
 -Mapas y Georreferenciación: OpenLayers API (para el renderizado de capas y mapas de calor interactivos)  
 -Backend: Java (Spring Boot)  
 -Calidad de Código y Análisis: SonarQube  
 -Infraestructura: Docker  
+
+#  Requisitos Previos
+Para levantar este proyecto en un entorno local, asegúrate de tener instalado:  
+- [Docker](https://www.docker.com/) y Docker Compose  
+- Node.js (versión 18 o superior)  
+- Java JDK 17+
+
+# 📦 Instalación y Ejecución
+
+1. **Clonar el repositorio:**
+   ```bash
+   git clone [https://github.com/tu-usuario/SIGAT.git](https://github.com/tu-usuario/SIGAT.git)
+   cd SIGAT
