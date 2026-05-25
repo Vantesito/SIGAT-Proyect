@@ -16,8 +16,8 @@ El sistema garantiza la anonimización de los datos, registrando la ubicación d
 -Filtros Avanzados: Capacidad de segmentar la búsqueda de datos por tipo de enfermedad y ciudad.  
 -Visualización Espacial Avanzada: Mapas de calor interactivos e independientes de proveedores privativos, utilizando capas dinámicas para mostrar la densidad de casos y brotes geográficos.   
 
-#Documentación
-- La documentación se encontrará dentro de cada carpeta (Frontend / Backend) en su respectivo apartado 
+# Documentación
+- La documentación se encontrará en DOCS
 
 # Tecnologías Utilizadas
 -Frontend: React  
