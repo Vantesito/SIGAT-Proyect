@@ -32,7 +32,7 @@ Para levantar este proyecto en un entorno local, asegúrate de tener instalado:
 - Node.js (versión 18 o superior)  
 - Java JDK 17+
 
-# 📦 Instalación y Ejecución
+#  Instalación y Ejecución
 
 1. **Clonar el repositorio:**
    ```bash
