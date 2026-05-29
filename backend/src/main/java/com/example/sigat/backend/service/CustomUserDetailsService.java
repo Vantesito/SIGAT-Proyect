@@ -1,7 +1,7 @@
-package com.psylink.backend.service;
+package com.example.sigat.backend.service;
 
-import com.psylink.backend.model.User;
-import com.psylink.backend.repository.UserRepository;
+import com.example.sigat.backend.model.User;
+import com.example.sigat.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

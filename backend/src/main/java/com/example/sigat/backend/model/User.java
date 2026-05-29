@@ -1,4 +1,4 @@
-package com.psylink.backend.model;
+package com.example.sigat.backend.model;
 
 import jakarta.persistence.*;
 import lombok.*;

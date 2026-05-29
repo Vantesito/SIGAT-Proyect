@@ -1,4 +1,4 @@
-package com.psylink.backend.util;
+package com.example.sigat.backend.util;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

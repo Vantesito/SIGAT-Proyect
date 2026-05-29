@@ -1,6 +1,6 @@
-package com.psylink.backend.config;
+package com.example.sigat.backend.config;
 
-import com.psylink.backend.service.CustomUserDetailsService;
+import com.example.sigat.backend.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
