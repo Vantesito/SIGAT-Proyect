@@ -1,14 +1,12 @@
-/* Variables Globales de SIGAT */
 :root {
-  --med-primary: #008080;     /* Verde azulado médico principal */
-  --med-primary-dark: #005959; /* Tono oscuro para énfasis */
-  --med-bg: #f4f7f9;          /* Fondo gris azulado muy suave */
-  --med-text: #1a202c;        /* Texto principal casi negro */
-  --med-muted: #718096;       /* Texto secundario/gris */
+  --med-primary: #008080;     
+  --med-primary-dark: #005959; 
+  --med-bg: #f4f7f9;          
+  --med-text: #1a202c;       
+  --med-muted: #718096;     
   --med-white: #ffffff;
 }
 
-/* Reset y Estilos Base */
 * {
   margin: 0;
   padding: 0;

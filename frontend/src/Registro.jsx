@@ -5,63 +5,125 @@ import logosigat from './assets/logosigat.png';
 
 function Registro() {
   const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     nombre: '',
-    email: '',
+    apellido: '',
+    correo: '',
     password: '',
+    confirmPassword: '',
+    telefono: '',
+    rut: '',
+    pais: '',
+    region: '',
+    ciudad: '',
     institucion: ''
   });
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const handleRegistro = (e) => {
     e.preventDefault();
     
-    // SIMULACIÓN DE BACKEND: Guardamos el usuario en la memoria del navegador
-    // Convertimos el objeto formData a un texto (string) para poder guardarlo
-    localStorage.setItem('sigat_usuario_demo', JSON.stringify(formData));
+    // Validación básica de contraseñas
+    if (formData.password !== formData.confirmPassword) {
+      alert("Las contraseñas no coinciden. Por favor, verifique.");
+      return;
+    }
     
-    alert("Cuenta simulada creada con éxito para " + formData.nombre);
+    // SIMULACIÓN
+    localStorage.setItem('sigat_usuario_demo', JSON.stringify({
+      email: formData.correo,
+      password: formData.password,
+      nombre: formData.nombre + ' ' + formData.apellido
+    }));
     
-    // Redirigimos al Login para que pruebe entrar
+    alert("Prototipo: Solicitud de registro enviada con éxito.");
     navigate('/login'); 
   };
 
   return (
-    <div className="registro-wrapper">
-      <div className="registro-card">
-        <img src={logosigat} alt="SIGAT" className="brand-logo" height={70} width={70} />
-        <h2>Registro de Profesional</h2>
-        <p>Crea tu credencial institucional para SIGAT.</p>
-        
-        <form onSubmit={handleRegistro}>
-          <div className="input-group-med">
-            <label>Nombre completo</label>
-            <input 
-              type="text" 
-              required 
-              onChange={(e) => setFormData({...formData, nombre: e.target.value})}
-            />
+    <div className="registro-wrapper-wide">
+      <div className="registro-card-wide">
+        <div className="registro-header-wide">
+          <img src={logosigat} alt="SIGAT" className="brand-logo" height={60} width={60} />
+          <h2>Formulario registro</h2>
+        </div>
+        <form className="registro-grid" onSubmit={handleRegistro}>
+          
+          {/*Datos Personales */}
+          <div className="form-column">
+            <div className="input-group-grid">
+              <label>Nombre(s)</label>
+              <input type="text" name="nombre" required onChange={handleChange} />
+            </div>
+            <div className="input-group-grid">
+              <label>Apellido(s)</label>
+              <input type="text" name="apellido" required onChange={handleChange} />
+            </div>
+            <div className="input-group-grid">
+              <label>Correo electrónico</label>
+              <input type="email" name="correo" required onChange={handleChange} />
+            </div>
+            <div className="input-group-grid">
+              <label>Contraseña</label>
+              <input type="password" name="password" required onChange={handleChange} />
+            </div>
+            <div className="input-group-grid">
+              <label>Confirmar contraseña</label>
+              <input type="password" name="confirmPassword" required onChange={handleChange} />
+            </div>
+            <div className="input-group-grid">
+              <label>Teléfono</label>
+              <input type="tel" name="telefono" required onChange={handleChange} />
+            </div>
           </div>
-          <div className="input-group-med">
-            <label>Email</label>
-            <input 
-              type="email" 
-              required 
-              onChange={(e) => setFormData({...formData, email: e.target.value})}
-            />
+
+          {/*Ubicación e Institución */}
+          <div className="form-column">
+            <div className="input-group-grid">
+              <label>Rut</label>
+              <input type="text" name="rut" required onChange={handleChange} />
+            </div>
+            <div className="input-group-grid">
+              <label>País</label>
+              <input type="text" name="pais" required onChange={handleChange} />
+            </div>
+            <div className="input-group-grid">
+              <label>Región</label>
+              <input type="text" name="region" required onChange={handleChange} />
+            </div>
+            <div className="input-group-grid">
+              <label>Ciudad</label>
+              <input type="text" name="ciudad" required onChange={handleChange} />
+            </div>
+            <div className="input-group-grid">
+              <label>Institución</label>
+              <input type="text" name="institucion" required onChange={handleChange} />
+            </div>
           </div>
-          <div className="input-group-med">
-            <label>Contraseña</label>
-            <input 
-              type="password" 
-              required 
-              onChange={(e) => setFormData({...formData, password: e.target.value})}
-            />
+
+          {/*Acciones y Advertencia */}
+          <div className="action-column">
+            <p className="disclaimer-text">
+              *La solicitud de registro<br/>
+              puede demorar un mínimo de 24 horas para ser aceptada.
+            </p>
+            
+            <button type="submit" className="btn-registro-submit">
+              Registrarse
+            </button>
+            
+            <div className="divider-circle">o</div>
+            
+            <button type="button" className="btn-registro-volver" onClick={() => navigate('/')}>
+              Volver al inicio
+            </button>
           </div>
-          <button type="submit" className="btn-submit-med">Crear cuenta</button>
+
         </form>
-        <button className="btn-back-med" onClick={() => navigate('/login')}>
-          ¿Ya tienes cuenta? Inicia sesión
-        </button>
       </div>
     </div>
   );
