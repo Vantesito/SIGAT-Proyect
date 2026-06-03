@@ -15,7 +15,7 @@ function App() {
         {/* Ruta de acceso: solo para personal autorizado */}
         <Route path="/login" element={<Login />} />
 
-        {/* Ruta del mapa: splo accesible después de login */}
+        {/* Ruta del mapa: solo accesible después de login */}
         <Route path="/mapa" element={<Mapa />} />
 
         {/* Ruta de registro: solo para demo, no es parte del producto final */}
