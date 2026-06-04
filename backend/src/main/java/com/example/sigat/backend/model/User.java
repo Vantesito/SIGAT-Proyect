@@ -7,16 +7,28 @@ import lombok.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 @Table(name="user")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    Long user_id;
+    private Long user_id;
     @Column(name = "email")
-    String email;
+    private String email;
     @Column(name = "password")
-    String password;
+    private String password;
     @Column(name = "name")
-    String name;
+    private String name;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role")
+    private Role role = Role.USER;
+    @Column(name = "active")
+    private boolean active;
+
+    public enum Role{
+        USER,
+        ADMIN,
+    }
 }
