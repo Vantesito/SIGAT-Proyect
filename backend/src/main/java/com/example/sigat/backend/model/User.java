@@ -31,6 +31,8 @@ public class User {
     private String city;
     @Column(name= "institution")
     private String institution;
+    @Column(name="rut")
+    private String rut;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
