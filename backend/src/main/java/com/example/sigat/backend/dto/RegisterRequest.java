@@ -6,7 +6,7 @@ public record RegisterRequest(
         String names,
         String surnames,
         String password,
-        String phoneNumber,
+        String phone_number,
         String rut,
         String country,
         String region,

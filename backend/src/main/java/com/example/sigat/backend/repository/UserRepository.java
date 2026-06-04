@@ -9,4 +9,8 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User,Long> {
     Optional<User> findByEmail(String email);
+    Optional<User> findByRut(String rut);
+
+    @Override
+    <S extends User> S save(S entity);
 }

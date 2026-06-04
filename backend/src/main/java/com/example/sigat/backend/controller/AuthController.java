@@ -3,6 +3,7 @@ package com.example.sigat.backend.controller;
 import com.example.sigat.backend.dto.AuthenticationRequest;
 import com.example.sigat.backend.dto.AuthenticationResponse;
 import com.example.sigat.backend.dto.RegisterRequest;
+import com.example.sigat.backend.service.AuthService;
 import com.example.sigat.backend.util.JwtUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.Collection;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/api/auth")
@@ -24,11 +26,13 @@ public class AuthController {
     AuthenticationManager authenticationManager;
     UserDetailsService userDetailsService;
     JwtUtil jwtUtil;
+    AuthService authService;
     public AuthController(AuthenticationManager authenticationManager, UserDetailsService userDetailsService,
-                          JwtUtil jwtUtil){
+                          JwtUtil jwtUtil, AuthService authService){
         this.authenticationManager=authenticationManager;
         this.userDetailsService=userDetailsService;
         this.jwtUtil=jwtUtil;
+        this.authService = authService;
     }
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthenticationRequest authReq){
@@ -47,6 +51,11 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request){
-        return new ResponseEntity<>(HttpStatus.OK);
+        try {
+            authService.register(request);
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>( Map.of("message",e.getMessage()),HttpStatus.BAD_REQUEST);
+        }
     }
 }
