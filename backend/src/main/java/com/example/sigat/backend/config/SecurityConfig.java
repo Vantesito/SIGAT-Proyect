@@ -1,6 +1,7 @@
 package com.example.sigat.backend.config;
 
 import com.example.sigat.backend.service.CustomUserDetailsService;
+import com.example.sigat.backend.util.JwtAuthFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -16,6 +17,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @RequiredArgsConstructor
 @Configuration
@@ -23,6 +25,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig{
     private final CustomUserDetailsService customUserDetailsService;
+    private final JwtAuthFilter jwtAuthFilter;
 
     @Bean
     public static PasswordEncoder passwordEncoder(){
@@ -46,7 +49,8 @@ public class SecurityConfig{
                 )
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .cors(AbstractHttpConfigurer::disable).csrf(AbstractHttpConfigurer::disable);
+                .cors(AbstractHttpConfigurer::disable).csrf(AbstractHttpConfigurer::disable)
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
