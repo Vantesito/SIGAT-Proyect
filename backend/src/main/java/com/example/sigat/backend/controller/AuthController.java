@@ -2,6 +2,7 @@ package com.example.sigat.backend.controller;
 
 import com.example.sigat.backend.dto.AuthenticationRequest;
 import com.example.sigat.backend.dto.AuthenticationResponse;
+import com.example.sigat.backend.dto.RegisterRequest;
 import com.example.sigat.backend.util.JwtUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,5 +43,10 @@ public class AuthController {
         String role = userDetails.getAuthorities().isEmpty() ? "NO_ROLE" : authorities.iterator().next().toString();
         String token = jwtUtil.generateToken(userDetails);
         return new ResponseEntity<>(new AuthenticationResponse(token,userDetails.getUsername(),role),HttpStatus.OK);
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody RegisterRequest request){
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
