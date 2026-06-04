@@ -19,8 +19,19 @@ public class User {
     private String email;
     @Column(name = "password")
     private String password;
-    @Column(name = "name")
+    @Column(name = "names")
     private String name;
+    @Column(name = "surnames")
+    private String surnames;
+    @Column(name= "country")
+    private String country;
+    @Column(name= "region")
+    private String region;
+    @Column(name= "city")
+    private String city;
+    @Column(name= "institution")
+    private String institution;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
     private Role role = Role.USER;
