@@ -19,12 +19,12 @@ import java.util.Collection;
 
 @Controller
 @RequestMapping("/api/auth")
-public class LoginController {
+public class AuthController {
     AuthenticationManager authenticationManager;
     UserDetailsService userDetailsService;
     JwtUtil jwtUtil;
-    public LoginController(AuthenticationManager authenticationManager,UserDetailsService userDetailsService,
-                           JwtUtil jwtUtil){
+    public AuthController(AuthenticationManager authenticationManager, UserDetailsService userDetailsService,
+                          JwtUtil jwtUtil){
         this.authenticationManager=authenticationManager;
         this.userDetailsService=userDetailsService;
         this.jwtUtil=jwtUtil;
