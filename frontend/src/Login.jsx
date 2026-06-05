@@ -14,9 +14,15 @@ function Login() {
   const handleAuth = (e) => {
     e.preventDefault();
     setErrorMensaje('');
-    
+
+    // Correo para entrar directo a PanelAdmin
+    if (email === 'admin@sigat.cl') {
+      navigate('/panel-admin');
+      return;
+    }
+
     const usuarioGuardadoStr = localStorage.getItem('sigat_usuario_demo');
-    
+  
     if (usuarioGuardadoStr) {
       const usuarioGuardado = JSON.parse(usuarioGuardadoStr);
       

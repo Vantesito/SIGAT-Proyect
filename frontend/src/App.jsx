@@ -3,6 +3,7 @@ import Landing from './Landing';
 import Login from './Login';
 import Mapa from './Mapa';
 import Registro from './Registro';
+import PanelAdmin from './PanelAdmin';
 import './App.css';
 
 function App() {
@@ -20,6 +21,9 @@ function App() {
 
         {/* Ruta de registro: solo para demo, no es parte del producto final */}
         <Route path="/registro" element={<Registro />} />
+
+        {/* Ruta de panel de administración: Autorización usuarios, etc */}
+        <Route path="/panel-admin" element={<PanelAdmin />} />
         
       </Routes>
     </BrowserRouter>
