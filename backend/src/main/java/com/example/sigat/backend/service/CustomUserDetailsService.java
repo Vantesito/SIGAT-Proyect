@@ -22,7 +22,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(username).orElse(null);
         assert user!=null;
-        if (user.getUser_id()==null){
+        if (user.getId()==null){
                 throw new UsernameNotFoundException("User not found");
         }
         String springRole = "ROLE_"+user.getRole().name();
