@@ -9,9 +9,11 @@ import java.util.List;
 @Service
 public class AdminService {
     private final UserRepository userRepository;
+    private final EmailService emailService;
 
-    public AdminService(UserRepository userRepository) {
+    public AdminService(UserRepository userRepository, EmailService emailService) {
         this.userRepository = userRepository;
+        this.emailService = emailService;
     }
 
     public List<User> getApprovalPendingUsers() {
@@ -29,6 +31,7 @@ public class AdminService {
             throw new IllegalArgumentException("El usuario ya está activo");
         }
         user.setActive(true);
+        emailService.sendAcceptedRequestEmail(user.getEmail(),user.getNames());
         userRepository.save(user);
     }
 
@@ -39,6 +42,7 @@ public class AdminService {
             throw new IllegalArgumentException("El usuario ya está desactivado");
         }
         user.setActive(false);
+        emailService.sendRegisterRequestEmail(user.getEmail(),user.getNames());
         userRepository.save(user);
     }
 }
