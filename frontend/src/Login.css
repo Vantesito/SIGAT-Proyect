@@ -1,0 +1,64 @@
+.login-wrapper {
+  min-height: 100vh;
+  display: flex; justify-content: center; align-items: center;
+  background-color: #c4e2ff; /* gris azulado institucional */
+  font-family: 'Inter', sans-serif;
+}
+
+.login-card-medical {
+  background: white; padding: 40px; border-radius: 12px;
+  width: 100%; max-width: 400px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+  border-top: 4px solid #008080; /* Linea médica superior */
+}
+
+.login-header { text-align: center; margin-bottom: 30px; }
+.med-icon { width: 40px; height: 40px; color: #008080; margin-bottom: 10px; }
+.login-header h2 { margin: 0 0 8px; color: #1a202c; font-size: 1.5rem; }
+.login-header p { margin: 0; color: #718096; font-size: 0.9rem; line-height: 1.4; }
+
+.login-form-medical { display: flex; flex-direction: column; gap: 20px; }
+
+.input-group-med { display: flex; flex-direction: column; gap: 6px; }
+.input-group-med label { font-size: 0.85rem; font-weight: 600; color: #4a5568; }
+.input-group-med input {
+  padding: 12px; border: 1px solid #cbd5e0; border-radius: 6px;
+  font-size: 0.95rem; color: #2d3748; outline: none; transition: border 0.2s;
+}
+.input-group-med input:focus { border-color: #008080; }
+
+.btn-submit-med {
+  background-color: #008080; color: white; border: none;
+  padding: 14px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px;
+}
+.btn-submit-med:hover { background-color: #005959; }
+
+.divider {
+  text-align: center; margin: 24px 0; position: relative;
+}
+.divider::before {
+  content: ""; position: absolute; left: 0; top: 50%; width: 45%; height: 1px; background: #e2e8f0;
+}
+.divider::after {
+  content: ""; position: absolute; right: 0; top: 50%; width: 45%; height: 1px; background: #e2e8f0;
+}
+.divider span { background: white; padding: 0 10px; color: #a0aec0; font-size: 0.85rem; position: relative; z-index: 1;}
+
+.btn-google {
+  width: 100%; display: flex; justify-content: center; align-items: center; gap: 10px;
+  background-color: white; border: 1px solid #cbd5e0; color: #4a5568;
+  padding: 12px; border-radius: 6px; font-weight: 500; cursor: pointer; transition: background 0.2s;
+}
+.btn-google:hover { background-color: #f7fafc; }
+.google-icon { width: 18px; height: 18px; }
+
+.btn-back-med {
+  background: none; border: none; color: #718096; width: 100%;
+  margin-top: 24px; cursor: pointer; font-size: 0.9rem; text-decoration: underline;
+}
+.btn-back-med:hover { color: #2d3748; }
+
+.btn-register-med {
+  background: none; border: none; color: #008080; width: 100%;
+  margin-top: 12px; cursor: pointer; font-size: 0.9rem; text-decoration: underline;
+}
