@@ -1,7 +1,10 @@
 package com.example.sigat.backend.controller;
 
+import com.example.sigat.backend.model.PointAction;
 import com.example.sigat.backend.model.User;
 import com.example.sigat.backend.service.AdminService;
+import com.example.sigat.backend.service.HistoryService;
+import jakarta.websocket.server.PathParam;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,9 +20,11 @@ import java.util.Map;
 @PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
     private final AdminService adminService;
+    private final HistoryService historyService;
 
-    public AdminController(AdminService adminService) {
+    public AdminController(AdminService adminService, HistoryService historyService) {
         this.adminService = adminService;
+        this.historyService = historyService;
     }
 
     @GetMapping("/users/approval-pending")
@@ -53,5 +58,13 @@ public class AdminController {
         } catch (IllegalArgumentException e){
             return new ResponseEntity<>(Map.of("message",e.getMessage()),HttpStatus.BAD_REQUEST);
         }
+    }
+    @GetMapping("/users/{id}/history")
+    public ResponseEntity<?> getUserHistory(@PathVariable Long id, @PathParam("entries") Integer entries){
+        if (entries==null || entries>64){
+            entries=64;
+        }
+        List<PointAction> actions = historyService.getUserHistory(id,entries);
+        return new ResponseEntity<>(actions,HttpStatus.OK);
     }
 }

@@ -15,7 +15,10 @@ public class PointModificationValues {
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToOne
-    @JoinColumn(name = "point_action_id")
-    private PointAction pointAction;
+    @Column(name = "affected_field")
+    String affectedField;
+    @Column(name = "old_value")
+    String oldValue;
+    @Column(name = "new_value")
+    String newValue;
 }

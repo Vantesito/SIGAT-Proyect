@@ -21,7 +21,11 @@ public class PointAction {
     @Column(name = "datetime")
     private OffsetDateTime dateTime;
     @Column(name = "action_type")
+    @Enumerated(EnumType.STRING)
     private ActionType actionType;
+    @OneToOne
+    @JoinColumn(name = "point_modification_values_id")
+    private PointModificationValues pointModificationValues;
     @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
