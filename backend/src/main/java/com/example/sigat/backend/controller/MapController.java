@@ -9,7 +9,9 @@ import com.example.sigat.backend.service.MapService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,27 +33,27 @@ public class MapController {
         return new ResponseEntity<>(points, HttpStatus.OK);
     }
     @PostMapping("points/new")
-    public ResponseEntity<?> createPoint(@AuthenticationPrincipal User user,@RequestBody PointCreationRequest pcr){
+    public ResponseEntity<?> createPoint(@AuthenticationPrincipal UserDetails ap,@RequestBody PointCreationRequest pcr){
         try {
-            mapService.createPoint(pcr,user);
+            mapService.createPoint(pcr,ap.getUsername());
             return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (IllegalArgumentException e){
             return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
         }
     }
     @PatchMapping("points/{id}/disease")
-    public ResponseEntity<?> modifyPoint(@AuthenticationPrincipal User user, @PathVariable("id") Long id, @RequestBody PointDiseasePatchRequest request){
+    public ResponseEntity<?> modifyPoint(@AuthenticationPrincipal UserDetails ap, @PathVariable("id") Long id, @RequestBody PointDiseasePatchRequest request){
         try {
-            mapService.patchPointDisease(id, request,user);
+            mapService.patchPointDisease(id, request,ap.getUsername());
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (IllegalArgumentException e){
             return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
         }
     }
     @PatchMapping("points/{id}/coordinates")
-    public ResponseEntity<?> modifyPoint(@AuthenticationPrincipal User user, @PathVariable("id") Long id, @RequestBody PointCoordPatchRequest request){
+    public ResponseEntity<?> modifyPoint(@AuthenticationPrincipal UserDetails ap, @PathVariable("id") Long id, @RequestBody PointCoordPatchRequest request){
         try {
-            mapService.patchPointCoordinates(id, request, user);
+            mapService.patchPointCoordinates(id, request, ap.getUsername());
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (IllegalArgumentException e){
             return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);

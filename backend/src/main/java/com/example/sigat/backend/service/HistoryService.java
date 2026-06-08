@@ -30,11 +30,11 @@ public class HistoryService {
         actions = actions.stream().limit(entries).toList();
         return actions;
     }
-    public void addUserPointModHistory(Long userId, Long pointId, PointAction.ActionType type, String old_value,
+    public void addUserPointModHistory(String username, Long pointId, PointAction.ActionType type, String old_value,
                                        PointCoordPatchRequest request){
         PointAction action = new PointAction();
         action.setDateTime(OffsetDateTime.now());
-        action.setUser(userRepository.findById(userId).orElseThrow());
+        action.setUser(userRepository.findByEmail(username).orElseThrow());
         action.setPoint(pointRepository.findById(pointId).orElseThrow());
         action.setActionType(type);
         PointModificationValues pmv = new PointModificationValues();
@@ -44,11 +44,11 @@ public class HistoryService {
         action.setPointModificationValues(pmv);
         pointActionRepository.save(action);
     }
-    public void addUserPointModHistory(Long userId, Long pointId, PointAction.ActionType type, String old_value,
+    public void addUserPointModHistory(String username, Long pointId, PointAction.ActionType type, String old_value,
                                        PointDiseasePatchRequest request){
         PointAction action = new PointAction();
         action.setDateTime(OffsetDateTime.now());
-        action.setUser(userRepository.findById(userId).orElseThrow());
+        action.setUser(userRepository.findByEmail(username).orElseThrow());
         action.setPoint(pointRepository.findById(pointId).orElseThrow());
         action.setActionType(type);
         PointModificationValues pmv = new PointModificationValues();
@@ -58,10 +58,10 @@ public class HistoryService {
         action.setPointModificationValues(pmv);
         pointActionRepository.save(action);
     }
-    public void addUserPointCreationHistory(Long userId, Long pointId, PointAction.ActionType type){
+    public void addUserPointCreationHistory(String username, Long pointId, PointAction.ActionType type){
         PointAction action = new PointAction();
         action.setDateTime(OffsetDateTime.now());
-        action.setUser(userRepository.findById(userId).orElseThrow());
+        action.setUser(userRepository.findByEmail(username).orElseThrow());
         action.setPoint(pointRepository.findById(pointId).orElseThrow());
         action.setActionType(type);
         pointActionRepository.save(action);

@@ -9,6 +9,7 @@ import com.example.sigat.backend.model.PointAction;
 import com.example.sigat.backend.model.User;
 import com.example.sigat.backend.repository.DiseaseRepository;
 import com.example.sigat.backend.repository.PointRepository;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,7 +30,7 @@ public class MapService {
         return pointRepository.findByDisease_IdAndActiveIsTrue(diseaseId);
     }
 
-    public void createPoint(PointCreationRequest pcr, User user) {
+    public void createPoint(PointCreationRequest pcr, String username) {
         System.out.println(diseaseRepository.existsById(pcr.disease_id()));
         if (!diseaseRepository.existsById(pcr.disease_id())){
             throw new IllegalArgumentException("la enfermedad asociada al punto no existe");
@@ -41,10 +42,10 @@ public class MapService {
         Disease disease = diseaseRepository.findById(pcr.disease_id()).orElseThrow();
         point.setDisease(disease);
         pointRepository.save(point);
-        historyService.addUserPointCreationHistory(user.getId(), point.getId(), PointAction.ActionType.CREATION);
+        historyService.addUserPointCreationHistory(username, point.getId(), PointAction.ActionType.CREATION);
     }
 
-    public void patchPointDisease(Long id, PointDiseasePatchRequest request, User user) {
+    public void patchPointDisease(Long id, PointDiseasePatchRequest request, String username) {
         Point point = pointRepository.findById(id).orElseThrow(
                 ()->new IllegalArgumentException("el punto no existe")
         );
@@ -54,9 +55,9 @@ public class MapService {
         );
         point.setDisease(disease);
         pointRepository.save(point);
-        historyService.addUserPointModHistory(user.getId(), point.getId(), PointAction.ActionType.MODIFICATION, old_value,request);
+        historyService.addUserPointModHistory(username, point.getId(), PointAction.ActionType.MODIFICATION, old_value,request);
     }
-    public void patchPointCoordinates(Long id, PointCoordPatchRequest request, User user) {
+    public void patchPointCoordinates(Long id, PointCoordPatchRequest request, String username) {
         Point point = pointRepository.findById(id).orElseThrow(
                 ()->new IllegalArgumentException("el punto no existe")
         );
@@ -64,7 +65,7 @@ public class MapService {
         point.setXCoordinate(request.x_coordinate());
         point.setYCoordinate(request.y_coordinate());
         pointRepository.save(point);
-        historyService.addUserPointModHistory(user.getId(), point.getId(), PointAction.ActionType.MODIFICATION, old_value,request);
+        historyService.addUserPointModHistory(username, point.getId(), PointAction.ActionType.MODIFICATION, old_value,request);
     }
 
     public Point getSinglePoint(Long id) {
