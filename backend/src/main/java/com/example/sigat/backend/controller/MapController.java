@@ -3,13 +3,12 @@ package com.example.sigat.backend.controller;
 import com.example.sigat.backend.dto.PointCoordPatchRequest;
 import com.example.sigat.backend.dto.PointCreationRequest;
 import com.example.sigat.backend.dto.PointDiseasePatchRequest;
+import com.example.sigat.backend.dto.PointStateChangeRequest;
 import com.example.sigat.backend.model.Point;
-import com.example.sigat.backend.model.User;
 import com.example.sigat.backend.service.MapService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -67,5 +66,9 @@ public class MapController {
         } catch (IllegalArgumentException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
+    }
+    @PutMapping("points/{id}/active")
+    public ResponseEntity<?> changePointState(@PathVariable Long id, @RequestBody PointStateChangeRequest request) {
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
