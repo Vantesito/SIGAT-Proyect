@@ -55,4 +55,13 @@ public class MapController {
             return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
         }
     }
+    @GetMapping("points/{id}")
+    public ResponseEntity<?> getSinglePoint(@PathVariable Long id){
+        try {
+            Point point = mapService.getSinglePoint(id);
+            return new ResponseEntity<>(point, HttpStatus.OK);
+        } catch (IllegalArgumentException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
 }

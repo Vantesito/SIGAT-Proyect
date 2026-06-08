@@ -56,4 +56,10 @@ public class MapService {
         point.setYCoordinate(request.y_coordinate());
         pointRepository.save(point);
     }
+
+    public Point getSinglePoint(Long id) {
+        return pointRepository.findById(id).orElseThrow(
+                ()->new IllegalArgumentException("el punto no existe")
+        );
+    }
 }
