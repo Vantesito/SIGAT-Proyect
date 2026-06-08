@@ -1,5 +1,6 @@
 package com.example.sigat.backend.service;
 
+import com.example.sigat.backend.dto.PointCoordPatchRequest;
 import com.example.sigat.backend.dto.PointCreationRequest;
 import com.example.sigat.backend.model.Disease;
 import com.example.sigat.backend.model.Point;
@@ -34,6 +35,25 @@ public class MapService {
         point.setRut(pcr.rut());
         Disease disease = diseaseRepository.findById(pcr.disease_id()).orElseThrow();
         point.setDisease(disease);
+        pointRepository.save(point);
+    }
+
+    public void patchPointDisease(Long id, Long disease_id) {
+        Point point = pointRepository.findById(id).orElseThrow(
+                ()->new IllegalArgumentException("el punto no existe")
+        );
+        Disease disease = diseaseRepository.findById(disease_id).orElseThrow(
+                ()->new IllegalArgumentException("la enfermedad no existe")
+        );
+        point.setDisease(disease);
+        pointRepository.save(point);
+    }
+    public void patchPointCoordinates(Long id, PointCoordPatchRequest request) {
+        Point point = pointRepository.findById(id).orElseThrow(
+                ()->new IllegalArgumentException("el punto no existe")
+        );
+        point.setXCoordinate(request.x_coordinate());
+        point.setYCoordinate(request.y_coordinate());
         pointRepository.save(point);
     }
 }
