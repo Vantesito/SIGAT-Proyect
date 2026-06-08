@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/api/user/map")
 @CrossOrigin(origins = "*")
 @PreAuthorize("hasRole('USER')")
 public class MapController {
@@ -20,7 +20,7 @@ public class MapController {
         this.mapService = mapService;
     }
 
-    @GetMapping("/map/points/active")
+    @GetMapping("points/active")
     public ResponseEntity<?> getPointsByDisease(@RequestParam Long disease){
         List<Point> points = mapService.getActivePointsByDisease(disease);
         return new ResponseEntity<>(points, HttpStatus.OK);
