@@ -1,5 +1,6 @@
 package com.example.sigat.backend.controller;
 
+import com.example.sigat.backend.dto.PointCreationRequest;
 import com.example.sigat.backend.model.Point;
 import com.example.sigat.backend.service.MapService;
 import org.springframework.http.HttpStatus;
@@ -24,5 +25,14 @@ public class MapController {
     public ResponseEntity<?> getPointsByDisease(@RequestParam Long disease){
         List<Point> points = mapService.getActivePointsByDisease(disease);
         return new ResponseEntity<>(points, HttpStatus.OK);
+    }
+    @PostMapping("points/new")
+    public ResponseEntity<?> createPoint(@RequestBody PointCreationRequest pcr){
+        try {
+            mapService.createPoint(pcr);
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        } catch (IllegalArgumentException e){
+            return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
+        }
     }
 }

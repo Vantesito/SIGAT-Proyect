@@ -17,6 +17,8 @@ public class Point {
     private double yCoordinate;
     @Column(name="active")
     private boolean active=false;
+    @Column(name="rut")
+    private String rut;
     @ManyToOne
     @JoinColumn(name = "disease_id")
     private Disease disease;
