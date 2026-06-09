@@ -6,10 +6,8 @@ import com.example.sigat.backend.dto.PointDiseasePatchRequest;
 import com.example.sigat.backend.model.Disease;
 import com.example.sigat.backend.model.Point;
 import com.example.sigat.backend.model.PointAction;
-import com.example.sigat.backend.model.User;
 import com.example.sigat.backend.repository.DiseaseRepository;
 import com.example.sigat.backend.repository.PointRepository;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -72,5 +70,13 @@ public class MapService {
         return pointRepository.findById(id).orElseThrow(
                 ()->new IllegalArgumentException("el punto no existe")
         );
+    }
+
+    public void deactivatePoint(Long id) {
+        Point point = pointRepository.findById(id).orElseThrow(
+                ()->new IllegalArgumentException("el punto no existe")
+        );
+        point.setActive(false);
+        pointRepository.save(point);
     }
 }
