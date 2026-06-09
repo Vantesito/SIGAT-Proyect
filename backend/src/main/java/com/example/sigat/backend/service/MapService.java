@@ -76,6 +76,9 @@ public class MapService {
         Point point = pointRepository.findById(id).orElseThrow(
                 ()->new IllegalArgumentException("el punto no existe")
         );
+        if (!point.isActive()){
+            throw new IllegalArgumentException("el punto ya está desactivado");
+        }
         point.setActive(false);
         pointRepository.save(point);
         historyService.addUserPointDeactivationHistory(username,point.getId());
