@@ -72,11 +72,12 @@ public class MapService {
         );
     }
 
-    public void deactivatePoint(Long id) {
+    public void deactivatePoint(String username,Long id) {
         Point point = pointRepository.findById(id).orElseThrow(
                 ()->new IllegalArgumentException("el punto no existe")
         );
         point.setActive(false);
         pointRepository.save(point);
+        historyService.addUserPointDeactivationHistory(username,point.getId());
     }
 }

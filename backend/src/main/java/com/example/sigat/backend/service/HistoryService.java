@@ -66,4 +66,12 @@ public class HistoryService {
         action.setActionType(type);
         pointActionRepository.save(action);
     }
+    public void addUserPointDeactivationHistory(String username, Long pointId){
+        PointAction action = new PointAction();
+        action.setDateTime(OffsetDateTime.now());
+        action.setUser(userRepository.findByEmail(username).orElseThrow());
+        action.setPoint(pointRepository.findById(pointId).orElseThrow());
+        action.setActionType(PointAction.ActionType.DEACTIVATION);
+        pointActionRepository.save(action);
+    }
 }

@@ -36,6 +36,7 @@ public class PointAction {
     public enum ActionType{
         CREATION,
         DELETION,
-        MODIFICATION
+        MODIFICATION,
+        DEACTIVATION
     }
 }

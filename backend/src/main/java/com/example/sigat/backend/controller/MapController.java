@@ -68,9 +68,9 @@ public class MapController {
         }
     }
     @PutMapping("points/{id}/deactivate")
-    public ResponseEntity<?> deactivatePoint(@PathVariable Long id){
+    public ResponseEntity<?> deactivatePoint(@AuthenticationPrincipal UserDetails ap, @PathVariable Long id){
         try {
-            mapService.deactivatePoint(id);
+            mapService.deactivatePoint(ap.getUsername(),id);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (IllegalArgumentException e){
             return new ResponseEntity<>(Set.of("message", e.getMessage()),HttpStatus.BAD_REQUEST);
