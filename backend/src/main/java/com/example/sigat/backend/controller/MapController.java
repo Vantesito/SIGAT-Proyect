@@ -13,7 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/user/map")
@@ -73,7 +73,7 @@ public class MapController {
             mapService.deactivatePoint(ap.getUsername(),id);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (IllegalArgumentException e){
-            return new ResponseEntity<>(Set.of("message", e.getMessage()),HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(Map.of("message", e.getMessage()),HttpStatus.BAD_REQUEST);
         }
     }
 }
