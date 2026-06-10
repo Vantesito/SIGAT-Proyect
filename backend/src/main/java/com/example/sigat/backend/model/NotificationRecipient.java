@@ -22,5 +22,5 @@ public class NotificationRecipient {
     @JoinColumn(name = "notification_id")
     private Notification notification;
     @Column(name = "accepted")
-    boolean accepted;
+    boolean accepted = false;
 }

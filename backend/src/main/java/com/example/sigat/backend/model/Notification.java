@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.OffsetDateTime;
+
 @Table(name = "notification")
 @Entity
 @Data
@@ -18,7 +20,7 @@ public class Notification {
     @Column(name = "title")
     String title;
     @Column(name = "created_at")
-    String createdAt;
+    OffsetDateTime createdAt;
     @Column(name = "content")
     String content;
 }
