@@ -16,7 +16,7 @@ public class Point {
     @Column(name = "y_coordinate")
     private double yCoordinate;
     @Column(name="active")
-    private boolean active=false;
+    private boolean active=true;
     @Column(name="rut")
     private String rut;
     @ManyToOne
