@@ -1,14 +1,18 @@
 package com.example.sigat.backend.controller;
 
+import com.example.sigat.backend.model.Notification;
 import com.example.sigat.backend.model.PointAction;
 import com.example.sigat.backend.model.User;
 import com.example.sigat.backend.service.AdminService;
 import com.example.sigat.backend.service.HistoryService;
+import com.example.sigat.backend.service.NotificationService;
 import jakarta.websocket.server.PathParam;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,10 +25,12 @@ import java.util.Map;
 public class AdminController {
     private final AdminService adminService;
     private final HistoryService historyService;
+    private final NotificationService notificationService;
 
-    public AdminController(AdminService adminService, HistoryService historyService) {
+    public AdminController(AdminService adminService, HistoryService historyService, NotificationService notificationService) {
         this.adminService = adminService;
         this.historyService = historyService;
+        this.notificationService = notificationService;
     }
 
     @GetMapping("/users/approval-pending")
@@ -66,5 +72,10 @@ public class AdminController {
         }
         List<PointAction> actions = historyService.getUserHistory(id,entries);
         return new ResponseEntity<>(actions,HttpStatus.OK);
+    }
+    @GetMapping("/notifications")
+    public ResponseEntity<?> getNotifications(@AuthenticationPrincipal UserDetails userDetails) {
+        List<Notification> notifications = notificationService.getNotifications(userDetails.getUsername());
+        return new ResponseEntity<>(notifications, HttpStatus.OK);
     }
 }

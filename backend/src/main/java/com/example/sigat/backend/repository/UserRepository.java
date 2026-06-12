@@ -18,4 +18,5 @@ public interface UserRepository extends JpaRepository<User,Long> {
     <S extends User> S save(S entity);
     @NullMarked
     Optional<User> findById(Long id);
+    List<User> findByActiveIsTrueAndRole(User.Role role);
 }

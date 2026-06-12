@@ -4,17 +4,16 @@ import com.example.sigat.backend.dto.PointCoordPatchRequest;
 import com.example.sigat.backend.dto.PointCreationRequest;
 import com.example.sigat.backend.dto.PointDiseasePatchRequest;
 import com.example.sigat.backend.model.Point;
-import com.example.sigat.backend.model.User;
 import com.example.sigat.backend.service.MapService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/user/map")
@@ -66,6 +65,15 @@ public class MapController {
             return new ResponseEntity<>(point, HttpStatus.OK);
         } catch (IllegalArgumentException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+    @PutMapping("points/{id}/deactivate")
+    public ResponseEntity<?> deactivatePoint(@AuthenticationPrincipal UserDetails ap, @PathVariable Long id){
+        try {
+            mapService.deactivatePoint(ap.getUsername(),id);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (IllegalArgumentException e){
+            return new ResponseEntity<>(Map.of("message", e.getMessage()),HttpStatus.BAD_REQUEST);
         }
     }
 }

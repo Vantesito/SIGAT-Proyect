@@ -23,7 +23,7 @@ public class PointAction {
     @Column(name = "action_type")
     @Enumerated(EnumType.STRING)
     private ActionType actionType;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "point_modification_values_id")
     private PointModificationValues pointModificationValues;
     @OneToOne
@@ -36,6 +36,7 @@ public class PointAction {
     public enum ActionType{
         CREATION,
         DELETION,
-        MODIFICATION
+        MODIFICATION,
+        DEACTIVATION
     }
 }
