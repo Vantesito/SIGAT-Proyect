@@ -1,0 +1,18 @@
+POST http://localhost:8080/api/auth/register
+
+body:
+{
+  "email":"newuser.newuser@example.com",
+  "confirmation_email":"newuser.newuser@example.com",
+  "names":"name middlename",
+  "surnames":"surname lastname",
+  "password":"$2a$10$L2PjkdmpVAYgF1NTz4rMkum4U9lpkjKDRL1dAIbcpJgjFny4Dl4Xa",//1234
+  "phone_number":"987654321",
+  "rut":"11111111-1",
+  "country":"Chile",
+  "region":"Araucania",
+  "city":"Temuco",
+  "institution":"Institucion"
+}
+response:
+201 CREATED

@@ -1,0 +1,19 @@
+GET http://localhost:8080/api/admin/users/approval-pending
+body: no
+response:
+200 OK
+[
+  {
+    "id": 1,
+    "email": "john.doe@example.com",
+    "password": "$2a$10$TZQdmMLeOJ42KdCN9TmmJ.dEgX6nd.XiSgEP1yiuPLksFEVZlzy2K",
+    "names": "john doe",
+    "surnames": null,
+    "country": null,
+    "region": null,
+    "city": null,
+    "institution": null,
+    "rut": null,
+    "role": "USER",
+    "active": false
+  }

@@ -1,0 +1,42 @@
+GET http://localhost:8080/api/user/map/points/active?disease=3
+
+body: no
+
+response:
+200OK
+[
+  {
+    "id": 13,
+    "active": true,
+    "rut": "15555111-3",
+    "disease": {
+      "id": 3,
+      "name": "COVID-19",
+      "yellow_minimum": 10,
+      "red_minimum": 25,
+      "diseaseFamily": {
+        "id": 2,
+        "name": "CORONAVIRUS"
+      }
+    },
+    "xcoordinate": -33.445,
+    "ycoordinate": -70.675
+  },
+  {
+    "id": 19,
+    "active": true,
+    "rut": "13333777-9",
+    "disease": {
+      "id": 3,
+      "name": "COVID-19",
+      "yellow_minimum": 10,
+      "red_minimum": 25,
+      "diseaseFamily": {
+        "id": 2,
+        "name": "CORONAVIRUS"
+      }
+    },
+    "xcoordinate": -33.515,
+    "ycoordinate": -70.705
+  }
+]

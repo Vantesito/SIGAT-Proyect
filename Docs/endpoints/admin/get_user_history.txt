@@ -1,0 +1,1689 @@
+GET http://localhost:8080/api/admin/users/1/history
+body: no
+response:
+200 OK
+[
+  {
+    "id": 45,
+    "dateTime": "2026-06-10T04:24:10Z",
+    "actionType": "MODIFICATION",
+    "pointModificationValues": {
+      "id": 10,
+      "affectedField": "COORDINATES",
+      "oldValue": "(1.0, 1.0)",
+      "newValue": "(1.0, 1.0)"
+    },
+    "user": {
+      "id": 1,
+      "email": "john.doe@example.com",
+      "password": "$2a$10$TZQdmMLeOJ42KdCN9TmmJ.dEgX6nd.XiSgEP1yiuPLksFEVZlzy2K",
+      "names": "john doe",
+      "surnames": null,
+      "country": null,
+      "region": null,
+      "city": null,
+      "institution": null,
+      "rut": null,
+      "role": "USER",
+      "active": false
+    },
+    "point": {
+      "id": 1,
+      "active": true,
+      "rut": "12345678-5",
+      "disease": {
+        "id": 3,
+        "name": "COVID-19",
+        "yellow_minimum": 10,
+        "red_minimum": 25,
+        "diseaseFamily": {
+          "id": 2,
+          "name": "CORONAVIRUS"
+        }
+      },
+      "xcoordinate": 1.0,
+      "ycoordinate": 1.0
+    }
+  },
+  {
+    "id": 43,
+    "dateTime": "2026-06-10T04:10:51Z",
+    "actionType": "CREATION",
+    "pointModificationValues": null,
+    "user": {
+      "id": 1,
+      "email": "john.doe@example.com",
+      "password": "$2a$10$TZQdmMLeOJ42KdCN9TmmJ.dEgX6nd.XiSgEP1yiuPLksFEVZlzy2K",
+      "names": "john doe",
+      "surnames": null,
+      "country": null,
+      "region": null,
+      "city": null,
+      "institution": null,
+      "rut": null,
+      "role": "USER",
+      "active": false
+    },
+    "point": {
+      "id": 29,
+      "active": false,
+      "rut": "11111111-1",
+      "disease": {
+        "id": 1,
+        "name": "Influenza A",
+        "yellow_minimum": 5,
+        "red_minimum": 15,
+        "diseaseFamily": {
+          "id": 1,
+          "name": "INFLUENZA"
+        }
+      },
+      "xcoordinate": 0.0,
+      "ycoordinate": 0.0
+    }
+  },
+  {
+    "id": 42,
+    "dateTime": "2026-06-10T04:08:18Z",
+    "actionType": "CREATION",
+    "pointModificationValues": null,
+    "user": {
+      "id": 1,
+      "email": "john.doe@example.com",
+      "password": "$2a$10$TZQdmMLeOJ42KdCN9TmmJ.dEgX6nd.XiSgEP1yiuPLksFEVZlzy2K",
+      "names": "john doe",
+      "surnames": null,
+      "country": null,
+      "region": null,
+      "city": null,
+      "institution": null,
+      "rut": null,
+      "role": "USER",
+      "active": false
+    },
+    "point": {
+      "id": 28,
+      "active": false,
+      "rut": "11111111-1",
+      "disease": {
+        "id": 1,
+        "name": "Influenza A",
+        "yellow_minimum": 5,
+        "red_minimum": 15,
+        "diseaseFamily": {
+          "id": 1,
+          "name": "INFLUENZA"
+        }
+      },
+      "xcoordinate": 0.0,
+      "ycoordinate": 0.0
+    }
+  },
+  {
+    "id": 41,
+    "dateTime": "2026-06-10T03:59:43Z",
+    "actionType": "CREATION",
+    "pointModificationValues": null,
+    "user": {
+      "id": 1,
+      "email": "john.doe@example.com",
+      "password": "$2a$10$TZQdmMLeOJ42KdCN9TmmJ.dEgX6nd.XiSgEP1yiuPLksFEVZlzy2K",
+      "names": "john doe",
+      "surnames": null,
+      "country": null,
+      "region": null,
+      "city": null,
+      "institution": null,
+      "rut": null,
+      "role": "USER",
+      "active": false
+    },
+    "point": {
+      "id": 27,
+      "active": false,
+      "rut": "11111111-1",
+      "disease": {
+        "id": 1,
+        "name": "Influenza A",
+        "yellow_minimum": 5,
+        "red_minimum": 15,
+        "diseaseFamily": {
+          "id": 1,
+          "name": "INFLUENZA"
+        }
+      },
+      "xcoordinate": 0.0,
+      "ycoordinate": 0.0
+    }
+  },
+  {
+    "id": 40,
+    "dateTime": "2026-06-10T03:48:58Z",
+    "actionType": "CREATION",
+    "pointModificationValues": null,
+    "user": {
+      "id": 1,
+      "email": "john.doe@example.com",
+      "password": "$2a$10$TZQdmMLeOJ42KdCN9TmmJ.dEgX6nd.XiSgEP1yiuPLksFEVZlzy2K",
+      "names": "john doe",
+      "surnames": null,
+      "country": null,
+      "region": null,
+      "city": null,
+      "institution": null,
+      "rut": null,
+      "role": "USER",
+      "active": false
+    },
+    "point": {
+      "id": 26,
+      "active": false,
+      "rut": "11111111-1",
+      "disease": {
+        "id": 1,
+        "name": "Influenza A",
+        "yellow_minimum": 5,
+        "red_minimum": 15,
+        "diseaseFamily": {
+          "id": 1,
+          "name": "INFLUENZA"
+        }
+      },
+      "xcoordinate": 0.0,
+      "ycoordinate": 0.0
+    }
+  },
+  {
+    "id": 39,
+    "dateTime": "2026-06-10T03:47:47Z",
+    "actionType": "CREATION",
+    "pointModificationValues": null,
+    "user": {
+      "id": 1,
+      "email": "john.doe@example.com",
+      "password": "$2a$10$TZQdmMLeOJ42KdCN9TmmJ.dEgX6nd.XiSgEP1yiuPLksFEVZlzy2K",
+      "names": "john doe",
+      "surnames": null,
+      "country": null,
+      "region": null,
+      "city": null,
+      "institution": null,
+      "rut": null,
+      "role": "USER",
+      "active": false
+    },
+    "point": {
+      "id": 25,
+      "active": false,
+      "rut": "11111111-1",
+      "disease": {
+        "id": 1,
+        "name": "Influenza A",
+        "yellow_minimum": 5,
+        "red_minimum": 15,
+        "diseaseFamily": {
+          "id": 1,
+          "name": "INFLUENZA"
+        }
+      },
+      "xcoordinate": 0.0,
+      "ycoordinate": 0.0
+    }
+  },
+  {
+    "id": 38,
+    "dateTime": "2026-06-10T03:45:49Z",
+    "actionType": "CREATION",
+    "pointModificationValues": null,
+    "user": {
+      "id": 1,
+      "email": "john.doe@example.com",
+      "password": "$2a$10$TZQdmMLeOJ42KdCN9TmmJ.dEgX6nd.XiSgEP1yiuPLksFEVZlzy2K",
+      "names": "john doe",
+      "surnames": null,
+      "country": null,
+      "region": null,
+      "city": null,
+      "institution": null,
+      "rut": null,
+      "role": "USER",
+      "active": false
+    },
+    "point": {
+      "id": 24,
+      "active": false,
+      "rut": "11111111-1",
+      "disease": {
+        "id": 1,
+        "name": "Influenza A",
+        "yellow_minimum": 5,
+        "red_minimum": 15,
+        "diseaseFamily": {
+          "id": 1,
+          "name": "INFLUENZA"
+        }
+      },
+      "xcoordinate": 0.0,
+      "ycoordinate": 0.0
+    }
+  },
+  {
+    "id": 37,
+    "dateTime": "2026-06-10T03:45:29Z",
+    "actionType": "CREATION",
+    "pointModificationValues": null,
+    "user": {
+      "id": 1,
+      "email": "john.doe@example.com",
+      "password": "$2a$10$TZQdmMLeOJ42KdCN9TmmJ.dEgX6nd.XiSgEP1yiuPLksFEVZlzy2K",
+      "names": "john doe",
+      "surnames": null,
+      "country": null,
+      "region": null,
+      "city": null,
+      "institution": null,
+      "rut": null,
+      "role": "USER",
+      "active": false
+    },
+    "point": {
+      "id": 23,
+      "active": false,
+      "rut": "11111111-1",
+      "disease": {
+        "id": 1,
+        "name": "Influenza A",
+        "yellow_minimum": 5,
+        "red_minimum": 15,
+        "diseaseFamily": {
+          "id": 1,
+          "name": "INFLUENZA"
+        }
+      },
+      "xcoordinate": 0.0,
+      "ycoordinate": 0.0
+    }
+  },
+  {
+    "id": 36,
+    "dateTime": "2026-06-10T03:42:33Z",
+    "actionType": "CREATION",
+    "pointModificationValues": null,
+    "user": {
+      "id": 1,
+      "email": "john.doe@example.com",
+      "password": "$2a$10$TZQdmMLeOJ42KdCN9TmmJ.dEgX6nd.XiSgEP1yiuPLksFEVZlzy2K",
+      "names": "john doe",
+      "surnames": null,
+      "country": null,
+      "region": null,
+      "city": null,
+      "institution": null,
+      "rut": null,
+      "role": "USER",
+      "active": false
+    },
+    "point": {
+      "id": 22,
+      "active": false,
+      "rut": "11111111-1",
+      "disease": {
+        "id": 1,
+        "name": "Influenza A",
+        "yellow_minimum": 5,
+        "red_minimum": 15,
+        "diseaseFamily": {
+          "id": 1,
+          "name": "INFLUENZA"
+        }
+      },
+      "xcoordinate": 0.0,
+      "ycoordinate": 0.0
+    }
+  },
+  {
+    "id": 35,
+    "dateTime": "2026-06-10T03:38:24Z",
+    "actionType": "CREATION",
+    "pointModificationValues": null,
+    "user": {
+      "id": 1,
+      "email": "john.doe@example.com",
+      "password": "$2a$10$TZQdmMLeOJ42KdCN9TmmJ.dEgX6nd.XiSgEP1yiuPLksFEVZlzy2K",
+      "names": "john doe",
+      "surnames": null,
+      "country": null,
+      "region": null,
+      "city": null,
+      "institution": null,
+      "rut": null,
+      "role": "USER",
+      "active": false
+    },
+    "point": {
+      "id": 21,
+      "active": false,
+      "rut": "11111111-1",
+      "disease": {
+        "id": 1,
+        "name": "Influenza A",
+        "yellow_minimum": 5,
+        "red_minimum": 15,
+        "diseaseFamily": {
+          "id": 1,
+          "name": "INFLUENZA"
+        }
+      },
+      "xcoordinate": 0.0,
+      "ycoordinate": 0.0
+    }
+  },
+  {
+    "id": 34,
+    "dateTime": "2026-06-09T15:09:33Z",
+    "actionType": "DEACTIVATION",
+    "pointModificationValues": null,
+    "user": {
+      "id": 1,
+      "email": "john.doe@example.com",
+      "password": "$2a$10$TZQdmMLeOJ42KdCN9TmmJ.dEgX6nd.XiSgEP1yiuPLksFEVZlzy2K",
+      "names": "john doe",
+      "surnames": null,
+      "country": null,
+      "region": null,
+      "city": null,
+      "institution": null,
+      "rut": null,
+      "role": "USER",
+      "active": false
+    },
+    "point": {
+      "id": 2,
+      "active": false,
+      "rut": "11222333-4",
+      "disease": {
+        "id": 1,
+        "name": "Influenza A",
+        "yellow_minimum": 5,
+        "red_minimum": 15,
+        "diseaseFamily": {
+          "id": 1,
+          "name": "INFLUENZA"
+        }
+      },
+      "xcoordinate": -33.456,
+      "ycoordinate": -70.648
+    }
+  },
+  {
+    "id": 33,
+    "dateTime": "2026-06-09T15:07:49Z",
+    "actionType": "DEACTIVATION",
+    "pointModificationValues": null,
+    "user": {
+      "id": 1,
+      "email": "john.doe@example.com",
+      "password": "$2a$10$TZQdmMLeOJ42KdCN9TmmJ.dEgX6nd.XiSgEP1yiuPLksFEVZlzy2K",
+      "names": "john doe",
+      "surnames": null,
+      "country": null,
+      "region": null,
+      "city": null,
+      "institution": null,
+      "rut": null,
+      "role": "USER",
+      "active": false
+    },
+    "point": {
+      "id": 2,
+      "active": false,
+      "rut": "11222333-4",
+      "disease": {
+        "id": 1,
+        "name": "Influenza A",
+        "yellow_minimum": 5,
+        "red_minimum": 15,
+        "diseaseFamily": {
+          "id": 1,
+          "name": "INFLUENZA"
+        }
+      },
+      "xcoordinate": -33.456,
+      "ycoordinate": -70.648
+    }
+  },
+  {
+    "id": 14,
+    "dateTime": "2025-05-05T09:30:00Z",
+    "actionType": "DELETION",
+    "pointModificationValues": null,
+    "user": {
+      "id": 1,
+      "email": "john.doe@example.com",
+      "password": "$2a$10$TZQdmMLeOJ42KdCN9TmmJ.dEgX6nd.XiSgEP1yiuPLksFEVZlzy2K",
+      "names": "john doe",
+      "surnames": null,
+      "country": null,
+      "region": null,
+      "city": null,
+      "institution": null,
+      "rut": null,
+      "role": "USER",
+      "active": false
+    },
+    "point": {
+      "id": 8,
+      "active": false,
+      "rut": "14567890-K",
+      "disease": {
+        "id": 10,
+        "name": "Measles",
+        "yellow_minimum": 3,
+        "red_minimum": 10,
+        "diseaseFamily": {
+          "id": 7,
+          "name": "MEASLES"
+        }
+      },
+      "xcoordinate": -33.48,
+      "ycoordinate": -70.75
+    }
+  },
+  {
+    "id": 20,
+    "dateTime": "2025-04-15T11:00:00Z",
+    "actionType": "DELETION",
+    "pointModificationValues": null,
+    "user": {
+      "id": 1,
+      "email": "john.doe@example.com",
+      "password": "$2a$10$TZQdmMLeOJ42KdCN9TmmJ.dEgX6nd.XiSgEP1yiuPLksFEVZlzy2K",
+      "names": "john doe",
+      "surnames": null,
+      "country": null,
+      "region": null,
+      "city": null,
+      "institution": null,
+      "rut": null,
+      "role": "USER",
+      "active": false
+    },
+    "point": {
+      "id": 12,
+      "active": false,
+      "rut": "17890123-6",
+      "disease": {
+        "id": 4,
+        "name": "SARS",
+        "yellow_minimum": 2,
+        "red_minimum": 8,
+        "diseaseFamily": {
+          "id": 2,
+          "name": "CORONAVIRUS"
+        }
+      },
+      "xcoordinate": -33.54,
+      "ycoordinate": -70.69
+    }
+  },
+  {
+    "id": 8,
+    "dateTime": "2025-04-10T17:00:00Z",
+    "actionType": "DELETION",
+    "pointModificationValues": null,
+    "user": {
+      "id": 1,
+      "email": "john.doe@example.com",
+      "password": "$2a$10$TZQdmMLeOJ42KdCN9TmmJ.dEgX6nd.XiSgEP1yiuPLksFEVZlzy2K",
+      "names": "john doe",
+      "surnames": null,
+      "country": null,
+      "region": null,
+      "city": null,
+      "institution": null,
+      "rut": null,
+      "role": "USER",
+      "active": false
+    },
+    "point": {
+      "id": 5,
+      "active": false,
+      "rut": "15432123-9",
+      "disease": {
+        "id": 5,
+        "name": "Hantavirus Pulmonary Syndrome",
+        "yellow_minimum": 1,
+        "red_minimum": 5,
+        "diseaseFamily": {
+          "id": 3,
+          "name": "HANTAVIRUS"
+        }
+      },
+      "xcoordinate": -33.5,
+      "ycoordinate": -70.7
+    }
+  },
+  {
+    "id": 28,
+    "dateTime": "2025-04-01T15:45:00Z",
+    "actionType": "MODIFICATION",
+    "pointModificationValues": {
+      "id": 8,
+      "affectedField": "COORDINATES",
+      "oldValue": "(-33.4670,-70.6870)",
+      "newValue": "(-33.4650,-70.6850)"
+    },
+    "user": {
+      "id": 1,
+      "email": "john.doe@example.com",
+      "password": "$2a$10$TZQdmMLeOJ42KdCN9TmmJ.dEgX6nd.XiSgEP1yiuPLksFEVZlzy2K",
+      "names": "john doe",
+      "surnames": null,
+      "country": null,
+      "region": null,
+      "city": null,
+      "institution": null,
+      "rut": null,
+      "role": "USER",
+      "active": false
+    },
+    "point": {
+      "id": 17,
+      "active": true,
+      "rut": "19999555-7",
+      "disease": {
+        "id": 9,
+        "name": "Norovirus Gastroenteritis",
+        "yellow_minimum": 8,
+        "red_minimum": 20,
+        "diseaseFamily": {
+          "id": 6,
+          "name": "NOROVIRUS"
+        }
+      },
+      "xcoordinate": -33.465,
+      "ycoordinate": -70.685
+    }
+  },
+  {
+    "id": 25,
+    "dateTime": "2025-03-25T12:00:00Z",
+    "actionType": "MODIFICATION",
+    "pointModificationValues": {
+      "id": 7,
+      "affectedField": "DISEASE",
+      "oldValue": "RSV Type A",
+      "newValue": "Influenza-Like Illness"
+    },
+    "user": {
+      "id": 1,
+      "email": "john.doe@example.com",
+      "password": "$2a$10$TZQdmMLeOJ42KdCN9TmmJ.dEgX6nd.XiSgEP1yiuPLksFEVZlzy2K",
+      "names": "john doe",
+      "surnames": null,
+      "country": null,
+      "region": null,
+      "city": null,
+      "institution": null,
+      "rut": null,
+      "role": "USER",
+      "active": false
+    },
+    "point": {
+      "id": 15,
+      "active": true,
+      "rut": "17777333-5",
+      "disease": {
+        "id": 15,
+        "name": "Influenza-Like Illness",
+        "yellow_minimum": 7,
+        "red_minimum": 18,
+        "diseaseFamily": {
+          "id": 1,
+          "name": "INFLUENZA"
+        }
+      },
+      "xcoordinate": -33.495,
+      "ycoordinate": -70.635
+    }
+  },
+  {
+    "id": 31,
+    "dateTime": "2025-03-20T11:30:00Z",
+    "actionType": "MODIFICATION",
+    "pointModificationValues": {
+      "id": 9,
+      "affectedField": "DISEASE",
+      "oldValue": "COVID-19 Variant Surveillance",
+      "newValue": "COVID-19"
+    },
+    "user": {
+      "id": 1,
+      "email": "john.doe@example.com",
+      "password": "$2a$10$TZQdmMLeOJ42KdCN9TmmJ.dEgX6nd.XiSgEP1yiuPLksFEVZlzy2K",
+      "names": "john doe",
+      "surnames": null,
+      "country": null,
+      "region": null,
+      "city": null,
+      "institution": null,
+      "rut": null,
+      "role": "USER",
+      "active": false
+    },
+    "point": {
+      "id": 19,
+      "active": true,
+      "rut": "13333777-9",
+      "disease": {
+        "id": 3,
+        "name": "COVID-19",
+        "yellow_minimum": 10,
+        "red_minimum": 25,
+        "diseaseFamily": {
+          "id": 2,
+          "name": "CORONAVIRUS"
+        }
+      },
+      "xcoordinate": -33.515,
+      "ycoordinate": -70.705
+    }
+  },
+  {
+    "id": 13,
+    "dateTime": "2025-03-18T16:40:00Z",
+    "actionType": "MODIFICATION",
+    "pointModificationValues": {
+      "id": 4,
+      "affectedField": "DISEASE",
+      "oldValue": "Chickenpox",
+      "newValue": "Measles"
+    },
+    "user": {
+      "id": 1,
+      "email": "john.doe@example.com",
+      "password": "$2a$10$TZQdmMLeOJ42KdCN9TmmJ.dEgX6nd.XiSgEP1yiuPLksFEVZlzy2K",
+      "names": "john doe",
+      "surnames": null,
+      "country": null,
+      "region": null,
+      "city": null,
+      "institution": null,
+      "rut": null,
+      "role": "USER",
+      "active": false
+    },
+    "point": {
+      "id": 8,
+      "active": false,
+      "rut": "14567890-K",
+      "disease": {
+        "id": 10,
+        "name": "Measles",
+        "yellow_minimum": 3,
+        "red_minimum": 10,
+        "diseaseFamily": {
+          "id": 7,
+          "name": "MEASLES"
+        }
+      },
+      "xcoordinate": -33.48,
+      "ycoordinate": -70.75
+    }
+  },
+  {
+    "id": 5,
+    "dateTime": "2025-03-01T14:00:00Z",
+    "actionType": "MODIFICATION",
+    "pointModificationValues": {
+      "id": 2,
+      "affectedField": "DISEASE",
+      "oldValue": "Influenza B",
+      "newValue": "Norovirus Gastroenteritis"
+    },
+    "user": {
+      "id": 1,
+      "email": "john.doe@example.com",
+      "password": "$2a$10$TZQdmMLeOJ42KdCN9TmmJ.dEgX6nd.XiSgEP1yiuPLksFEVZlzy2K",
+      "names": "john doe",
+      "surnames": null,
+      "country": null,
+      "region": null,
+      "city": null,
+      "institution": null,
+      "rut": null,
+      "role": "USER",
+      "active": false
+    },
+    "point": {
+      "id": 3,
+      "active": true,
+      "rut": "99888777-6",
+      "disease": {
+        "id": 9,
+        "name": "Norovirus Gastroenteritis",
+        "yellow_minimum": 8,
+        "red_minimum": 20,
+        "diseaseFamily": {
+          "id": 6,
+          "name": "NOROVIRUS"
+        }
+      },
+      "xcoordinate": -33.47,
+      "ycoordinate": -70.64
+    }
+  },
+  {
+    "id": 22,
+    "dateTime": "2025-02-28T09:15:00Z",
+    "actionType": "MODIFICATION",
+    "pointModificationValues": {
+      "id": 6,
+      "affectedField": "COORDINATES",
+      "oldValue": "(-33.4460,-70.6770)",
+      "newValue": "(-33.4450,-70.6750)"
+    },
+    "user": {
+      "id": 1,
+      "email": "john.doe@example.com",
+      "password": "$2a$10$TZQdmMLeOJ42KdCN9TmmJ.dEgX6nd.XiSgEP1yiuPLksFEVZlzy2K",
+      "names": "john doe",
+      "surnames": null,
+      "country": null,
+      "region": null,
+      "city": null,
+      "institution": null,
+      "rut": null,
+      "role": "USER",
+      "active": false
+    },
+    "point": {
+      "id": 13,
+      "active": true,
+      "rut": "15555111-3",
+      "disease": {
+        "id": 3,
+        "name": "COVID-19",
+        "yellow_minimum": 10,
+        "red_minimum": 25,
+        "diseaseFamily": {
+          "id": 2,
+          "name": "CORONAVIRUS"
+        }
+      },
+      "xcoordinate": -33.445,
+      "ycoordinate": -70.675
+    }
+  },
+  {
+    "id": 17,
+    "dateTime": "2025-02-22T10:30:00Z",
+    "actionType": "MODIFICATION",
+    "pointModificationValues": {
+      "id": 5,
+      "affectedField": "DISEASE",
+      "oldValue": "Influenza A",
+      "newValue": "Influenza B"
+    },
+    "user": {
+      "id": 1,
+      "email": "john.doe@example.com",
+      "password": "$2a$10$TZQdmMLeOJ42KdCN9TmmJ.dEgX6nd.XiSgEP1yiuPLksFEVZlzy2K",
+      "names": "john doe",
+      "surnames": null,
+      "country": null,
+      "region": null,
+      "city": null,
+      "institution": null,
+      "rut": null,
+      "role": "USER",
+      "active": false
+    },
+    "point": {
+      "id": 10,
+      "active": true,
+      "rut": "13456789-0",
+      "disease": {
+        "id": 2,
+        "name": "Influenza B",
+        "yellow_minimum": 4,
+        "red_minimum": 12,
+        "diseaseFamily": {
+          "id": 1,
+          "name": "INFLUENZA"
+        }
+      },
+      "xcoordinate": -33.41,
+      "ycoordinate": -70.65
+    }
+  },
+  {
+    "id": 10,
+    "dateTime": "2025-02-15T10:10:00Z",
+    "actionType": "MODIFICATION",
+    "pointModificationValues": {
+      "id": 3,
+      "affectedField": "COORDINATES",
+      "oldValue": "(-33.3880,-70.6820)",
+      "newValue": "(-33.3900,-70.6800)"
+    },
+    "user": {
+      "id": 1,
+      "email": "john.doe@example.com",
+      "password": "$2a$10$TZQdmMLeOJ42KdCN9TmmJ.dEgX6nd.XiSgEP1yiuPLksFEVZlzy2K",
+      "names": "john doe",
+      "surnames": null,
+      "country": null,
+      "region": null,
+      "city": null,
+      "institution": null,
+      "rut": null,
+      "role": "USER",
+      "active": false
+    },
+    "point": {
+      "id": 6,
+      "active": true,
+      "rut": "20123456-7",
+      "disease": {
+        "id": 8,
+        "name": "Adenoviral Respiratory Infection",
+        "yellow_minimum": 4,
+        "red_minimum": 12,
+        "diseaseFamily": {
+          "id": 5,
+          "name": "ADENOVIRUS"
+        }
+      },
+      "xcoordinate": -33.39,
+      "ycoordinate": -70.68
+    }
+  },
+  {
+    "id": 2,
+    "dateTime": "2025-02-05T11:20:00Z",
+    "actionType": "MODIFICATION",
+    "pointModificationValues": {
+      "id": 1,
+      "affectedField": "COORDINATES",
+      "oldValue": "(-33.4500,-70.6700)",
+      "newValue": "(-33.4489,-70.6693)"
+    },
+    "user": {
+      "id": 1,
+      "email": "john.doe@example.com",
+      "password": "$2a$10$TZQdmMLeOJ42KdCN9TmmJ.dEgX6nd.XiSgEP1yiuPLksFEVZlzy2K",
+      "names": "john doe",
+      "surnames": null,
+      "country": null,
+      "region": null,
+      "city": null,
+      "institution": null,
+      "rut": null,
+      "role": "USER",
+      "active": false
+    },
+    "point": {
+      "id": 1,
+      "active": true,
+      "rut": "12345678-5",
+      "disease": {
+        "id": 3,
+        "name": "COVID-19",
+        "yellow_minimum": 10,
+        "red_minimum": 25,
+        "diseaseFamily": {
+          "id": 2,
+          "name": "CORONAVIRUS"
+        }
+      },
+      "xcoordinate": 1.0,
+      "ycoordinate": 1.0
+    }
+  },
+  {
+    "id": 32,
+    "dateTime": "2025-01-29T14:15:00Z",
+    "actionType": "CREATION",
+    "pointModificationValues": null,
+    "user": {
+      "id": 1,
+      "email": "john.doe@example.com",
+      "password": "$2a$10$TZQdmMLeOJ42KdCN9TmmJ.dEgX6nd.XiSgEP1yiuPLksFEVZlzy2K",
+      "names": "john doe",
+      "surnames": null,
+      "country": null,
+      "region": null,
+      "city": null,
+      "institution": null,
+      "rut": null,
+      "role": "USER",
+      "active": false
+    },
+    "point": {
+      "id": 20,
+      "active": true,
+      "rut": "14444888-K",
+      "disease": {
+        "id": 12,
+        "name": "Pertussis",
+        "yellow_minimum": 3,
+        "red_minimum": 9,
+        "diseaseFamily": {
+          "id": 9,
+          "name": "PERTUSSIS"
+        }
+      },
+      "xcoordinate": -33.405,
+      "ycoordinate": -70.635
+    }
+  },
+  {
+    "id": 30,
+    "dateTime": "2025-01-28T11:30:00Z",
+    "actionType": "CREATION",
+    "pointModificationValues": null,
+    "user": {
+      "id": 1,
+      "email": "john.doe@example.com",
+      "password": "$2a$10$TZQdmMLeOJ42KdCN9TmmJ.dEgX6nd.XiSgEP1yiuPLksFEVZlzy2K",
+      "names": "john doe",
+      "surnames": null,
+      "country": null,
+      "region": null,
+      "city": null,
+      "institution": null,
+      "rut": null,
+      "role": "USER",
+      "active": false
+    },
+    "point": {
+      "id": 19,
+      "active": true,
+      "rut": "13333777-9",
+      "disease": {
+        "id": 3,
+        "name": "COVID-19",
+        "yellow_minimum": 10,
+        "red_minimum": 25,
+        "diseaseFamily": {
+          "id": 2,
+          "name": "CORONAVIRUS"
+        }
+      },
+      "xcoordinate": -33.515,
+      "ycoordinate": -70.705
+    }
+  },
+  {
+    "id": 29,
+    "dateTime": "2025-01-27T09:50:00Z",
+    "actionType": "CREATION",
+    "pointModificationValues": null,
+    "user": {
+      "id": 1,
+      "email": "john.doe@example.com",
+      "password": "$2a$10$TZQdmMLeOJ42KdCN9TmmJ.dEgX6nd.XiSgEP1yiuPLksFEVZlzy2K",
+      "names": "john doe",
+      "surnames": null,
+      "country": null,
+      "region": null,
+      "city": null,
+      "institution": null,
+      "rut": null,
+      "role": "USER",
+      "active": false
+    },
+    "point": {
+      "id": 18,
+      "active": true,
+      "rut": "12222666-8",
+      "disease": {
+        "id": 1,
+        "name": "Influenza A",
+        "yellow_minimum": 5,
+        "red_minimum": 15,
+        "diseaseFamily": {
+          "id": 1,
+          "name": "INFLUENZA"
+        }
+      },
+      "xcoordinate": -33.485,
+      "ycoordinate": -70.615
+    }
+  },
+  {
+    "id": 27,
+    "dateTime": "2025-01-26T15:45:00Z",
+    "actionType": "CREATION",
+    "pointModificationValues": null,
+    "user": {
+      "id": 1,
+      "email": "john.doe@example.com",
+      "password": "$2a$10$TZQdmMLeOJ42KdCN9TmmJ.dEgX6nd.XiSgEP1yiuPLksFEVZlzy2K",
+      "names": "john doe",
+      "surnames": null,
+      "country": null,
+      "region": null,
+      "city": null,
+      "institution": null,
+      "rut": null,
+      "role": "USER",
+      "active": false
+    },
+    "point": {
+      "id": 17,
+      "active": true,
+      "rut": "19999555-7",
+      "disease": {
+        "id": 9,
+        "name": "Norovirus Gastroenteritis",
+        "yellow_minimum": 8,
+        "red_minimum": 20,
+        "diseaseFamily": {
+          "id": 6,
+          "name": "NOROVIRUS"
+        }
+      },
+      "xcoordinate": -33.465,
+      "ycoordinate": -70.685
+    }
+  },
+  {
+    "id": 26,
+    "dateTime": "2025-01-25T10:20:00Z",
+    "actionType": "CREATION",
+    "pointModificationValues": null,
+    "user": {
+      "id": 1,
+      "email": "john.doe@example.com",
+      "password": "$2a$10$TZQdmMLeOJ42KdCN9TmmJ.dEgX6nd.XiSgEP1yiuPLksFEVZlzy2K",
+      "names": "john doe",
+      "surnames": null,
+      "country": null,
+      "region": null,
+      "city": null,
+      "institution": null,
+      "rut": null,
+      "role": "USER",
+      "active": false
+    },
+    "point": {
+      "id": 16,
+      "active": true,
+      "rut": "18888444-6",
+      "disease": {
+        "id": 7,
+        "name": "RSV Type B",
+        "yellow_minimum": 5,
+        "red_minimum": 15,
+        "diseaseFamily": {
+          "id": 4,
+          "name": "RESPIRATORY_SYNCYTIAL_VIRUS"
+        }
+      },
+      "xcoordinate": -33.455,
+      "ycoordinate": -70.645
+    }
+  },
+  {
+    "id": 24,
+    "dateTime": "2025-01-24T08:00:00Z",
+    "actionType": "CREATION",
+    "pointModificationValues": null,
+    "user": {
+      "id": 1,
+      "email": "john.doe@example.com",
+      "password": "$2a$10$TZQdmMLeOJ42KdCN9TmmJ.dEgX6nd.XiSgEP1yiuPLksFEVZlzy2K",
+      "names": "john doe",
+      "surnames": null,
+      "country": null,
+      "region": null,
+      "city": null,
+      "institution": null,
+      "rut": null,
+      "role": "USER",
+      "active": false
+    },
+    "point": {
+      "id": 15,
+      "active": true,
+      "rut": "17777333-5",
+      "disease": {
+        "id": 15,
+        "name": "Influenza-Like Illness",
+        "yellow_minimum": 7,
+        "red_minimum": 18,
+        "diseaseFamily": {
+          "id": 1,
+          "name": "INFLUENZA"
+        }
+      },
+      "xcoordinate": -33.495,
+      "ycoordinate": -70.635
+    }
+  },
+  {
+    "id": 23,
+    "dateTime": "2025-01-23T13:45:00Z",
+    "actionType": "CREATION",
+    "pointModificationValues": null,
+    "user": {
+      "id": 1,
+      "email": "john.doe@example.com",
+      "password": "$2a$10$TZQdmMLeOJ42KdCN9TmmJ.dEgX6nd.XiSgEP1yiuPLksFEVZlzy2K",
+      "names": "john doe",
+      "surnames": null,
+      "country": null,
+      "region": null,
+      "city": null,
+      "institution": null,
+      "rut": null,
+      "role": "USER",
+      "active": false
+    },
+    "point": {
+      "id": 14,
+      "active": true,
+      "rut": "16666222-4",
+      "disease": {
+        "id": 6,
+        "name": "RSV Type A",
+        "yellow_minimum": 6,
+        "red_minimum": 18,
+        "diseaseFamily": {
+          "id": 4,
+          "name": "RESPIRATORY_SYNCYTIAL_VIRUS"
+        }
+      },
+      "xcoordinate": -33.475,
+      "ycoordinate": -70.655
+    }
+  },
+  {
+    "id": 21,
+    "dateTime": "2025-01-22T09:05:00Z",
+    "actionType": "CREATION",
+    "pointModificationValues": null,
+    "user": {
+      "id": 1,
+      "email": "john.doe@example.com",
+      "password": "$2a$10$TZQdmMLeOJ42KdCN9TmmJ.dEgX6nd.XiSgEP1yiuPLksFEVZlzy2K",
+      "names": "john doe",
+      "surnames": null,
+      "country": null,
+      "region": null,
+      "city": null,
+      "institution": null,
+      "rut": null,
+      "role": "USER",
+      "active": false
+    },
+    "point": {
+      "id": 13,
+      "active": true,
+      "rut": "15555111-3",
+      "disease": {
+        "id": 3,
+        "name": "COVID-19",
+        "yellow_minimum": 10,
+        "red_minimum": 25,
+        "diseaseFamily": {
+          "id": 2,
+          "name": "CORONAVIRUS"
+        }
+      },
+      "xcoordinate": -33.445,
+      "ycoordinate": -70.675
+    }
+  },
+  {
+    "id": 19,
+    "dateTime": "2025-01-21T10:50:00Z",
+    "actionType": "CREATION",
+    "pointModificationValues": null,
+    "user": {
+      "id": 1,
+      "email": "john.doe@example.com",
+      "password": "$2a$10$TZQdmMLeOJ42KdCN9TmmJ.dEgX6nd.XiSgEP1yiuPLksFEVZlzy2K",
+      "names": "john doe",
+      "surnames": null,
+      "country": null,
+      "region": null,
+      "city": null,
+      "institution": null,
+      "rut": null,
+      "role": "USER",
+      "active": false
+    },
+    "point": {
+      "id": 12,
+      "active": false,
+      "rut": "17890123-6",
+      "disease": {
+        "id": 4,
+        "name": "SARS",
+        "yellow_minimum": 2,
+        "red_minimum": 8,
+        "diseaseFamily": {
+          "id": 2,
+          "name": "CORONAVIRUS"
+        }
+      },
+      "xcoordinate": -33.54,
+      "ycoordinate": -70.69
+    }
+  },
+  {
+    "id": 18,
+    "dateTime": "2025-01-20T15:10:00Z",
+    "actionType": "CREATION",
+    "pointModificationValues": null,
+    "user": {
+      "id": 1,
+      "email": "john.doe@example.com",
+      "password": "$2a$10$TZQdmMLeOJ42KdCN9TmmJ.dEgX6nd.XiSgEP1yiuPLksFEVZlzy2K",
+      "names": "john doe",
+      "surnames": null,
+      "country": null,
+      "region": null,
+      "city": null,
+      "institution": null,
+      "rut": null,
+      "role": "USER",
+      "active": false
+    },
+    "point": {
+      "id": 11,
+      "active": true,
+      "rut": "19345678-8",
+      "disease": {
+        "id": 13,
+        "name": "Mumps",
+        "yellow_minimum": 2,
+        "red_minimum": 8,
+        "diseaseFamily": {
+          "id": 10,
+          "name": "MUMPS"
+        }
+      },
+      "xcoordinate": -33.46,
+      "ycoordinate": -70.6
+    }
+  },
+  {
+    "id": 16,
+    "dateTime": "2025-01-19T14:20:00Z",
+    "actionType": "CREATION",
+    "pointModificationValues": null,
+    "user": {
+      "id": 1,
+      "email": "john.doe@example.com",
+      "password": "$2a$10$TZQdmMLeOJ42KdCN9TmmJ.dEgX6nd.XiSgEP1yiuPLksFEVZlzy2K",
+      "names": "john doe",
+      "surnames": null,
+      "country": null,
+      "region": null,
+      "city": null,
+      "institution": null,
+      "rut": null,
+      "role": "USER",
+      "active": false
+    },
+    "point": {
+      "id": 10,
+      "active": true,
+      "rut": "13456789-0",
+      "disease": {
+        "id": 2,
+        "name": "Influenza B",
+        "yellow_minimum": 4,
+        "red_minimum": 12,
+        "diseaseFamily": {
+          "id": 1,
+          "name": "INFLUENZA"
+        }
+      },
+      "xcoordinate": -33.41,
+      "ycoordinate": -70.65
+    }
+  },
+  {
+    "id": 15,
+    "dateTime": "2025-01-18T08:10:00Z",
+    "actionType": "CREATION",
+    "pointModificationValues": null,
+    "user": {
+      "id": 1,
+      "email": "john.doe@example.com",
+      "password": "$2a$10$TZQdmMLeOJ42KdCN9TmmJ.dEgX6nd.XiSgEP1yiuPLksFEVZlzy2K",
+      "names": "john doe",
+      "surnames": null,
+      "country": null,
+      "region": null,
+      "city": null,
+      "institution": null,
+      "rut": null,
+      "role": "USER",
+      "active": false
+    },
+    "point": {
+      "id": 9,
+      "active": true,
+      "rut": "16789123-5",
+      "disease": {
+        "id": 11,
+        "name": "Chickenpox",
+        "yellow_minimum": 4,
+        "red_minimum": 12,
+        "diseaseFamily": {
+          "id": 8,
+          "name": "VARICELLA"
+        }
+      },
+      "xcoordinate": -33.43,
+      "ycoordinate": -70.72
+    }
+  },
+  {
+    "id": 12,
+    "dateTime": "2025-01-17T16:40:00Z",
+    "actionType": "CREATION",
+    "pointModificationValues": null,
+    "user": {
+      "id": 1,
+      "email": "john.doe@example.com",
+      "password": "$2a$10$TZQdmMLeOJ42KdCN9TmmJ.dEgX6nd.XiSgEP1yiuPLksFEVZlzy2K",
+      "names": "john doe",
+      "surnames": null,
+      "country": null,
+      "region": null,
+      "city": null,
+      "institution": null,
+      "rut": null,
+      "role": "USER",
+      "active": false
+    },
+    "point": {
+      "id": 8,
+      "active": false,
+      "rut": "14567890-K",
+      "disease": {
+        "id": 10,
+        "name": "Measles",
+        "yellow_minimum": 3,
+        "red_minimum": 10,
+        "diseaseFamily": {
+          "id": 7,
+          "name": "MEASLES"
+        }
+      },
+      "xcoordinate": -33.48,
+      "ycoordinate": -70.75
+    }
+  },
+  {
+    "id": 11,
+    "dateTime": "2025-01-16T11:00:00Z",
+    "actionType": "CREATION",
+    "pointModificationValues": null,
+    "user": {
+      "id": 1,
+      "email": "john.doe@example.com",
+      "password": "$2a$10$TZQdmMLeOJ42KdCN9TmmJ.dEgX6nd.XiSgEP1yiuPLksFEVZlzy2K",
+      "names": "john doe",
+      "surnames": null,
+      "country": null,
+      "region": null,
+      "city": null,
+      "institution": null,
+      "rut": null,
+      "role": "USER",
+      "active": false
+    },
+    "point": {
+      "id": 7,
+      "active": true,
+      "rut": "17654321-2",
+      "disease": {
+        "id": 12,
+        "name": "Pertussis",
+        "yellow_minimum": 3,
+        "red_minimum": 9,
+        "diseaseFamily": {
+          "id": 9,
+          "name": "PERTUSSIS"
+        }
+      },
+      "xcoordinate": -33.52,
+      "ycoordinate": -70.62
+    }
+  },
+  {
+    "id": 9,
+    "dateTime": "2025-01-15T13:25:00Z",
+    "actionType": "CREATION",
+    "pointModificationValues": null,
+    "user": {
+      "id": 1,
+      "email": "john.doe@example.com",
+      "password": "$2a$10$TZQdmMLeOJ42KdCN9TmmJ.dEgX6nd.XiSgEP1yiuPLksFEVZlzy2K",
+      "names": "john doe",
+      "surnames": null,
+      "country": null,
+      "region": null,
+      "city": null,
+      "institution": null,
+      "rut": null,
+      "role": "USER",
+      "active": false
+    },
+    "point": {
+      "id": 6,
+      "active": true,
+      "rut": "20123456-7",
+      "disease": {
+        "id": 8,
+        "name": "Adenoviral Respiratory Infection",
+        "yellow_minimum": 4,
+        "red_minimum": 12,
+        "diseaseFamily": {
+          "id": 5,
+          "name": "ADENOVIRUS"
+        }
+      },
+      "xcoordinate": -33.39,
+      "ycoordinate": -70.68
+    }
+  },
+  {
+    "id": 7,
+    "dateTime": "2025-01-14T12:10:00Z",
+    "actionType": "CREATION",
+    "pointModificationValues": null,
+    "user": {
+      "id": 1,
+      "email": "john.doe@example.com",
+      "password": "$2a$10$TZQdmMLeOJ42KdCN9TmmJ.dEgX6nd.XiSgEP1yiuPLksFEVZlzy2K",
+      "names": "john doe",
+      "surnames": null,
+      "country": null,
+      "region": null,
+      "city": null,
+      "institution": null,
+      "rut": null,
+      "role": "USER",
+      "active": false
+    },
+    "point": {
+      "id": 5,
+      "active": false,
+      "rut": "15432123-9",
+      "disease": {
+        "id": 5,
+        "name": "Hantavirus Pulmonary Syndrome",
+        "yellow_minimum": 1,
+        "red_minimum": 5,
+        "diseaseFamily": {
+          "id": 3,
+          "name": "HANTAVIRUS"
+        }
+      },
+      "xcoordinate": -33.5,
+      "ycoordinate": -70.7
+    }
+  },
+  {
+    "id": 6,
+    "dateTime": "2025-01-13T09:45:00Z",
+    "actionType": "CREATION",
+    "pointModificationValues": null,
+    "user": {
+      "id": 1,
+      "email": "john.doe@example.com",
+      "password": "$2a$10$TZQdmMLeOJ42KdCN9TmmJ.dEgX6nd.XiSgEP1yiuPLksFEVZlzy2K",
+      "names": "john doe",
+      "surnames": null,
+      "country": null,
+      "region": null,
+      "city": null,
+      "institution": null,
+      "rut": null,
+      "role": "USER",
+      "active": false
+    },
+    "point": {
+      "id": 4,
+      "active": true,
+      "rut": "18765432-1",
+      "disease": {
+        "id": 14,
+        "name": "COVID-19 Variant Surveillance",
+        "yellow_minimum": 12,
+        "red_minimum": 30,
+        "diseaseFamily": {
+          "id": 2,
+          "name": "CORONAVIRUS"
+        }
+      },
+      "xcoordinate": -33.42,
+      "ycoordinate": -70.61
+    }
+  },
+  {
+    "id": 4,
+    "dateTime": "2025-01-12T08:30:00Z",
+    "actionType": "CREATION",
+    "pointModificationValues": null,
+    "user": {
+      "id": 1,
+      "email": "john.doe@example.com",
+      "password": "$2a$10$TZQdmMLeOJ42KdCN9TmmJ.dEgX6nd.XiSgEP1yiuPLksFEVZlzy2K",
+      "names": "john doe",
+      "surnames": null,
+      "country": null,
+      "region": null,
+      "city": null,
+      "institution": null,
+      "rut": null,
+      "role": "USER",
+      "active": false
+    },
+    "point": {
+      "id": 3,
+      "active": true,
+      "rut": "99888777-6",
+      "disease": {
+        "id": 9,
+        "name": "Norovirus Gastroenteritis",
+        "yellow_minimum": 8,
+        "red_minimum": 20,
+        "diseaseFamily": {
+          "id": 6,
+          "name": "NOROVIRUS"
+        }
+      },
+      "xcoordinate": -33.47,
+      "ycoordinate": -70.64
+    }
+  },
+  {
+    "id": 3,
+    "dateTime": "2025-01-11T10:15:00Z",
+    "actionType": "CREATION",
+    "pointModificationValues": null,
+    "user": {
+      "id": 1,
+      "email": "john.doe@example.com",
+      "password": "$2a$10$TZQdmMLeOJ42KdCN9TmmJ.dEgX6nd.XiSgEP1yiuPLksFEVZlzy2K",
+      "names": "john doe",
+      "surnames": null,
+      "country": null,
+      "region": null,
+      "city": null,
+      "institution": null,
+      "rut": null,
+      "role": "USER",
+      "active": false
+    },
+    "point": {
+      "id": 2,
+      "active": false,
+      "rut": "11222333-4",
+      "disease": {
+        "id": 1,
+        "name": "Influenza A",
+        "yellow_minimum": 5,
+        "red_minimum": 15,
+        "diseaseFamily": {
+          "id": 1,
+          "name": "INFLUENZA"
+        }
+      },
+      "xcoordinate": -33.456,
+      "ycoordinate": -70.648
+    }
+  },
+  {
+    "id": 1,
+    "dateTime": "2025-01-10T09:00:00Z",
+    "actionType": "CREATION",
+    "pointModificationValues": null,
+    "user": {
+      "id": 1,
+      "email": "john.doe@example.com",
+      "password": "$2a$10$TZQdmMLeOJ42KdCN9TmmJ.dEgX6nd.XiSgEP1yiuPLksFEVZlzy2K",
+      "names": "john doe",
+      "surnames": null,
+      "country": null,
+      "region": null,
+      "city": null,
+      "institution": null,
+      "rut": null,
+      "role": "USER",
+      "active": false
+    },
+    "point": {
+      "id": 1,
+      "active": true,
+      "rut": "12345678-5",
+      "disease": {
+        "id": 3,
+        "name": "COVID-19",
+        "yellow_minimum": 10,
+        "red_minimum": 25,
+        "diseaseFamily": {
+          "id": 2,
+          "name": "CORONAVIRUS"
+        }
+      },
+      "xcoordinate": 1.0,
+      "ycoordinate": 1.0
+    }
+  }
+]
+
+or
+
+200 OK
+[]

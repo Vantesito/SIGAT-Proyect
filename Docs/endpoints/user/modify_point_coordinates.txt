@@ -1,0 +1,8 @@
+PATCH
+body: http://localhost:8080/api/user/map/points/1/coordinates
+{
+  "x_coordinate": 1.0,
+  "y_coordinate":1.0
+}
+response:
+200OK

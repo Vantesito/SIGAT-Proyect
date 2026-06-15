@@ -1,0 +1,22 @@
+GET http://localhost:8080/api/user/map/points/1
+body: no
+
+response:
+200OK
+{
+  "id": 1,
+  "active": false,
+  "rut": "12345678-5",
+  "disease": {
+    "id": 3,
+    "name": "COVID-19",
+    "yellow_minimum": 10,
+    "red_minimum": 25,
+    "diseaseFamily": {
+      "id": 2,
+      "name": "CORONAVIRUS"
+    }
+  },
+  "xcoordinate": 1.0,
+  "ycoordinate": 1.0
+}

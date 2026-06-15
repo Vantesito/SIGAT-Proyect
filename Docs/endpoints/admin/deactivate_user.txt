@@ -1,0 +1,14 @@
+PUT http://localhost:8080/api/admin/users/1/deactivate
+body: no
+response:
+200 OK
+{
+  "message": "exitoso"
+}
+
+or
+
+400 BAD REQUEST
+{
+  "message": "El usuario ya está desactivado"
+}

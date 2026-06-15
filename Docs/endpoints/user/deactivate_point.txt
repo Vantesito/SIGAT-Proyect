@@ -1,0 +1,18 @@
+PUT http://localhost:8080/api/user/map/points/1/deactivate
+
+body: no
+
+response: 
+
+200 OK
+
+--------------
+body: no
+
+response:
+
+200 OK
+
+{
+  "message": "el punto ya está desactivado"
+}

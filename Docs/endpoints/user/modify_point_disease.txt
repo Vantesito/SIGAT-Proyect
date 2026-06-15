@@ -1,0 +1,7 @@
+PATCH http://localhost:8080/api/user/map/points/1/disease
+body:
+{
+  "disease_id":1
+}
+response:
+200OK

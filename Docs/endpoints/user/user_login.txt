@@ -1,0 +1,14 @@
+POST http://localhost:8080/api/auth/login
+
+body:
+{
+ 	"email":"john.doe@example.com",
+	"password":"test_password"
+}
+response:
+200 OK
+{
+	"token":<token>,
+	"correo":"john.doe@example.com",
+	"rol":"ROLE_USER"
+}

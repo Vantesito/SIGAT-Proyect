@@ -1,0 +1,14 @@
+POST http://localhost:8080/api/user/map/points/new 
+
+body:
+
+{
+  "x_coordinate": 0.0,
+  "y_coordinate":0.0,
+  "rut":"11111111-1",
+  "disease_id":1
+}
+
+response:
+
+201 Created

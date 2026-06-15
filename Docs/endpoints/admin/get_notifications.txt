@@ -1,0 +1,109 @@
+GET http://localhost:8080/api/admin/notifications
+body: no
+response:
+200 OK
+[
+  {
+    "id": 3,
+    "title": "Se ha creado un punto",
+    "createdAt": "2026-06-10T04:10:51Z",
+    "content": "john.doe@example.com creó el punto 29con enfermedad Influenza A, sus coordenadas son (0.0, 0.0)"
+  },
+  {
+    "id": 4,
+    "title": "Se ha desactivado un punto",
+    "createdAt": "2026-06-11T00:48:26Z",
+    "content": "El punto 1 fue desactivado por john.doe@example.com"
+  },
+  {
+    "id": 5,
+    "title": "Se ha desactivado un punto",
+    "createdAt": "2026-06-11T01:07:47Z",
+    "content": "El punto 10 fue desactivado por john.doe@example.com"
+  },
+  {
+    "id": 6,
+    "title": "Se ha desactivado un punto",
+    "createdAt": "2026-06-11T01:07:52Z",
+    "content": "El punto 7 fue desactivado por john.doe@example.com"
+  },
+  {
+    "id": 7,
+    "title": "Se ha desactivado un punto",
+    "createdAt": "2026-06-11T01:07:58Z",
+    "content": "El punto 4 fue desactivado por john.doe@example.com"
+  },
+  {
+    "id": 8,
+    "title": "Se ha creado un punto",
+    "createdAt": "2026-06-11T01:08:15Z",
+    "content": "john.doe@example.com creó un nuevo punto con id 30 y enfermedad Influenza A, sus coordenadas son (0.0, 0.0)"
+  },
+  {
+    "id": 9,
+    "title": "Se ha desactivado un punto",
+    "createdAt": "2026-06-11T01:08:25Z",
+    "content": "El punto 3 fue desactivado por john.doe@example.com"
+  },
+  {
+    "id": 10,
+    "title": "Se ha creado un punto",
+    "createdAt": "2026-06-11T01:13:31Z",
+    "content": "john.doe@example.com creó un nuevo punto con id 31 y enfermedad Influenza A, sus coordenadas son (0.0, 0.0)"
+  },
+  {
+    "id": 11,
+    "title": "Se ha creado un punto",
+    "createdAt": "2026-06-11T01:16:31Z",
+    "content": "john.doe@example.com creó un nuevo punto con id 32 y enfermedad Influenza A, sus coordenadas son (0.0, 0.0)"
+  },
+  {
+    "id": 12,
+    "title": "Se ha creado un punto",
+    "createdAt": "2026-06-11T01:16:32Z",
+    "content": "john.doe@example.com creó un nuevo punto con id 33 y enfermedad Influenza A, sus coordenadas son (0.0, 0.0)"
+  },
+  {
+    "id": 13,
+    "title": "Se ha creado un punto",
+    "createdAt": "2026-06-11T01:16:33Z",
+    "content": "john.doe@example.com creó un nuevo punto con id 34 y enfermedad Influenza A, sus coordenadas son (0.0, 0.0)"
+  },
+  {
+    "id": 14,
+    "title": "Se ha creado un punto",
+    "createdAt": "2026-06-11T01:16:34Z",
+    "content": "john.doe@example.com creó un nuevo punto con id 35 y enfermedad Influenza A, sus coordenadas son (0.0, 0.0)"
+  },
+  {
+    "id": 15,
+    "title": "Se ha modificado un punto",
+    "createdAt": "2026-06-11T01:22:18Z",
+    "content": "El punto 1 fue modificado por john.doe@example.com, se le asignó Influenza A"
+  },
+  {
+    "id": 16,
+    "title": "Se ha creado un punto",
+    "createdAt": "2026-06-11T01:28:12Z",
+    "content": "john.doe@example.com creó un nuevo punto con id 36 y enfermedad Influenza A, sus coordenadas son (0.0, 0.0)"
+  },
+  {
+    "id": 17,
+    "title": "Se ha creado un punto",
+    "createdAt": "2026-06-11T01:28:28Z",
+    "content": "john.doe@example.com creó un nuevo punto con id 37 y enfermedad Influenza A, sus coordenadas son (0.1, 0.0)"
+  },
+  {
+    "id": 18,
+    "title": "Se ha creado un punto",
+    "createdAt": "2026-06-11T01:32:09Z",
+    "content": "john.doe@example.com creó un nuevo punto con id 38 y enfermedad Influenza A, sus coordenadas son (0.1, 0.0)"
+  },
+  {
+    "id": 19,
+    "title": "Se ha creado un punto",
+    "createdAt": "2026-06-11T01:32:10Z",
+    "content": "john.doe@example.com creó un nuevo punto con id 39 y enfermedad Influenza A, sus coordenadas son (0.1, 0.0)"
+  }
+]
+the response could be modified so that the first element in the list is the last one that was added
