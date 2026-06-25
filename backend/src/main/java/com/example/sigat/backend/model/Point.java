@@ -34,4 +34,13 @@ public class Point {
 
     @Column(name = "next_control")
     private LocalDate nextControl;
+
+    @Column(name = "quadrant_col")
+    private Long quadrantCol;
+
+    @Column(name = "quadrant_row")
+    private Long quadrantRow;
+
+    @Column(name = "quadrant_label")
+    private String quadrantLabel;
 }
