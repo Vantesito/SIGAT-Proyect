@@ -18,8 +18,9 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/user/map")
 @CrossOrigin(origins = "*")
-@PreAuthorize("hasRole('USER')")
+@PreAuthorize("hasAnyRole('USER','ADMIN')")
 public class MapController {
+
     private final MapService mapService;
 
     public MapController(MapService mapService) {
@@ -29,6 +30,11 @@ public class MapController {
     @GetMapping("points/active")
     public ResponseEntity<?> getPointsByDisease(@RequestParam Long disease){
         List<Point> points = mapService.getActivePointsByDisease(disease);
+        return new ResponseEntity<>(points, HttpStatus.OK);
+    }
+    @GetMapping("points/active/all")
+    public ResponseEntity<?> getAllActivePoints() {
+        List<Point> points = mapService.getAllActivePoints();
         return new ResponseEntity<>(points, HttpStatus.OK);
     }
     @PostMapping("points/new")

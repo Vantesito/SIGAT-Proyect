@@ -1,6 +1,7 @@
 package com.example.sigat.backend.model;
 
 import jakarta.persistence.*;
+import java.time.LocalDate;
 import lombok.Data;
 
 @Table(name = "point")
@@ -22,4 +23,15 @@ public class Point {
     @ManyToOne
     @JoinColumn(name = "disease_id")
     private Disease disease;
+    @Column(name = "city")
+    private String city;
+
+    @Column(name = "in_treatment")
+    private boolean inTreatment = false;
+
+    @Column(name = "treatment_start")
+    private LocalDate treatmentStart;
+
+    @Column(name = "next_control")
+    private LocalDate nextControl;
 }

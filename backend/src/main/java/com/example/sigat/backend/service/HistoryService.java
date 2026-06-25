@@ -30,6 +30,9 @@ public class HistoryService {
         actions = actions.stream().limit(entries).toList();
         return actions;
     }
+    public List<PointAction> getGlobalHistory() {
+        return pointActionRepository.findTop100ByOrderByDateTimeDesc();
+    }
     public void addUserPointModHistory(String username, Long pointId, PointAction.ActionType type, String old_value,
                                        PointCoordPatchRequest request){
         PointAction action = new PointAction();

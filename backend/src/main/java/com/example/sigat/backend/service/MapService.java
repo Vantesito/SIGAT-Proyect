@@ -29,6 +29,9 @@ public class MapService {
     public List<Point> getActivePointsByDisease(Long diseaseId) {
         return pointRepository.findByDisease_IdAndActiveIsTrue(diseaseId);
     }
+    public List<Point> getAllActivePoints() {
+        return pointRepository.findByActiveIsTrue();
+    }
 
     public void createPoint(PointCreationRequest pcr, String username) {
         System.out.println(diseaseRepository.existsById(pcr.disease_id()));
@@ -39,6 +42,10 @@ public class MapService {
         point.setXCoordinate(pcr.x_coordinate());
         point.setYCoordinate(pcr.y_coordinate());
         point.setRut(pcr.rut());
+        point.setCity(pcr.city());
+        point.setInTreatment(pcr.in_treatment());
+        point.setTreatmentStart(pcr.treatment_start());
+        point.setNextControl(pcr.next_control());
         Disease disease = diseaseRepository.findById(pcr.disease_id()).orElseThrow();
         point.setDisease(disease);
         pointRepository.save(point);

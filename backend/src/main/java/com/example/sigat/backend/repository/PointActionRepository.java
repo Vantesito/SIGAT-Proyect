@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface PointActionRepository extends JpaRepository<PointAction,Long> {
     List<PointAction> findTop64ByUser_IdOrderByDateTimeDesc(Long userId);
+    List<PointAction> findTop100ByOrderByDateTimeDesc();
 }

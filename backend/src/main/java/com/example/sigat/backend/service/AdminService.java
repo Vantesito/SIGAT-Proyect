@@ -45,4 +45,16 @@ public class AdminService {
         emailService.sendRegisterRequestEmail(user.getEmail(),user.getNames());
         userRepository.save(user);
     }
+    public void setAdmin(Long id, boolean admin) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("La id especificada no fue encontrada"));
+        user.setRole(admin ? User.Role.ADMIN : User.Role.USER);
+        userRepository.save(user);
+    }
+
+    public void delete(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("La id especificada no fue encontrada"));
+        userRepository.delete(user);
+    }
 }
