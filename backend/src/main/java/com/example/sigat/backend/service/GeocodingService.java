@@ -21,7 +21,7 @@ public class GeocodingService {
     public double[] geocode(String address, String city) {
         String query = address + ", " + city + ", Chile";
 
-        URI uri = UriComponentsBuilder.fromHttpUrl(NOMINATIM_URL)
+        URI uri = UriComponentsBuilder.fromUriString(NOMINATIM_URL)
                 .queryParam("q", query)
                 .queryParam("format", "json")
                 .queryParam("limit", 1)
