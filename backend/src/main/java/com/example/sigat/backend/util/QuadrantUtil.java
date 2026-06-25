@@ -16,11 +16,10 @@ public final class QuadrantUtil {
         double lngStep = CELL_SIZE_M / (METERS_PER_DEG_LAT * Math.cos(Math.toRadians(bandLat)));
         long col = (long) Math.floor(lng / lngStep);
 
-        double centerLat = bandLat;
         double centerLng = (col + 0.5) * lngStep;
         String label = "Cuadrante " + Math.abs(col) + "-" + Math.abs(row);
 
-        return new Quadrant(col, row, centerLng, centerLat, label);
+        return new Quadrant(col, row, centerLng, bandLat, label);
     }
 
     public record Quadrant(long col, long row, double centerLng, double centerLat, String label) {}
