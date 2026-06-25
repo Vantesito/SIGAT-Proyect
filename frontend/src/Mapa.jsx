@@ -40,6 +40,21 @@ const getCiudad = (nombre) => CIUDADES_CHILE.find((c) => c.nombre === nombre);
 
 // Pequeño desplazamiento para "anonimizar por cuadrante"
 const jitter = () => (Math.random() - 0.5) * 0.03;
+// Mismo cálculo que QuadrantUtil del backend (celdas reales de 50x50 m)
+const CELL_SIZE_M = 50;
+const M_PER_DEG_LAT = 111320;
+const snapToQuadrant = (lat, lng) => {
+    const latStep = CELL_SIZE_M / M_PER_DEG_LAT;
+    const row = Math.floor(lat / latStep);
+    const bandLat = (row + 0.5) * latStep;
+    const lngStep = CELL_SIZE_M / (M_PER_DEG_LAT * Math.cos((bandLat * Math.PI) / 180));
+    const col = Math.floor(lng / lngStep);
+    return {
+        centerLng: (col + 0.5) * lngStep,
+        centerLat: bandLat,
+        label: `Cuadrante ${Math.abs(col)}-${Math.abs(row)}`,
+    };
+};
 
 // Fecha de hoy + n días en formato yyyy-mm-dd (para inputs date)
 const hoyMas = (n) => {
@@ -256,9 +271,10 @@ function Mapa() {
             );
         } else {
             const ci = getCiudad(datos.ciudad) || getCiudad('Temuco');
+            const q = snapToQuadrant(ci.lat + jitter(), ci.lng + jitter());
             setCasos((prev) => [
                 ...prev,
-                { id: Date.now(), ...datos, lng: ci.lng + jitter(), lat: ci.lat + jitter() },
+                { id: Date.now(), ...datos, lng: q.centerLng, lat: q.centerLat, quadrante: q.label },
             ]);
         }
         cerrarModal();
@@ -419,6 +435,7 @@ function Mapa() {
                                         <th>Ciudad</th>
                                         <th>Tratam.</th>
                                         <th>Acciones</th>
+                                        <th>Cuadrante</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -433,6 +450,7 @@ function Mapa() {
                                                 <td>{c.enfermedad}</td>
                                                 <td>{c.ciudad}</td>
                                                 <td>{c.enTratamiento ? 'Sí' : 'No'}</td>
+                                                <td>{c.quadrante || '—'}</td>
                                                 <td className="acciones-celda">
                                                     <button className="btn-mini-edit" onClick={() => abrirEditar(c)}>Editar</button>
                                                     <button className="btn-mini-del" onClick={() => eliminarCaso(c.id)}>Eliminar</button>

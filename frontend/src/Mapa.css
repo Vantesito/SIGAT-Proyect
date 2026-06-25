@@ -358,8 +358,8 @@
     top: 0;
     right: 0;
     height: 100%;
-    width: 520px;
-    max-width: 90%;
+    width: 680px;
+    max-width: 92%;
     background: #ffffff;
     box-shadow: -4px 0 20px rgba(0, 0, 0, 0.12);
     display: flex;
@@ -492,4 +492,31 @@
     margin-bottom: 18px;
 }
 .fechas-tratamiento .form-group:last-child { margin-bottom: 0; }
+/* La tabla ocupa todo el ancho disponible sin scroll lateral */
+.data-panel-body {
+    overflow-x: hidden;
+}
+
+.data-table {
+    table-layout: fixed;   /* reparte el ancho de forma pareja */
+    width: 100%;
+}
+
+.data-table th,
+.data-table td {
+    white-space: normal;   /* permite que el texto baje de línea en vez de empujar */
+    word-break: break-word;
+    padding: 8px;
+}
+
+/* Botones de acción: que no se corten y bajen juntos si hace falta */
+.acciones-celda {
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.btn-mini-edit,
+.btn-mini-del {
+    white-space: nowrap;
+}
 
