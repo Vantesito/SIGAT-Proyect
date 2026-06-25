@@ -492,7 +492,7 @@
     margin-bottom: 18px;
 }
 .fechas-tratamiento .form-group:last-child { margin-bottom: 0; }
-/* La tabla ocupa todo el ancho disponible sin scroll lateral */
+/* La tabla ocupa toda la banda  */
 .data-panel-body {
     overflow-x: hidden;
 }
