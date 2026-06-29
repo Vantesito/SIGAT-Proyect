@@ -1,8 +1,9 @@
 package com.example.sigat.backend.model;
 
 import jakarta.persistence.*;
-import java.time.LocalDate;
 import lombok.Data;
+
+import java.time.LocalDate;
 
 @Table(name = "point")
 @Entity
@@ -12,17 +13,17 @@ public class Point {
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "x_coordinate")
-    private double xCoordinate;
-    @Column(name = "y_coordinate")
-    private double yCoordinate;
-    @Column(name="active")
-    private boolean active=true;
-    @Column(name="rut")
+
+    @Column(name = "active")
+    private boolean active = true;
+
+    @Column(name = "rut")
     private String rut;
+
     @ManyToOne
     @JoinColumn(name = "disease_id")
     private Disease disease;
+
     @Column(name = "city")
     private String city;
 
@@ -35,12 +36,8 @@ public class Point {
     @Column(name = "next_control")
     private LocalDate nextControl;
 
-    @Column(name = "quadrant_col")
-    private Long quadrantCol;
-
-    @Column(name = "quadrant_row")
-    private Long quadrantRow;
-
-    @Column(name = "quadrant_label")
-    private String quadrantLabel;
+    // El cuadrante (con su centro y etiqueta) ahora es una entidad aparte
+    @ManyToOne
+    @JoinColumn(name = "quadrant_id")
+    private Quadrant quadrant;
 }
