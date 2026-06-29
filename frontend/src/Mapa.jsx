@@ -6,10 +6,13 @@ import View from 'ol/View';
 import TileLayer from 'ol/layer/Tile';
 import OSM from 'ol/source/OSM';
 import Heatmap from 'ol/layer/Heatmap';
+import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import Feature from 'ol/Feature';
 import Point from 'ol/geom/Point';
-import { fromLonLat } from 'ol/proj';
+import LineString from 'ol/geom/LineString';
+import { Style, Stroke } from 'ol/style';
+import { fromLonLat, toLonLat } from 'ol/proj';
 import './Mapa.css';
 
 // Listas compartidas (mantienen sincronizados formulario y filtros)
@@ -56,6 +59,9 @@ const snapToQuadrant = (lat, lng) => {
     };
 };
 
+// Zoom a partir del cual se dibuja la grilla de cuadrantes
+const ZOOM_MINIMO_GRILLA = 16;
+
 // Fecha de hoy + n días en formato yyyy-mm-dd (para inputs date)
 const hoyMas = (n) => {
     const d = new Date();
@@ -92,6 +98,7 @@ function Mapa() {
     const mapElement = useRef(null);
     const mapRef = useRef(null);
     const vectorSourceRef = useRef(new VectorSource());
+    const gridSourceRef = useRef(new VectorSource());
     const primerRender = useRef(true);
 
     // DATOS PRINCIPALES (cada caso = un paciente)
@@ -138,6 +145,51 @@ function Mapa() {
         [enTratamiento]
     );
 
+    // ---------- DIBUJAR GRILLA DE CUADRANTES (solo en zoom cercano) ----------
+    const dibujarGrilla = () => {
+        if (!mapRef.current) return;
+        const src = gridSourceRef.current;
+        src.clear();
+
+        const view = mapRef.current.getView();
+        if (view.getZoom() < ZOOM_MINIMO_GRILLA) return; // solo cuando estás cerca
+
+        const extent = view.calculateExtent(mapRef.current.getSize());
+        const [minLng, minLat] = toLonLat([extent[0], extent[1]]);
+        const [maxLng, maxLat] = toLonLat([extent[2], extent[3]]);
+
+        const latStep = CELL_SIZE_M / M_PER_DEG_LAT;
+        const startRow = Math.floor(minLat / latStep);
+        const endRow = Math.ceil(maxLat / latStep);
+
+        // Recorremos banda por banda (cada fila de cuadrantes). Así cada línea
+        // queda anclada a la geografía y coincide con el snap del backend; no
+        // depende de la posición de la cámara, por lo que no se mueve al hacer zoom.
+        for (let r = startRow; r <= endRow; r++) {
+            const latBottom = r * latStep;        // borde inferior de la banda
+            const latTop = (r + 1) * latStep;     // borde superior de la banda
+
+            // Línea horizontal en el borde de la banda
+            src.addFeature(
+                new Feature(new LineString([fromLonLat([minLng, latBottom]), fromLonLat([maxLng, latBottom])]))
+            );
+
+            // lngStep PROPIO de esta banda (mismo cálculo que snapToQuadrant)
+            const bandLat = (r + 0.5) * latStep;
+            const lngStep = CELL_SIZE_M / (M_PER_DEG_LAT * Math.cos((bandLat * Math.PI) / 180));
+            const startCol = Math.floor(minLng / lngStep);
+            const endCol = Math.ceil(maxLng / lngStep);
+
+            // Segmentos verticales, solo dentro de la franja de esta banda
+            for (let c = startCol; c <= endCol; c++) {
+                const lng = c * lngStep;
+                src.addFeature(
+                    new Feature(new LineString([fromLonLat([lng, latBottom]), fromLonLat([lng, latTop])]))
+                );
+            }
+        }
+    };
+
     // ---------- INICIALIZAR MAPA ----------
     useEffect(() => {
         if (!mapRef.current) {
@@ -151,32 +203,45 @@ function Mapa() {
                 weight: () => 1,
             });
 
+            // Capa de grilla de cuadrantes (50x50 m), solo visible en zoom cercano
+            const gridLayer = new VectorLayer({
+                source: gridSourceRef.current,
+                style: new Style({
+                    stroke: new Stroke({ color: 'rgba(0, 128, 128, 0.35)', width: 1 }),
+                }),
+            });
+
             mapRef.current = new Map({
                 target: mapElement.current,
-                layers: [baseLayer, heatMapLayer],
+                layers: [baseLayer, heatMapLayer, gridLayer],
                 view: new View({ center: fromLonLat([-72.5904, -38.7397]), zoom: 13 }),
             });
+
+            // Redibuja la grilla al mover o hacer zoom
+            mapRef.current.on('moveend', dibujarGrilla);
+            dibujarGrilla();
         }
 
         // Carga inicial simulada (incluye casos en tratamiento para ver la alerta)
         setTimeout(() => {
             const t = getCiudad('Temuco');
+            const armar = (base, extra) => {
+                const q = snapToQuadrant(t.lat + jitter(), t.lng + jitter());
+                return { ...base, lng: q.centerLng, lat: q.centerLat, quadrante: q.label, ...extra };
+            };
             setCasos([
-                {
-                    id: 1, rut: '12.345.678-9', enfermedad: 'Tuberculosis', ciudad: 'Temuco',
-                    domicilio: 'Av. Alemania 0123', lng: t.lng + jitter(), lat: t.lat + jitter(),
-                    enTratamiento: true, fechaInicio: hoyMas(-40), fechaProximoControl: hoyMas(1),
-                },
-                {
-                    id: 2, rut: '9.876.543-2', enfermedad: 'Varicela', ciudad: 'Temuco',
-                    domicilio: 'Calle Prat 456', lng: t.lng + jitter(), lat: t.lat + jitter(),
-                    enTratamiento: false, fechaInicio: '', fechaProximoControl: '',
-                },
-                {
-                    id: 3, rut: '15.111.222-3', enfermedad: 'Tuberculosis', ciudad: 'Temuco',
-                    domicilio: 'Av. Caupolicán 789', lng: t.lng + jitter(), lat: t.lat + jitter(),
-                    enTratamiento: true, fechaInicio: hoyMas(-10), fechaProximoControl: hoyMas(12),
-                },
+                armar(
+                    { id: 1, rut: '12.345.678-9', enfermedad: 'Tuberculosis', ciudad: 'Temuco', domicilio: 'Av. Alemania 0123' },
+                    { enTratamiento: true, fechaInicio: hoyMas(-40), fechaProximoControl: hoyMas(1) }
+                ),
+                armar(
+                    { id: 2, rut: '9.876.543-2', enfermedad: 'Varicela', ciudad: 'Temuco', domicilio: 'Calle Prat 456' },
+                    { enTratamiento: false, fechaInicio: '', fechaProximoControl: '' }
+                ),
+                armar(
+                    { id: 3, rut: '15.111.222-3', enfermedad: 'Tuberculosis', ciudad: 'Temuco', domicilio: 'Av. Caupolicán 789' },
+                    { enTratamiento: true, fechaInicio: hoyMas(-10), fechaProximoControl: hoyMas(12) }
+                ),
             ]);
         }, 800);
 
@@ -259,14 +324,16 @@ function Mapa() {
             setCasos((prev) =>
                 prev.map((c) => {
                     if (c.id !== editId) return c;
-                    // Si cambió de ciudad, reubicamos el punto; si no, mantenemos coords
-                    let { lng, lat } = c;
+                    // Si cambió de ciudad, reubicamos el punto y su cuadrante; si no, mantenemos
+                    let { lng, lat, quadrante } = c;
                     if (c.ciudad !== datos.ciudad) {
                         const ci = getCiudad(datos.ciudad) || getCiudad('Temuco');
-                        lng = ci.lng + jitter();
-                        lat = ci.lat + jitter();
+                        const q = snapToQuadrant(ci.lat + jitter(), ci.lng + jitter());
+                        lng = q.centerLng;
+                        lat = q.centerLat;
+                        quadrante = q.label;
                     }
-                    return { ...c, ...datos, lng, lat };
+                    return { ...c, ...datos, lng, lat, quadrante };
                 })
             );
         } else {
@@ -292,14 +359,16 @@ function Mapa() {
         const ci = getCiudad(ciudadBase);
         const nuevos = Array.from({ length: 15 }).map(() => {
             const tratamiento = Math.random() > 0.5;
+            const q = snapToQuadrant(ci.lat + jitter() * 2, ci.lng + jitter() * 2);
             return {
                 id: Date.now() + Math.floor(Math.random() * 100000),
                 rut: `${Math.floor(Math.random() * 25) + 5}.${Math.floor(Math.random() * 900) + 100}.${Math.floor(Math.random() * 900) + 100}-${Math.floor(Math.random() * 9)}`,
                 enfermedad: ENFERMEDADES[Math.floor(Math.random() * ENFERMEDADES.length)],
                 ciudad: ciudadBase,
                 domicilio: 'Importado por lote',
-                lng: ci.lng + jitter() * 2,
-                lat: ci.lat + jitter() * 2,
+                lng: q.centerLng,
+                lat: q.centerLat,
+                quadrante: q.label,
                 enTratamiento: tratamiento,
                 fechaInicio: tratamiento ? hoyMas(-Math.floor(Math.random() * 30)) : '',
                 fechaProximoControl: tratamiento ? hoyMas(Math.floor(Math.random() * 8)) : '',
@@ -434,14 +503,14 @@ function Mapa() {
                                         <th>Enfermedad</th>
                                         <th>Ciudad</th>
                                         <th>Tratam.</th>
-                                        <th>Acciones</th>
                                         <th>Cuadrante</th>
+                                        <th>Acciones</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     {casosFiltrados.length === 0 ? (
                                         <tr>
-                                            <td colSpan="5" className="tabla-vacia">No hay casos para este filtro.</td>
+                                            <td colSpan="6" className="tabla-vacia">No hay casos para este filtro.</td>
                                         </tr>
                                     ) : (
                                         casosFiltrados.map((c) => (
