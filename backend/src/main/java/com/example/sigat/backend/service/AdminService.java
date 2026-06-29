@@ -26,30 +26,49 @@ public class AdminService {
 
     public void approve(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(()->new IllegalArgumentException("La id especificada no fue encontrada"));
-        if (user.isActive()){
+                .orElseThrow(() -> new IllegalArgumentException("La id especificada no fue encontrada"));
+        if (user.isActive()) {
             throw new IllegalArgumentException("El usuario ya está activo");
         }
         user.setActive(true);
-        emailService.sendAcceptedRequestEmail(user.getEmail(),user.getNames());
+        emailService.sendAcceptedRequestEmail(user.getEmail(), user.getNames());
+        userRepository.save(user);
+    }
+
+    public void activate(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("La id especificada no fue encontrada"));
+        if (user.isActive()) {
+            throw new IllegalArgumentException("El usuario ya está activo");
+        }
+        user.setActive(true);
+        emailService.sendReactivatedAccountEmail(user.getEmail(), user.getNames());
         userRepository.save(user);
     }
 
     public void deactivate(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(()->new IllegalArgumentException("La id especificada no fue encontrada"));
-        if (!user.isActive()){
+                .orElseThrow(() -> new IllegalArgumentException("La id especificada no fue encontrada"));
+        if (!user.isActive()) {
             throw new IllegalArgumentException("El usuario ya está desactivado");
         }
         user.setActive(false);
-        emailService.sendRegisterRequestEmail(user.getEmail(),user.getNames());
+        emailService.sendDeactivatedAccountEmail(user.getEmail(), user.getNames());
         userRepository.save(user);
     }
+
     public void setAdmin(Long id, boolean admin) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("La id especificada no fue encontrada"));
+        boolean eraAdmin = user.getRole() == User.Role.ADMIN;
         user.setRole(admin ? User.Role.ADMIN : User.Role.USER);
         userRepository.save(user);
+
+        if (admin && !eraAdmin) {
+            emailService.sendPromotedToAdminEmail(user.getEmail(), user.getNames());
+        } else if (!admin && eraAdmin) {
+            emailService.sendRemovedAdminEmail(user.getEmail(), user.getNames());
+        }
     }
 
     public void delete(Long id) {

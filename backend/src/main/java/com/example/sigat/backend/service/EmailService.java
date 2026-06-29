@@ -68,6 +68,88 @@ public class EmailService {
         send(recipient, subject, body);
     }
 
+    public void sendDeactivatedAccountEmail(String recipient, String names) {
+        String subject = "SIGAT — Tu cuenta ha sido desactivada";
+        String body = """
+                <html>
+                <body style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: auto;">
+                    <h2 style="color: #dc3545;">Hola, %s</h2>
+                    <p>Te informamos que tu cuenta en <strong>SIGAT</strong> ha sido
+                       <strong>desactivada</strong> por el administrador.</p>
+                    <p>Mientras tu cuenta esté desactivada no podrás iniciar sesión
+                       ni acceder al sistema.</p>
+                    <p>Si crees que se trata de un error, contacta con el administrador.</p>
+                    <br>
+                    <p style="color: #888; font-size: 13px;">— Equipo SIGAT</p>
+                </body>
+                </html>
+                """.formatted(names);
+
+        send(recipient, subject, body);
+    }
+
+    public void sendReactivatedAccountEmail(String recipient, String names) {
+        String subject = "SIGAT — Tu cuenta ha sido reactivada";
+        String body = """
+                <html>
+                <body style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: auto;">
+                    <h2 style="color: #28a745;">¡Hola de nuevo, %s!</h2>
+                    <p>Tu cuenta en <strong>SIGAT</strong> ha sido
+                       <strong>reactivada</strong> por el administrador.</p>
+                    <p>Ya puedes volver a iniciar sesión y acceder al sistema con normalidad.</p>
+                    <br>
+                    <a href="http://localhost:3000/login"
+                       style="background-color: #2c7be5; color: white; padding: 12px 24px;
+                              text-decoration: none; border-radius: 5px; font-weight: bold;">
+                        Iniciar sesión
+                    </a>
+                    <br><br>
+                    <p style="color: #888; font-size: 13px;">— Equipo SIGAT</p>
+                </body>
+                </html>
+                """.formatted(names);
+
+        send(recipient, subject, body);
+    }
+
+    public void sendPromotedToAdminEmail(String recipient, String names) {
+        String subject = "SIGAT — Ahora eres administrador";
+        String body = """
+                <html>
+                <body style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: auto;">
+                    <h2 style="color: #2c7be5;">¡Felicidades, %s!</h2>
+                    <p>Se te han otorgado privilegios de <strong>administrador</strong>
+                       en <strong>SIGAT</strong>.</p>
+                    <p>Ahora puedes gestionar usuarios, revisar solicitudes de acceso
+                       y consultar el historial del sistema.</p>
+                    <br>
+                    <p style="color: #888; font-size: 13px;">— Equipo SIGAT</p>
+                </body>
+                </html>
+                """.formatted(names);
+
+        send(recipient, subject, body);
+    }
+
+    public void sendRemovedAdminEmail(String recipient, String names) {
+        String subject = "SIGAT — Cambios en tu rol";
+        String body = """
+                <html>
+                <body style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: auto;">
+                    <h2 style="color: #d97706;">Hola, %s</h2>
+                    <p>Te informamos que tus privilegios de <strong>administrador</strong>
+                       en <strong>SIGAT</strong> han sido <strong>removidos</strong>.</p>
+                    <p>Tu cuenta continúa activa como usuario estándar y puedes seguir
+                       accediendo al sistema con normalidad.</p>
+                    <br>
+                    <p style="color: #888; font-size: 13px;">— Equipo SIGAT</p>
+                </body>
+                </html>
+                """.formatted(names);
+
+        send(recipient, subject, body);
+    }
+
     private void send(String recipient, String subject, String body) {
         try {
             CreateEmailOptions params = CreateEmailOptions.builder()

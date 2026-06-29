@@ -108,4 +108,14 @@ public class AdminController {
         List<Notification> notifications = notificationService.getNotifications(userDetails.getUsername());
         return new ResponseEntity<>(notifications, HttpStatus.OK);
     }
+
+    @PutMapping("/users/{id}/activate")
+    public ResponseEntity<?> activateUser(@PathVariable(name = "id") Long id) {
+        try {
+            adminService.activate(id);
+            return new ResponseEntity<>(Map.of("message", "exitoso"), HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(Map.of("message", e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+    }
 }
