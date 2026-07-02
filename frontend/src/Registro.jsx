@@ -24,24 +24,40 @@ function Registro() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleRegistro = (e) => {
-    e.preventDefault();
-    
-    // Validación básica de contraseñas
-    if (formData.password !== formData.confirmPassword) {
-      alert("Las contraseñas no coinciden. Por favor, verifique.");
-      return;
-    }
-    
-    // SIMULACIÓN
-    localStorage.setItem('sigat_usuario_demo', JSON.stringify({
-      email: formData.correo,
-      password: formData.password,
-      nombre: formData.nombre + ' ' + formData.apellido
-    }));
-    
-    alert("Prototipo: Solicitud de registro enviada con éxito.");
-    navigate('/login'); 
+  const handleRegistro = async (e) => {
+      e.preventDefault();
+
+      // Validación básica de contraseñas
+      if (formData.password !== formData.confirmPassword) {
+          alert("Las contraseñas no coinciden. Por favor, verifique.");
+          return;
+      }
+      const response = await fetch("http://localhost:8080/api/auth/register", {
+          method: 'POST',
+          headers: {
+              'Accept': 'application/json',
+              'content-type': 'application/json',
+          },
+          body: JSON.stringify({
+              "email": formData.correo,
+              "confirmation_email":formData.correo,
+              "names":formData.nombre,
+              "surnames":formData.apellido,
+              "password":formData.password,
+              "phone_number":formData.telefono,
+              "rut":formData.rut,
+              "country":formData.pais,
+              "region":formData.region,
+              "city":formData.ciudad,
+              "institution":formData.institucion
+          })
+      });
+      if (response.ok) {
+          alert("Prototipo: Solicitud de registro enviada con éxito.");
+          navigate('/login');
+      } else if (response.status === 400) {
+          alert("Formato incorrecto de datos");
+      }
   };
 
   return (

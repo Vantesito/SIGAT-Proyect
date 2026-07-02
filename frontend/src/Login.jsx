@@ -3,38 +3,41 @@ import { useState } from 'react';
 import './Login.css';
 import logosigat from './assets/logosigat.png';
 import mapcalor from './assets/mapcalor.png';
-
 function Login() {
   const navigate = useNavigate();
-  
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMensaje, setErrorMensaje] = useState('');
 
-  const handleAuth = (e) => {
-    e.preventDefault();
-    setErrorMensaje('');
+  const handleAuth = async (e) => {
+      e.preventDefault();
+      setErrorMensaje('');
+      const r = await fetch("http://localhost:8080/api/auth/login", {
+          method: 'POST',
+          headers: {
+              'Accept': 'application/json',
+              'content-type': 'application/json',
+          },
+          body: JSON.stringify({"email": email, "password": password})
+      });
+      if (r.ok || r.status === 401 || r.status === 403) {
+          const res = await r.json();
+          console.log(res.correo);
 
-    // Correo para entrar directo a PanelAdmin
-    if (email === 'admin@sigat.cl') {
-      navigate('/panel-admin');
-      return;
-    }
-
-    const usuarioGuardadoStr = localStorage.getItem('sigat_usuario_demo');
-  
-    if (usuarioGuardadoStr) {
-      const usuarioGuardado = JSON.parse(usuarioGuardadoStr);
-      
-      if (usuarioGuardado.email === email && usuarioGuardado.password === password) {
-        alert("Acceso autorizado. Bienvenida/o " + usuarioGuardado.nombre);
-        navigate('/mapa'); 
+          if (res.correo === email && res.token.length > 0 && res.rol === "ROLE_USER") {
+              alert("Acceso autorizado. Bienvenida/o ");
+              navigate('/mapa');
+              localStorage.setItem("token", res.token);
+          } else if (res.correo === email && res.token.length > 0 && res.rol === "ROLE_ADMIN") {
+              navigate('/panel-admin');
+              localStorage.setItem("token", res.token);
+          } else {
+              setErrorMensaje('Credenciales incorrectas. Intente nuevamente.');
+          }
       } else {
-        setErrorMensaje('Credenciales incorrectas. Intente nuevamente.');
+          alert("Ocurrió un error al intentar iniciar sesión")
       }
-    } else {
-      setErrorMensaje('No hay ninguna cuenta registrada en el simulador.');
-    }
   };
 
   return (
