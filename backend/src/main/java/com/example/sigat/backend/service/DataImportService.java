@@ -24,7 +24,7 @@ public class DataImportService {
     private final WaitingService waitingService;
     private final DataValidationService dataValidationService;
 
-    // Columnas que el archivo debe tener (los nombres del encabezado).
+
     private static final List<String> COLUMNAS_REQUERIDAS = List.of(
             "rut", "enfermedad", "ciudad", "domicilio", "enTratamiento", "fechaInicio", "fechaProximoControl"
     );
@@ -46,12 +46,12 @@ public class DataImportService {
         int importados = 0;
 
         int lastRow = data.getLastRowNum();
-        for (int r = 1; r <= lastRow; r++) { // fila 0 = encabezado
+        for (int r = 1; r <= lastRow; r++) {
             Row row = data.getRow(r);
             if (row == null || filaVacia(row, headers)) {
                 continue; // saltar filas totalmente vacías (comunes al final del Excel)
             }
-            int numeroFilaExcel = r + 1; // lo que el usuario ve en su Excel (base 1, con encabezado)
+            int numeroFilaExcel = r + 1;
             try {
                 procesarFila(row, headers);
                 importados++;
@@ -66,18 +66,18 @@ public class DataImportService {
     // Valida y guarda UNA fila. Cualquier problema se lanza como excepción
     // con un mensaje claro, que el llamador convierte en "Fila X no válida por: ...".
     private void procesarFila(Row row, Map<String, Integer> headers) {
-        // 1. RUT (dígito verificador) — barato, primero
+
         String rut = readCell(row, headers.get("rut"));
         dataValidationService.validateRut(rut);
 
-        // 2. Enfermedad debe existir en la base
+        //  Enfermedad debe existir en la base
         String enfermedad = readCell(row, headers.get("enfermedad"));
         Long diseaseId = diseaseRepository.findByNameEqualsIgnoreCase(enfermedad);
         if (diseaseId == null) {
             throw new IllegalArgumentException("la enfermedad '" + enfermedad + "' no existe en el sistema");
         }
 
-        // 3. Ciudad y domicilio presentes
+        // Ciudad y domicilio presentes
         String city = readCell(row, headers.get("ciudad"));
         if (city.isBlank()) {
             throw new IllegalArgumentException("la ciudad está vacía");
@@ -87,10 +87,10 @@ public class DataImportService {
             throw new IllegalArgumentException("el domicilio está vacío");
         }
 
-        // 4. Estado de tratamiento (Sí/No/true/false)
+        // Estado de tratamiento (Sí/No/true/false)
         boolean inTreatment = dataValidationService.parseState(readCell(row, headers.get("enTratamiento")));
 
-        // 5. Fechas: obligatorias y bien formadas SOLO si está en tratamiento
+        // Fechas: obligatorias y bien formadas SOLO si está en tratamiento
         String fiStr = readCell(row, headers.get("fechaInicio"));
         String fcStr = readCell(row, headers.get("fechaProximoControl"));
         LocalDate treatmentStart = null;
@@ -103,7 +103,7 @@ public class DataImportService {
             nextControl = parseDate(fcStr);
         }
 
-        // 6. Dirección (lo más caro): createPoint geocodifica con Nominatim y arma el cuadrante.
+        // Dirección (lo más caro): createPoint geocodifica con Nominatim y arma el cuadrante.
         //    Si la dirección no se encuentra, GeocodingService lanza y esta fila queda marcada.
         PointCreationRequest pcr = new PointCreationRequest(rut, diseaseId, city, address, inTreatment, treatmentStart, nextControl);
         mapService.createPoint(pcr, "");
