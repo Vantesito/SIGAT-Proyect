@@ -18,7 +18,7 @@ function Login() {
     // Correo para entrar directo a PanelAdmin
     if (email === 'admin@sigat.cl') {
       navigate('/panel-admin');
-      return;
+      return;g
     }
 
     const usuarioGuardadoStr = localStorage.getItem('sigat_usuario_demo');
