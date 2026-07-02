@@ -2,6 +2,7 @@ package com.example.sigat.backend.service;
 
 import com.example.sigat.backend.dto.PointCoordPatchRequest;
 import com.example.sigat.backend.dto.PointDiseasePatchRequest;
+import com.example.sigat.backend.model.Disease;
 import com.example.sigat.backend.model.PointAction;
 import com.example.sigat.backend.model.PointModificationValues;
 import com.example.sigat.backend.repository.DiseaseRepository;
@@ -67,7 +68,7 @@ public class HistoryService {
         PointModificationValues pmv = new PointModificationValues();
         pmv.setAffectedField("DISEASE");
         String nuevoNombre = diseaseRepository.findById(request.disease_id())
-                .map(d -> d.getName())
+                .map(Disease::getName)
                 .orElse(String.valueOf(request.disease_id()));
         pmv.setNewValue(nuevoNombre);
         pmv.setOldValue(old_value);
