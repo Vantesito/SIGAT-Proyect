@@ -148,7 +148,7 @@ public class DataImportService {
         }
         return switch (cell.getCellType()) {
             case STRING -> cell.getStringCellValue().strip();
-            case BOOLEAN -> cell.getBooleanCellValue() ? "true" : "false";
+            case BOOLEAN -> Boolean.toString(cell.getBooleanCellValue());
             case NUMERIC -> {
                 if (DateUtil.isCellDateFormatted(cell)) {
                     // Fecha nativa de Excel -> texto AAAA-MM-DD
@@ -165,7 +165,7 @@ public class DataImportService {
     private boolean filaVacia(Row row, Map<String, Integer> headers) {
         for (Integer col : headers.values()) {
             Cell c = row.getCell(col, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
-            if (c != null && !c.toString().strip().isEmpty()) {
+            if (c != null && !c.toString().isBlank()) {
                 return false;
             }
         }
