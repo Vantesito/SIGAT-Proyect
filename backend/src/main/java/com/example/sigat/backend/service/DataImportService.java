@@ -40,7 +40,7 @@ public class DataImportService {
     public ImportResult importWorkbookData(Workbook workbook) {
         Sheet data = workbook.getSheetAt(0);
         Map<String, Integer> headers = generateHeaderMap(data);
-        validarColumnas(headers); // si faltan columnas, aborta todo el archivo (no es error de una fila)
+        validarColumnas(headers); // si faltan columnas, aborta el archivo completo
 
         List<String> errores = new ArrayList<>();
         int importados = 0;
