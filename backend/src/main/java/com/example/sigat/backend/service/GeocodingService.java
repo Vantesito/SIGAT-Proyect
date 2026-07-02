@@ -6,6 +6,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -33,16 +34,26 @@ public class GeocodingService {
         headers.set("User-Agent", "SIGAT/1.0 (proyecto academico)");
         HttpEntity<Void> entity = new HttpEntity<>(headers);
 
-        ResponseEntity<NominatimResult[]> response =
-                restTemplate.exchange(uri, HttpMethod.GET, entity, NominatimResult[].class);
+        ResponseEntity<NominatimResult[]> response;
+        try {
+            response = restTemplate.exchange(uri, HttpMethod.GET, entity, NominatimResult[].class);
+        } catch (RestClientException e) {
+
+            throw new IllegalArgumentException("no se pudo contactar el servicio de geolocalización (intente más tarde)");
+        }
 
         NominatimResult[] body = response.getBody();
         if (body == null || body.length == 0) {
-            throw new IllegalArgumentException("No se pudo geolocalizar la dirección ingresada");
+            throw new IllegalArgumentException("no se encontró la dirección ingresada");
         }
-        double lat = Double.parseDouble(body[0].lat());
-        double lng = Double.parseDouble(body[0].lon());
-        return new double[]{lat, lng};
+
+        try {
+            double lat = Double.parseDouble(body[0].lat());
+            double lng = Double.parseDouble(body[0].lon());
+            return new double[]{lat, lng};
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("la respuesta de geolocalización no fue válida");
+        }
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

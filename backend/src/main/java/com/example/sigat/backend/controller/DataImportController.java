@@ -1,5 +1,6 @@
 package com.example.sigat.backend.controller;
 
+import com.example.sigat.backend.dto.ImportResult;
 import com.example.sigat.backend.exception.UnsupportedFileException;
 import com.example.sigat.backend.service.DataImportService;
 import com.example.sigat.backend.service.DataValidationService;
@@ -21,14 +22,21 @@ public class DataImportController {
     private final DataValidationService dataValidationService;
 
     @PostMapping("/upload")
-    public ResponseEntity<?> upload(@RequestParam("file") MultipartFile file) throws IOException {
+    public ResponseEntity<?> upload(@RequestParam("file") MultipartFile file) {
         try {
-            dataValidationService.validateExtension(file.getResource().getFile());
-            Workbook workbook = dataValidationService.parseWorkbook(file.getInputStream());
-            dataImportService.importWorkbookData(workbook);
-            return new ResponseEntity<>(HttpStatus.OK);
+            // Validamos la extensión por el NOMBRE, sin exigir un File físico.
+            dataValidationService.validateExtension(file.getOriginalFilename());
+
+            // try-with-resources: el Workbook se cierra solo al terminar,
+            // aunque el import lance, evitando fugas de memoria con archivos grandes.
+            try (Workbook workbook = dataValidationService.parseWorkbook(file.getInputStream())) {
+                ImportResult result = dataImportService.importWorkbookData(workbook);
+                return new ResponseEntity<>(result, HttpStatus.OK);
+            }
         } catch (UnsupportedFileException | IllegalArgumentException e) {
-            return new ResponseEntity<>( Map.of("message", e.getMessage()),HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(Map.of("message", e.getMessage()), HttpStatus.BAD_REQUEST);
+        } catch (IOException e) {
+            return new ResponseEntity<>(Map.of("message", "No se pudo leer el archivo"), HttpStatus.BAD_REQUEST);
         }
     }
 }
