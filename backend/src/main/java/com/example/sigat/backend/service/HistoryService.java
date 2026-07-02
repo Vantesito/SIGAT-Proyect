@@ -4,6 +4,7 @@ import com.example.sigat.backend.dto.PointCoordPatchRequest;
 import com.example.sigat.backend.dto.PointDiseasePatchRequest;
 import com.example.sigat.backend.model.PointAction;
 import com.example.sigat.backend.model.PointModificationValues;
+import com.example.sigat.backend.repository.DiseaseRepository;
 import com.example.sigat.backend.repository.PointActionRepository;
 import com.example.sigat.backend.repository.PointRepository;
 import com.example.sigat.backend.repository.UserRepository;
@@ -18,11 +19,14 @@ public class HistoryService {
     private final PointActionRepository pointActionRepository;
     private final UserRepository userRepository;
     private final PointRepository pointRepository;
+    private final DiseaseRepository diseaseRepository;
 
-    public HistoryService(PointActionRepository pointActionRepository, UserRepository userRepository, PointRepository pointRepository) {
+    public HistoryService(PointActionRepository pointActionRepository, UserRepository userRepository,
+                          PointRepository pointRepository, DiseaseRepository diseaseRepository) {
         this.pointActionRepository = pointActionRepository;
         this.userRepository = userRepository;
         this.pointRepository = pointRepository;
+        this.diseaseRepository = diseaseRepository;
     }
 
     public List<PointAction> getUserHistory(Long userId, Integer entries) {
@@ -33,6 +37,8 @@ public class HistoryService {
     public List<PointAction> getGlobalHistory() {
         return pointActionRepository.findTop100ByOrderByDateTimeDesc();
     }
+
+    // Reubicación de coordenadas -> cuadrante
     public void addUserPointModHistory(String username, Long pointId, PointAction.ActionType type, String old_value,
                                        PointCoordPatchRequest request){
         PointAction action = new PointAction();
@@ -47,6 +53,10 @@ public class HistoryService {
         action.setPointModificationValues(pmv);
         pointActionRepository.save(action);
     }
+
+    // Cambio de enfermedad. Antes decía "COORDINATES" por error (copy-paste) y
+    // guardaba el disease_id numérico; ahora dice "DISEASE" y guarda el nombre
+    // real de la enfermedad, para que el informe del panel admin se lea bien.
     public void addUserPointModHistory(String username, Long pointId, PointAction.ActionType type, String old_value,
                                        PointDiseasePatchRequest request){
         PointAction action = new PointAction();
@@ -55,12 +65,16 @@ public class HistoryService {
         action.setPoint(pointRepository.findById(pointId).orElseThrow());
         action.setActionType(type);
         PointModificationValues pmv = new PointModificationValues();
-        pmv.setAffectedField("COORDINATES");
-        pmv.setNewValue(""+request.disease_id());
+        pmv.setAffectedField("DISEASE");
+        String nuevoNombre = diseaseRepository.findById(request.disease_id())
+                .map(d -> d.getName())
+                .orElse(String.valueOf(request.disease_id()));
+        pmv.setNewValue(nuevoNombre);
         pmv.setOldValue(old_value);
         action.setPointModificationValues(pmv);
         pointActionRepository.save(action);
     }
+
     public void addUserPointCreationHistory(String username, Long pointId, PointAction.ActionType type){
         PointAction action = new PointAction();
         action.setDateTime(OffsetDateTime.now());

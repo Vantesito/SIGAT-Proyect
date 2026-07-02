@@ -1,7 +1,8 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './PanelAdmin.css';
 import logosigat from './assets/logosigat.png';
+import * as api from './api';
 
 // Ciudades disponibles en la barra lateral de gestión
 const CIUDADES = [
@@ -18,6 +19,65 @@ const fmtFecha = (iso) => {
     });
 };
 
+// Convierte un User del backend al formato que usan las tablas del panel
+const mapearUsuario = (u) => ({
+    id: u.id,
+    rut: u.rut,
+    nombre: `${u.names || ''} ${u.surnames || ''}`.trim(),
+    email: u.email,
+    institucion: u.institution,
+    ciudad: u.city,
+    estado: u.active ? 'Activo' : 'Desactivado',
+    esAdmin: u.role === 'ADMIN',
+});
+
+const mapearSolicitud = (u) => ({
+    id: u.id,
+    rut: u.rut,
+    nombre: `${u.names || ''} ${u.surnames || ''}`.trim(),
+    email: u.email,
+    institucion: u.institution,
+    estado: 'Pendiente',
+});
+
+// Texto legible según el tipo de acción del backend
+const ACCION_TEXTO = {
+    CREATION: 'Añadió punto',
+    MODIFICATION: 'Modificó punto',
+    DELETION: 'Eliminó punto',
+    DEACTIVATION: 'Desactivó punto',
+};
+
+// Arma el detalle del informe a partir del punto y (si aplica) los valores modificados
+const construirDetalle = (a) => {
+    const d = {};
+    if (a.point) {
+        d.rut = a.point.rut;
+        d.enfermedad = a.point.disease ? a.point.disease.name : '—';
+        d.ciudad = a.point.city;
+        d.cuadrante = a.point.quadrant ? a.point.quadrant.label : '—';
+        d.enTratamiento = a.point.inTreatment;
+        if (a.point.treatmentStart) d.fechaInicio = a.point.treatmentStart;
+        if (a.point.nextControl) d.fechaProximoControl = a.point.nextControl;
+    }
+    if (a.pointModificationValues) {
+        d.campoModificado = a.pointModificationValues.affectedField;
+        d.valorAnterior = a.pointModificationValues.oldValue;
+        d.valorNuevo = a.pointModificationValues.newValue;
+    }
+    return d;
+};
+
+// Convierte un PointAction del backend a la fila del historial
+const mapearAccion = (a) => ({
+    id: a.id,
+    usuario: a.user ? `${a.user.names || ''} ${a.user.surnames || ''}`.trim() : '—',
+    accion: ACCION_TEXTO[a.actionType] || a.actionType,
+    lugar: a.point ? a.point.city : '—',
+    fecha: a.dateTime,
+    detalle: construirDetalle(a),
+});
+
 function PanelAdmin() {
     const navigate = useNavigate();
 
@@ -25,31 +85,55 @@ function PanelAdmin() {
     const [vista, setVista] = useState('solicitudes');
 
     // ---------- SOLICITUDES DE ACCESO ----------
-    const [solicitudes, setSolicitudes] = useState([
-        { id: 1, rut: '12.345.678-9', nombre: 'Dra. María González', email: 'mgonzalez@institucion.cl', institucion: 'CESFAM Centro', estado: 'Pendiente' },
-        { id: 2, rut: '22.345.678-9', nombre: 'Enf. Carlos Pérez', email: 'cperez@institucion.cl', institucion: 'Hospital Regional', estado: 'Pendiente' },
-        { id: 3, rut: '12.345.678-k', nombre: 'TS. Laura Méndez', email: 'lmendez@institucion.cl', institucion: 'CESFAM Norte', estado: 'Pendiente' },
-    ]);
+    const [solicitudes, setSolicitudes] = useState([]);
 
-    const handleAprobar = (id) => {
-        setSolicitudes(solicitudes.filter((s) => s.id !== id));
-        alert('Usuario aprobado. El sistema ha enviado un correo con las credenciales.');
+    const cargarSolicitudes = async () => {
+        try {
+            const data = await api.getSolicitudesPendientes();
+            setSolicitudes((data || []).map(mapearSolicitud));
+        } catch {
+            setSolicitudes([]);
+        }
     };
 
-    const handleRechazar = (id) => {
-        setSolicitudes(solicitudes.filter((s) => s.id !== id));
-        alert('Solicitud rechazada y eliminada del sistema.');
+    const handleAprobar = async (id) => {
+        try {
+            await api.aprobarUsuario(id); // el backend envía el correo de bienvenida
+            await cargarSolicitudes();
+            await cargarUsuarios();
+        } catch (err) {
+            alert(err.message || 'No se pudo aprobar la solicitud.');
+        }
+    };
+
+    const handleRechazar = async (id) => {
+        if (!window.confirm('¿Rechazar y eliminar esta solicitud?')) return;
+        try {
+            await api.eliminarUsuario(id);
+            await cargarSolicitudes();
+        } catch (err) {
+            alert(err.message || 'No se pudo rechazar la solicitud.');
+        }
     };
 
     // ---------- GESTIÓN DE USUARIOS ----------
-    const [usuarios, setUsuarios] = useState([
-        { id: 1, rut: '11.111.111-1', nombre: 'Dra. María González', email: 'mgonzalez@institucion.cl', institucion: 'CESFAM Centro', ciudad: 'Temuco', estado: 'Activo', esAdmin: false },
-        { id: 2, rut: '22.222.222-2', nombre: 'Enf. Carlos Pérez', email: 'cperez@institucion.cl', institucion: 'Hospital Regional', ciudad: 'Temuco', estado: 'Activo', esAdmin: false },
-        { id: 3, rut: '33.333.333-3', nombre: 'TS. Laura Méndez', email: 'lmendez@institucion.cl', institucion: 'CESFAM Norte', ciudad: 'Santiago', estado: 'Desactivado', esAdmin: false },
-        { id: 4, rut: '44.444.444-4', nombre: 'Dr. Jorge Silva', email: 'jsilva@institucion.cl', institucion: 'Hospital El Salvador', ciudad: 'Santiago', estado: 'Activo', esAdmin: true },
-        { id: 5, rut: '55.555.555-5', nombre: 'Mat. Ana Rojas', email: 'arojas@institucion.cl', institucion: 'CESFAM Valdivia', ciudad: 'Valdivia', estado: 'Activo', esAdmin: false },
-        { id: 6, rut: '66.666.666-6', nombre: 'Dr. Pedro Tapia', email: 'ptapia@institucion.cl', institucion: 'Hospital Naval', ciudad: 'Valparaíso', estado: 'Desactivado', esAdmin: false },
-    ]);
+    const [usuarios, setUsuarios] = useState([]);
+
+    const cargarUsuarios = async () => {
+        try {
+            const data = await api.getUsuarios();
+            setUsuarios((data || []).map(mapearUsuario));
+        } catch {
+            setUsuarios([]);
+        }
+    };
+
+    // Cargar datos reales al montar el panel
+    useEffect(() => {
+        void cargarSolicitudes();
+        void cargarUsuarios();
+        void cargarHistorial();
+    }, []);
 
     const [ciudadSeleccionada, setCiudadSeleccionada] = useState(null);
     const [busqueda, setBusqueda] = useState('');
@@ -62,50 +146,63 @@ function PanelAdmin() {
                 !q ||
                 u.nombre.toLowerCase().includes(q) ||
                 u.email.toLowerCase().includes(q) ||
-                u.rut.toLowerCase().includes(q);
+                (u.rut || '').toLowerCase().includes(q);
             return okCiudad && okBusqueda;
         });
     }, [usuarios, ciudadSeleccionada, busqueda]);
 
     const usuariosPorCiudad = (ciudad) => usuarios.filter((u) => u.ciudad === ciudad).length;
 
-    const toggleEstado = (id) => {
-        setUsuarios((prev) =>
-            prev.map((u) => (u.id === id ? { ...u, estado: u.estado === 'Activo' ? 'Desactivado' : 'Activo' } : u))
-        );
+    const toggleEstado = async (u) => {
+        try {
+            if (u.estado === 'Activo') {
+                await api.desactivarUsuario(u.id); // correo de cuenta desactivada
+            } else {
+                await api.activarUsuario(u.id); // correo de cuenta reactivada
+            }
+            await cargarUsuarios();
+        } catch (err) {
+            alert(err.message || 'No se pudo cambiar el estado del usuario.');
+        }
     };
 
-    const toggleAdmin = (id) => {
-        setUsuarios((prev) => prev.map((u) => (u.id === id ? { ...u, esAdmin: !u.esAdmin } : u)));
+    const toggleAdmin = async (u) => {
+        try {
+            await api.cambiarRolUsuario(u.id, !u.esAdmin); // correo de promoción/remoción
+            await cargarUsuarios();
+        } catch (err) {
+            alert(err.message || 'No se pudo cambiar el rol del usuario.');
+        }
     };
 
-    const eliminarUsuario = (id) => {
+    const eliminarUsuario = async (id) => {
         if (!window.confirm('¿Eliminar definitivamente a este usuario?')) return;
-        setUsuarios((prev) => prev.filter((u) => u.id !== id));
+        try {
+            await api.eliminarUsuario(id);
+            await cargarUsuarios();
+        } catch (err) {
+            alert(err.message || 'No se pudo eliminar el usuario.');
+        }
     };
 
     // ---------- HISTORIAL ----------
-    const [historial] = useState([
-        {
-            id: 1, usuario: 'Dra. María González', accion: 'Añadió punto', lugar: 'Temuco',
-            fecha: '2026-06-24T09:15:00',
-            detalle: { rut: '12.345.678-9', enfermedad: 'Tuberculosis', ciudad: 'Temuco', enTratamiento: true, fechaInicio: '2026-05-10', fechaProximoControl: '2026-06-25' },
-        },
-        {
-            id: 2, usuario: 'Enf. Carlos Pérez', accion: 'Modificó punto', lugar: 'Temuco',
-            fecha: '2026-06-24T10:02:00',
-            detalle: { rut: '9.876.543-2', enfermedad: 'Varicela', ciudad: 'Temuco', cambio: 'Marcó paciente en tratamiento' },
-        },
-        {
-            id: 3, usuario: 'Dr. Jorge Silva', accion: 'Eliminó punto', lugar: 'Santiago',
-            fecha: '2026-06-23T16:48:00',
-            detalle: { rut: '15.111.222-3', enfermedad: 'Influenza', ciudad: 'Santiago', motivo: 'Registro duplicado' },
-        },
-    ]);
+    const [historial, setHistorial] = useState([]);
+
+    const cargarHistorial = async () => {
+        try {
+            const data = await api.getHistorialGlobal();
+            setHistorial((data || []).map(mapearAccion));
+        } catch {
+            setHistorial([]);
+        }
+    };
 
     const [informe, setInforme] = useState(null);
 
-    const handleLogout = () => navigate('/');
+    const handleLogout = () => {
+        api.logout();
+        navigate('/');
+    };
 
     return (
         <div className="admin-layout">
@@ -270,10 +367,10 @@ function PanelAdmin() {
                                 </span>
                                                         </td>
                                                         <td className="action-cells">
-                                                            <button className="btn-toggle" onClick={() => toggleEstado(u.id)}>
+                                                            <button className="btn-toggle" onClick={() => toggleEstado(u)}>
                                                                 {u.estado === 'Activo' ? 'Desactivar' : 'Activar'}
                                                             </button>
-                                                            <button className="btn-admin" onClick={() => toggleAdmin(u.id)}>
+                                                            <button className="btn-admin" onClick={() => toggleAdmin(u)}>
                                                                 {u.esAdmin ? 'Quitar admin' : 'Dar admin'}
                                                             </button>
                                                             <button className="btn-reject" onClick={() => eliminarUsuario(u.id)}>Eliminar</button>
@@ -321,7 +418,7 @@ function PanelAdmin() {
                                                 <td>
                             <span className={
                                 h.accion.includes('Añadió') ? 'badge-add'
-                                    : h.accion.includes('Eliminó') ? 'badge-del'
+                                    : (h.accion.includes('Eliminó') || h.accion.includes('Desactivó')) ? 'badge-del'
                                         : 'badge-mod'
                             }>
                               {h.accion}

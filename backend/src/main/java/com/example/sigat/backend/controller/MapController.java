@@ -17,7 +17,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/user/map")
-@CrossOrigin(origins = "*")
 @PreAuthorize("hasAnyRole('USER','ADMIN')")
 public class MapController {
 

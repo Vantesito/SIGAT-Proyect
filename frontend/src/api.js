@@ -103,3 +103,37 @@ export function subirCargaMasiva(file) {
     form.append('file', file);
     return apiFetch('/api/data/upload', { method: 'POST', body: form, isForm: true });
 }
+
+// ---------- ADMIN: USUARIOS Y SOLICITUDES ----------
+export function getUsuarios() {
+    return apiFetch('/api/admin/users');
+}
+
+export function getSolicitudesPendientes() {
+    return apiFetch('/api/admin/users/approval-pending');
+}
+
+export function aprobarUsuario(id) {
+    return apiFetch(`/api/admin/users/${id}/approve`, { method: 'PUT' });
+}
+
+export function activarUsuario(id) {
+    return apiFetch(`/api/admin/users/${id}/activate`, { method: 'PUT' });
+}
+
+export function desactivarUsuario(id) {
+    return apiFetch(`/api/admin/users/${id}/deactivate`, { method: 'PUT' });
+}
+
+export function cambiarRolUsuario(id, admin) {
+    return apiFetch(`/api/admin/users/${id}/role`, { method: 'PUT', body: { admin } });
+}
+
+export function eliminarUsuario(id) {
+    return apiFetch(`/api/admin/users/${id}`, { method: 'DELETE' });
+}
+
+// ---------- ADMIN: HISTORIAL ----------
+export function getHistorialGlobal() {
+    return apiFetch('/api/admin/history');
+}
