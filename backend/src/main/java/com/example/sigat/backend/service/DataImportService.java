@@ -17,11 +17,13 @@ public class DataImportService {
     private final DiseaseRepository diseaseRepository;
     private final MapService mapService;
     private final WaitingService waitingService;
+    private final DataValidationService dataValidationService;
 
-    public DataImportService(DiseaseRepository diseaseRepository, MapService mapService, WaitingService waitingService) {
+    public DataImportService(DiseaseRepository diseaseRepository, MapService mapService, WaitingService waitingService, DataValidationService dataValidationService) {
         this.diseaseRepository = diseaseRepository;
         this.mapService = mapService;
         this.waitingService= waitingService;
+        this.dataValidationService = dataValidationService;
     }
 
     public void importWorkbookData(Workbook workbook){
@@ -35,16 +37,28 @@ public class DataImportService {
             for (int i = 0; i < 7; i++) {
                 dataStrings[i]=cells.next().toString();
             }
-            String rut = dataStrings[headers.get("rut")];
-            String address = dataStrings[headers.get("domicilio")];
-            String city = dataStrings[headers.get("ciudad")];
-            boolean inTreatment= dataStrings[headers.get("enTratamiento")].equals("Sí");
-            LocalDate treatmentStart = parseDate(dataStrings[headers.get("fechaInicio")]);
-            LocalDate nextControl= parseDate(dataStrings[headers.get("fechaProximoControl")]);
-            Long diseaseId = diseaseRepository.findByNameEqualsIgnoreCase(dataStrings[headers.get("enfermedad")]);
-            PointCreationRequest pcr = new PointCreationRequest(rut,diseaseId,city,address,inTreatment,treatmentStart,nextControl);
-            mapService.createPoint(pcr,"");
-            waitingService.acquire();
+            String rut;
+            String address;
+            String city;
+            boolean inTreatment;
+            LocalDate treatmentStart;
+            LocalDate nextControl;
+            Long diseaseId;
+            PointCreationRequest pcr;
+            try {
+                rut = dataStrings[headers.get("rut")];
+                address = dataStrings[headers.get("domicilio")];
+                city = dataStrings[headers.get("ciudad")];
+                inTreatment = dataValidationService.parseState(dataStrings[headers.get("enTratamiento")]);
+                treatmentStart = parseDate(dataStrings[headers.get("fechaInicio")]);
+                nextControl = parseDate(dataStrings[headers.get("fechaProximoControl")]);
+                diseaseId = diseaseRepository.findByNameEqualsIgnoreCase(dataStrings[headers.get("enfermedad")]);
+                pcr = new PointCreationRequest(rut, diseaseId, city, address, inTreatment, treatmentStart, nextControl);
+                mapService.createPoint(pcr, "");
+                waitingService.acquire();
+            } catch (NullPointerException e) {
+                throw new IllegalArgumentException("El documento no tiene sus datos en el formato correcto, revise el títulos de las columnas");
+            }
         }
     }
     private HashMap<String,Integer> generateHeaderMap(Sheet data){
