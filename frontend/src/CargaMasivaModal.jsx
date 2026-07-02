@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import * as XLSX from 'xlsx';
 import './CargaMasivaModal.css';
+import { subirCargaMasiva } from './api';
 
 // Segundos estimados por fila: el backend espera geo_api_wait (~1s) por cada
 // dirección geocodificada, más la latencia de Nominatim. Ajusta si cambias
@@ -18,10 +19,8 @@ const formatTiempo = (seg) => {
 // Props:
 //  onCerrar()            -> cierra el modal
 //  onCompletado(result)  -> opcional, se llama con el ImportResult al terminar
-//  endpoint              -> URL del backend (default /api/data/upload)
-//  token                 -> JWT para Authorization
 //  simular               -> si true, no llama al backend (útil en modo demo)
-function CargaMasivaModal({ onCerrar, onCompletado, endpoint = '/api/data/upload', token, simular = false }) {
+function CargaMasivaModal({ onCerrar, onCompletado, simular = false }) {
   const [fase, setFase] = useState('seleccion'); // seleccion | cargando | resultado | error
 
   // Usamos JSDoc para que el IDE entienda que es un archivo y no marque error en FormData
@@ -94,30 +93,8 @@ function CargaMasivaModal({ onCerrar, onCompletado, endpoint = '/api/data/upload
           errores: numFilas > 0 ? ['Fila 3 no válida por: no se encontró la dirección ingresada'] : [],
         };
       } else {
-        const formData = new FormData();
-        formData.append('file', /** @type {Blob} */ (archivo));
-
-        // Preparamos los headers de forma explícita para evitar errores de tipado en el IDE
-        const fetchHeaders = {};
-        if (token) {
-          fetchHeaders['Authorization'] = `Bearer ${token}`;
-        }
-
-        const resp = await fetch(endpoint, {
-          method: 'POST',
-          headers: fetchHeaders,
-          body: formData,
-        });
-
-        if (!resp.ok) {
-          const err = await resp.json().catch(() => ({}));
-          // Manejamos el error directamente sin hacer un 'throw' local
-          finalizarBarra();
-          setMensajeError(err.message || 'El servidor rechazó el archivo');
-          setFase('error');
-          return; // Detenemos la ejecución aquí
-        }
-        data = await resp.json();
+        // Llamada centralizada: api.js agrega la URL base y el token JWT
+        data = await subirCargaMasiva(archivo);
       }
 
       finalizarBarra();

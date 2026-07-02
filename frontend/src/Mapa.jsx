@@ -15,10 +15,16 @@ import { Style, Stroke } from 'ol/style';
 import { fromLonLat, toLonLat } from 'ol/proj';
 import './Mapa.css';
 import CargaMasivaModal from './CargaMasivaModal';
+import {
+    getPuntosActivos,
+    getPuntosPorEnfermedad,
+    getEnfermedades,
+    crearPunto,
+    desactivarPunto,
+    logout,
+} from './api';
 
-// Listas compartidas (mantienen sincronizados formulario y filtros)
-const ENFERMEDADES = ['Tuberculosis', 'Varicela', 'Influenza', 'COVID-19', 'Sarampión'];
-
+// Ciudades para el selector y el recentrado del mapa
 const CIUDADES_CHILE = [
     { nombre: 'Arica', lng: -70.3126, lat: -18.4783 },
     { nombre: 'Iquique', lng: -70.1503, lat: -20.2307 },
@@ -42,35 +48,11 @@ const CIUDADES_CHILE = [
 
 const getCiudad = (nombre) => CIUDADES_CHILE.find((c) => c.nombre === nombre);
 
-// Pequeño desplazamiento para "anonimizar por cuadrante"
-const jitter = () => (Math.random() - 0.5) * 0.03;
-// Mismo cálculo que QuadrantUtil del backend (celdas reales de 50x50 m)
+// Constantes del cuadrante (para la grilla dibujada; coinciden con el backend)
 const CELL_SIZE_M = 50;
 const M_PER_DEG_LAT = 111320;
-const snapToQuadrant = (lat, lng) => {
-    const latStep = CELL_SIZE_M / M_PER_DEG_LAT;
-    const row = Math.floor(lat / latStep);
-    const bandLat = (row + 0.5) * latStep;
-    const lngStep = CELL_SIZE_M / (M_PER_DEG_LAT * Math.cos((bandLat * Math.PI) / 180));
-    const col = Math.floor(lng / lngStep);
-    return {
-        centerLng: (col + 0.5) * lngStep,
-        centerLat: bandLat,
-        label: `Cuadrante ${Math.abs(col)}-${Math.abs(row)}`,
-    };
-};
-
-// Zoom a partir del cual se dibuja la grilla de cuadrantes
 const ZOOM_MINIMO_GRILLA = 16;
 
-// Fecha de hoy + n días en formato yyyy-mm-dd (para inputs date)
-const hoyMas = (n) => {
-    const d = new Date();
-    d.setDate(d.getDate() + n);
-    return d.toISOString().slice(0, 10);
-};
-
-// Días que faltan para una fecha (negativo = vencido). null si no hay fecha.
 const diasHastaControl = (fecha) => {
     if (!fecha) return null;
     const hoy = new Date();
@@ -79,12 +61,11 @@ const diasHastaControl = (fecha) => {
     return Math.round((f - hoy) / (1000 * 60 * 60 * 24));
 };
 
-// Alerta = control vencido o dentro de 2 días (1-2 días antes del límite)
 const esAlerta = (dias) => dias !== null && dias <= 2;
 
 const FORM_VACIO = {
     rut: '',
-    enfermedad: 'Tuberculosis',
+    enfermedadId: '',
     ciudad: 'Temuco',
     domicilio: '',
     enTratamiento: false,
@@ -92,45 +73,89 @@ const FORM_VACIO = {
     fechaProximoControl: '',
 };
 
+// Convierte un Point del backend al formato que usan las tablas y el heatmap.
+const mapearPunto = (p) => ({
+    id: p.id,
+    rut: p.rut,
+    enfermedad: p.disease ? p.disease.name : '',
+    diseaseId: p.disease ? p.disease.id : null,
+    ciudad: p.city,
+    lng: p.quadrant ? p.quadrant.centerLng : null,
+    lat: p.quadrant ? p.quadrant.centerLat : null,
+    quadrante: p.quadrant ? p.quadrant.label : '—',
+    enTratamiento: p.inTreatment,
+    fechaInicio: p.treatmentStart || '',
+    fechaProximoControl: p.nextControl || '',
+});
+
 function Mapa() {
     const navigate = useNavigate();
 
-    // REFERENCIAS PARA OPENLAYERS
+    // REFERENCIAS OPENLAYERS
     const mapElement = useRef(null);
     const mapRef = useRef(null);
     const vectorSourceRef = useRef(new VectorSource());
     const gridSourceRef = useRef(new VectorSource());
     const primerRender = useRef(true);
 
-    // DATOS PRINCIPALES (cada caso = un paciente)
+    // DATOS DEL BACKEND
     const [casos, setCasos] = useState([]);
+    const [enfermedades, setEnfermedades] = useState([]); // [{id, name}]
+    const [cargando, setCargando] = useState(false);
+    const [errorCarga, setErrorCarga] = useState('');
 
     // MODALES
     const [showModal, setShowModal] = useState(false);
     const [showBatchModal, setShowBatchModal] = useState(false);
     const [showFilterModal, setShowFilterModal] = useState(false);
 
-    // PANEL DESPLEGABLE DE TABLAS: null | 'casos' | 'tratamiento'
+    // PANEL DE TABLAS
     const [panelAbierto, setPanelAbierto] = useState(null);
 
-    // FORMULARIO (sirve para crear y editar)
+    // FORMULARIO DE CREACIÓN
     const [form, setForm] = useState(FORM_VACIO);
-    const [editId, setEditId] = useState(null);
+    const [guardando, setGuardando] = useState(false);
+    const [errorForm, setErrorForm] = useState('');
 
+    // FILTROS: enfermedadId = 'Todas' o el id de la enfermedad
+    const [filtroActual, setFiltroActual] = useState({ ciudad: 'Todas', enfermedadId: 'Todas' });
+    const [tempFiltro, setTempFiltro] = useState({ ciudad: 'Todas', enfermedadId: 'Todas' });
 
-    // FILTROS
-    const [filtroActual, setFiltroActual] = useState({ ciudad: 'Todas', enfermedad: 'Todas' });
-    const [tempFiltro, setTempFiltro] = useState({ ciudad: 'Todas', enfermedad: 'Todas' });
+    // ---------- CARGA DE PUNTOS DESDE EL BACKEND ----------
+    const cargarPuntos = async () => {
+        setCargando(true);
+        setErrorCarga('');
+        try {
+            const data =
+                filtroActual.enfermedadId === 'Todas'
+                    ? await getPuntosActivos()
+                    : await getPuntosPorEnfermedad(filtroActual.enfermedadId);
+            setCasos((data || []).map(mapearPunto));
+        } catch {
+            setErrorCarga('No se pudieron cargar los puntos del servidor.');
+            setCasos([]);
+        } finally {
+            setCargando(false);
+        }
+    };
 
-    // ---------- DERIVADOS ----------
+    // Cargar enfermedades una vez (para los selectores)
+    useEffect(() => {
+        getEnfermedades()
+            .then((data) => setEnfermedades(data || []))
+            .catch(() => setEnfermedades([]));
+    }, []);
+
+    // Cargar/recargar puntos cuando cambia el filtro de enfermedad
+    useEffect(() => {
+        void cargarPuntos();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [filtroActual.enfermedadId]);
+
+    // ---------- DERIVADOS (el filtro de ciudad se aplica en el front) ----------
     const casosFiltrados = useMemo(
-        () =>
-            casos.filter((c) => {
-                const okEnf = filtroActual.enfermedad === 'Todas' || c.enfermedad === filtroActual.enfermedad;
-                const okCiu = filtroActual.ciudad === 'Todas' || c.ciudad === filtroActual.ciudad;
-                return okEnf && okCiu;
-            }),
-        [casos, filtroActual]
+        () => casos.filter((c) => filtroActual.ciudad === 'Todas' || c.ciudad === filtroActual.ciudad),
+        [casos, filtroActual.ciudad]
     );
 
     const enTratamiento = useMemo(
@@ -143,14 +168,14 @@ function Mapa() {
         [enTratamiento]
     );
 
-    // ---------- DIBUJAR GRILLA DE CUADRANTES (solo en zoom cercano) ----------
+    // ---------- GRILLA DE CUADRANTES (solo zoom cercano) ----------
     const dibujarGrilla = () => {
         if (!mapRef.current) return;
         const src = gridSourceRef.current;
         src.clear();
 
         const view = mapRef.current.getView();
-        if (view.getZoom() < ZOOM_MINIMO_GRILLA) return; // solo cuando estás cerca
+        if (view.getZoom() < ZOOM_MINIMO_GRILLA) return;
 
         const extent = view.calculateExtent(mapRef.current.getSize());
         const [minLng, minLat] = toLonLat([extent[0], extent[1]]);
@@ -160,25 +185,16 @@ function Mapa() {
         const startRow = Math.floor(minLat / latStep);
         const endRow = Math.ceil(maxLat / latStep);
 
-        // Recorremos banda por banda (cada fila de cuadrantes). Así cada línea
-        // queda anclada a la geografía y coincide con el snap del backend; no
-        // depende de la posición de la cámara, por lo que no se mueve al hacer zoom.
         for (let r = startRow; r <= endRow; r++) {
-            const latBottom = r * latStep;        // borde inferior de la banda
-            const latTop = (r + 1) * latStep;     // borde superior de la banda
-
-            // Línea horizontal en el borde de la banda
+            const latBottom = r * latStep;
+            const latTop = (r + 1) * latStep;
             src.addFeature(
                 new Feature(new LineString([fromLonLat([minLng, latBottom]), fromLonLat([maxLng, latBottom])]))
             );
-
-            // lngStep PROPIO de esta banda (mismo cálculo que snapToQuadrant)
             const bandLat = (r + 0.5) * latStep;
             const lngStep = CELL_SIZE_M / (M_PER_DEG_LAT * Math.cos((bandLat * Math.PI) / 180));
             const startCol = Math.floor(minLng / lngStep);
             const endCol = Math.ceil(maxLng / lngStep);
-
-            // Segmentos verticales, solo dentro de la franja de esta banda
             for (let c = startCol; c <= endCol; c++) {
                 const lng = c * lngStep;
                 src.addFeature(
@@ -196,17 +212,11 @@ function Mapa() {
                 source: vectorSourceRef.current,
                 blur: 18,
                 radius: 12,
-                // Peso constante por caso: la intensidad nace de la CONCENTRACIÓN
-                // geográfica (puntos que se solapan), no del total de la ciudad.
                 weight: () => 1,
             });
-
-            // Capa de grilla de cuadrantes (50x50 m), solo visible en zoom cercano
             const gridLayer = new VectorLayer({
                 source: gridSourceRef.current,
-                style: new Style({
-                    stroke: new Stroke({ color: 'rgba(0, 128, 128, 0.35)', width: 1 }),
-                }),
+                style: new Style({ stroke: new Stroke({ color: 'rgba(0, 128, 128, 0.35)', width: 1 }) }),
             });
 
             mapRef.current = new Map({
@@ -215,33 +225,9 @@ function Mapa() {
                 view: new View({ center: fromLonLat([-72.5904, -38.7397]), zoom: 13 }),
             });
 
-            // Redibuja la grilla al mover o hacer zoom
             mapRef.current.on('moveend', dibujarGrilla);
             dibujarGrilla();
         }
-
-        // Carga inicial simulada (incluye casos en tratamiento para ver la alerta)
-        setTimeout(() => {
-            const t = getCiudad('Temuco');
-            const armar = (base, extra) => {
-                const q = snapToQuadrant(t.lat + jitter(), t.lng + jitter());
-                return { ...base, lng: q.centerLng, lat: q.centerLat, quadrante: q.label, ...extra };
-            };
-            setCasos([
-                armar(
-                    { id: 1, rut: '12.345.678-9', enfermedad: 'Tuberculosis', ciudad: 'Temuco', domicilio: 'Av. Alemania 0123' },
-                    { enTratamiento: true, fechaInicio: hoyMas(-40), fechaProximoControl: hoyMas(1) }
-                ),
-                armar(
-                    { id: 2, rut: '9.876.543-2', enfermedad: 'Varicela', ciudad: 'Temuco', domicilio: 'Calle Prat 456' },
-                    { enTratamiento: false, fechaInicio: '', fechaProximoControl: '' }
-                ),
-                armar(
-                    { id: 3, rut: '15.111.222-3', enfermedad: 'Tuberculosis', ciudad: 'Temuco', domicilio: 'Av. Caupolicán 789' },
-                    { enTratamiento: true, fechaInicio: hoyMas(-10), fechaProximoControl: hoyMas(12) }
-                ),
-            ]);
-        }, 800);
 
         return () => {
             if (mapRef.current) {
@@ -251,18 +237,18 @@ function Mapa() {
         };
     }, []);
 
-    // ---------- RECONSTRUIR PUNTOS DEL MAPA SEGÚN FILTRO ----------
+    // ---------- DIBUJAR PUNTOS EN EL MAPA ----------
     useEffect(() => {
         const src = vectorSourceRef.current;
         src.clear();
-        const features = casosFiltrados.map(
-            (c) => new Feature({ geometry: new Point(fromLonLat([c.lng, c.lat])) })
-        );
+        const features = casosFiltrados
+            .filter((c) => c.lng != null && c.lat != null)
+            .map((c) => new Feature({ geometry: new Point(fromLonLat([c.lng, c.lat])) }));
         features.forEach((f) => f.set('weight', 1));
         src.addFeatures(features);
     }, [casosFiltrados]);
 
-    // ---------- RECENTRAR EL MAPA AL CAMBIAR DE CIUDAD ----------
+    // ---------- RECENTRAR AL CAMBIAR CIUDAD ----------
     useEffect(() => {
         if (primerRender.current) {
             primerRender.current = false;
@@ -271,117 +257,69 @@ function Mapa() {
         if (!mapRef.current) return;
         const view = mapRef.current.getView();
         if (filtroActual.ciudad === 'Todas') {
-            view.animate({ center: fromLonLat([-71, -37]), zoom: 4 }); // Chile completo
+            view.animate({ center: fromLonLat([-71, -37]), zoom: 4 });
         } else {
             const c = getCiudad(filtroActual.ciudad);
-            // Acercamos justo al umbral de la grilla para que se dibuje al filtrar
             if (c) view.animate({ center: fromLonLat([c.lng, c.lat]), zoom: ZOOM_MINIMO_GRILLA });
         }
     }, [filtroActual.ciudad]);
 
-    // ---------- ABRIR / CERRAR FORMULARIO ----------
+    // ---------- FORMULARIO ----------
     const abrirNuevo = () => {
-        setEditId(null);
-        setForm({ ...FORM_VACIO, ciudad: filtroActual.ciudad !== 'Todas' ? filtroActual.ciudad : 'Temuco' });
-        setShowModal(true);
-    };
-
-    const abrirEditar = (caso) => {
-        setEditId(caso.id);
+        setErrorForm('');
         setForm({
-            rut: caso.rut,
-            enfermedad: caso.enfermedad,
-            ciudad: caso.ciudad,
-            domicilio: caso.domicilio || '',
-            enTratamiento: caso.enTratamiento,
-            fechaInicio: caso.fechaInicio || '',
-            fechaProximoControl: caso.fechaProximoControl || '',
+            ...FORM_VACIO,
+            ciudad: filtroActual.ciudad !== 'Todas' ? filtroActual.ciudad : 'Temuco',
+            enfermedadId: enfermedades.length > 0 ? String(enfermedades[0].id) : '',
         });
         setShowModal(true);
     };
 
     const cerrarModal = () => {
         setShowModal(false);
-        setEditId(null);
         setForm(FORM_VACIO);
+        setErrorForm('');
     };
 
-    // ---------- GUARDAR (crear o editar) ----------
-    const handleGuardar = (e) => {
+    // ---------- GUARDAR (crear punto en el backend) ----------
+    const handleGuardar = async (e) => {
         e.preventDefault();
-        const datos = {
-            rut: form.rut,
-            enfermedad: form.enfermedad,
-            ciudad: form.ciudad,
-            domicilio: form.domicilio,
-            enTratamiento: form.enTratamiento,
-            fechaInicio: form.enTratamiento ? form.fechaInicio : '',
-            fechaProximoControl: form.enTratamiento ? form.fechaProximoControl : '',
-        };
-
-        if (editId) {
-            setCasos((prev) =>
-                prev.map((c) => {
-                    if (c.id !== editId) return c;
-                    // Si cambió de ciudad, reubicamos el punto y su cuadrante; si no, mantenemos
-                    let { lng, lat, quadrante } = c;
-                    if (c.ciudad !== datos.ciudad) {
-                        const ci = getCiudad(datos.ciudad) || getCiudad('Temuco');
-                        const q = snapToQuadrant(ci.lat + jitter(), ci.lng + jitter());
-                        lng = q.centerLng;
-                        lat = q.centerLat;
-                        quadrante = q.label;
-                    }
-                    return { ...c, ...datos, lng, lat, quadrante };
-                })
-            );
-        } else {
-            const ci = getCiudad(datos.ciudad) || getCiudad('Temuco');
-            const q = snapToQuadrant(ci.lat + jitter(), ci.lng + jitter());
-            setCasos((prev) => [
-                ...prev,
-                { id: Date.now(), ...datos, lng: q.centerLng, lat: q.centerLat, quadrante: q.label },
-            ]);
-        }
-        cerrarModal();
-    };
-
-    // ---------- ELIMINAR ----------
-    const eliminarCaso = (id) => {
-        if (!window.confirm('¿Eliminar este registro? También se quitará del mapa.')) return;
-        setCasos((prev) => prev.filter((c) => c.id !== id));
-    };
-
-    // ---------- CARGA MASIVA ----------
-    // Modo simulado: cuando el modal termina, "poblamos" el mapa con tantos
-    // casos como registros haya reportado como importados. En la integración
-    // real, este callback recargaría los puntos desde el backend.
-    const poblarDesdeCarga = (result) => {
-        const cantidad = result?.importados || 0;
-        if (cantidad <= 0) {
-            setShowBatchModal(false);
+        setErrorForm('');
+        if (!form.enfermedadId) {
+            setErrorForm('Selecciona una enfermedad.');
             return;
         }
-        const ciudadBase = filtroActual.ciudad !== 'Todas' ? filtroActual.ciudad : 'Temuco';
-        const ci = getCiudad(ciudadBase);
-        const nuevos = Array.from({ length: cantidad }).map(() => {
-            const tratamiento = Math.random() > 0.5;
-            const q = snapToQuadrant(ci.lat + jitter() * 2, ci.lng + jitter() * 2);
-            return {
-                id: Date.now() + Math.floor(Math.random() * 100000),
-                rut: `${Math.floor(Math.random() * 25) + 5}.${Math.floor(Math.random() * 900) + 100}.${Math.floor(Math.random() * 900) + 100}-${Math.floor(Math.random() * 9)}`,
-                enfermedad: ENFERMEDADES[Math.floor(Math.random() * ENFERMEDADES.length)],
-                ciudad: ciudadBase,
-                domicilio: 'Importado por lote',
-                lng: q.centerLng,
-                lat: q.centerLat,
-                quadrante: q.label,
-                enTratamiento: tratamiento,
-                fechaInicio: tratamiento ? hoyMas(-Math.floor(Math.random() * 30)) : '',
-                fechaProximoControl: tratamiento ? hoyMas(Math.floor(Math.random() * 8)) : '',
-            };
-        });
-        setCasos((prev) => [...prev, ...nuevos]);
+        setGuardando(true);
+        const pcr = {
+            rut: form.rut,
+            disease_id: Number(form.enfermedadId),
+            city: form.ciudad,
+            address: form.domicilio,
+            in_treatment: form.enTratamiento,
+            treatment_start: form.enTratamiento ? form.fechaInicio : null,
+            next_control: form.enTratamiento ? form.fechaProximoControl : null,
+        };
+        try {
+            await crearPunto(pcr);
+            cerrarModal();
+            await cargarPuntos();
+        } catch (err) {
+            // El backend devuelve el motivo (p. ej. "no se encontró la dirección ingresada")
+            setErrorForm(err.message || 'No se pudo crear el registro.');
+        } finally {
+            setGuardando(false);
+        }
+    };
+
+    // ---------- ELIMINAR (desactivar en el backend) ----------
+    const eliminarCaso = async (id) => {
+        if (!window.confirm('¿Desactivar este registro? Dejará de verse en el mapa.')) return;
+        try {
+            await desactivarPunto(id);
+            await cargarPuntos();
+        } catch (err) {
+            alert(err.message || 'No se pudo desactivar el registro.');
+        }
     };
 
     // ---------- FILTROS ----------
@@ -392,7 +330,7 @@ function Mapa() {
     };
 
     const limpiarFiltro = () => {
-        const limpio = { ciudad: 'Todas', enfermedad: 'Todas' };
+        const limpio = { ciudad: 'Todas', enfermedadId: 'Todas' };
         setTempFiltro(limpio);
         setFiltroActual(limpio);
         setShowFilterModal(false);
@@ -403,11 +341,13 @@ function Mapa() {
         setShowFilterModal(true);
     };
 
-    const handleLogout = () => navigate('/');
+    const handleLogout = () => {
+        logout();
+        navigate('/');
+    };
 
     const togglePanel = (cual) => setPanelAbierto((prev) => (prev === cual ? null : cual));
 
-    // Texto de los días para la tabla de tratamiento
     const textoDias = (dias) => {
         if (dias === null) return '—';
         if (dias < 0) return `Vencido (${Math.abs(dias)}d)`;
@@ -454,10 +394,13 @@ function Mapa() {
                         </div>
                     </div>
 
+                    {cargando && <p className="mapa-estado">Cargando puntos…</p>}
+                    {errorCarga && <p className="mapa-estado mapa-error">{errorCarga}</p>}
+
                     <div className="action-buttons">
                         <button className="btn-outline-dark" onClick={abrirFiltro}>
                             Filtrar Ciudad/Enfermedad
-                            {(filtroActual.enfermedad !== 'Todas' || filtroActual.ciudad !== 'Todas') && (
+                            {(filtroActual.enfermedadId !== 'Todas' || filtroActual.ciudad !== 'Todas') && (
                                 <span style={{ color: '#2b7bbc', marginLeft: '5px' }}>●</span>
                             )}
                         </button>
@@ -478,7 +421,6 @@ function Mapa() {
             <main className="mapa-container">
                 <div ref={mapElement} className="ol-map-container" />
 
-                {/* PANEL DESPLEGABLE CON LAS TABLAS */}
                 {panelAbierto && (
                     <div className="data-panel">
                         <div className="data-panel-header">
@@ -515,7 +457,6 @@ function Mapa() {
                                                 <td>{c.enTratamiento ? 'Sí' : 'No'}</td>
                                                 <td>{c.quadrante || '—'}</td>
                                                 <td className="acciones-celda">
-                                                    <button className="btn-mini-edit" onClick={() => abrirEditar(c)}>Editar</button>
                                                     <button className="btn-mini-del" onClick={() => eliminarCaso(c.id)}>Eliminar</button>
                                                 </td>
                                             </tr>
@@ -556,7 +497,6 @@ function Mapa() {
                                                         <td>{c.fechaProximoControl || '—'}</td>
                                                         <td>{textoDias(dias)}</td>
                                                         <td className="acciones-celda">
-                                                            <button className="btn-mini-edit" onClick={() => abrirEditar(c)}>Editar</button>
                                                             <button className="btn-mini-del" onClick={() => eliminarCaso(c.id)}>Eliminar</button>
                                                         </td>
                                                     </tr>
@@ -593,10 +533,10 @@ function Mapa() {
 
                             <div className="form-group">
                                 <label>Enfermedad</label>
-                                <select value={tempFiltro.enfermedad} onChange={(e) => setTempFiltro({ ...tempFiltro, enfermedad: e.target.value })}>
+                                <select value={tempFiltro.enfermedadId} onChange={(e) => setTempFiltro({ ...tempFiltro, enfermedadId: e.target.value })}>
                                     <option value="Todas">Todas las enfermedades</option>
-                                    {ENFERMEDADES.map((en) => (
-                                        <option key={en} value={en}>{en}</option>
+                                    {enfermedades.map((en) => (
+                                        <option key={en.id} value={en.id}>{en.name}</option>
                                     ))}
                                 </select>
                             </div>
@@ -610,26 +550,29 @@ function Mapa() {
                 </div>
             )}
 
-            {/* MODAL: INGRESO / EDICIÓN */}
+            {/* MODAL: INGRESO */}
             {showModal && (
                 <div className="modal-overlay">
                     <div className="modal-content">
                         <div className="modal-header" style={{ backgroundColor: '#1e293b' }}>
-                            <h3>{editId ? 'Editar caso' : 'Añadir nuevo caso'}</h3>
+                            <h3>Añadir nuevo caso</h3>
                             <button className="btn-close" onClick={cerrarModal}>&times;</button>
                         </div>
                         <form onSubmit={handleGuardar} className="modal-form">
+                            {errorForm && <div className="error-alert"><p>{errorForm}</p></div>}
+
                             <div className="form-group">
                                 <label>RUT del Paciente</label>
-                                <input type="text" placeholder="12.345.678-9" required value={form.rut}
+                                <input type="text" placeholder="12.345.678-5" required value={form.rut}
                                        onChange={(e) => setForm({ ...form, rut: e.target.value })} />
                             </div>
 
                             <div className="form-group">
                                 <label>Enfermedad</label>
-                                <select required value={form.enfermedad} onChange={(e) => setForm({ ...form, enfermedad: e.target.value })}>
-                                    {ENFERMEDADES.map((en) => (
-                                        <option key={en} value={en}>{en}</option>
+                                <select required value={form.enfermedadId} onChange={(e) => setForm({ ...form, enfermedadId: e.target.value })}>
+                                    <option value="" disabled>Selecciona una enfermedad</option>
+                                    {enfermedades.map((en) => (
+                                        <option key={en.id} value={en.id}>{en.name}</option>
                                     ))}
                                 </select>
                             </div>
@@ -650,7 +593,6 @@ function Mapa() {
                                 <small>La ubicación se anonimizará automáticamente a un cuadrante.</small>
                             </div>
 
-                            {/* Tratamiento */}
                             <div className="form-group checkbox-group">
                                 <label className="checkbox-label">
                                     <input type="checkbox" checked={form.enTratamiento}
@@ -676,8 +618,8 @@ function Mapa() {
 
                             <div className="modal-actions">
                                 <button type="button" className="btn-cancel" onClick={cerrarModal}>Cancelar</button>
-                                <button type="submit" className="btn-save" style={{ backgroundColor: '#1e293b' }}>
-                                    {editId ? 'Guardar cambios' : 'Guardar registro'}
+                                <button type="submit" className="btn-save" style={{ backgroundColor: '#1e293b' }} disabled={guardando}>
+                                    {guardando ? 'Guardando…' : 'Guardar registro'}
                                 </button>
                             </div>
                         </form>
@@ -688,9 +630,9 @@ function Mapa() {
             {/* MODAL: CARGA MASIVA (componente con barra de progreso) */}
             {showBatchModal && (
                 <CargaMasivaModal
-                    simular={true}
+                    simular={false}
                     onCerrar={() => setShowBatchModal(false)}
-                    onCompletado={poblarDesdeCarga}
+                    onCompletado={() => { setShowBatchModal(false); void cargarPuntos(); }}
                 />
             )}
         </div>

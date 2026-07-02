@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class WaitingService {
-    @Value("${geo_api_wait:0}")
+    @Value("${geo_api_wait:1000}")
     private int time;
     public void acquire() {
         if (time>0){
