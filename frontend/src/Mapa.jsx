@@ -14,6 +14,7 @@ import LineString from 'ol/geom/LineString';
 import { Style, Stroke } from 'ol/style';
 import { fromLonLat, toLonLat } from 'ol/proj';
 import './Mapa.css';
+import CargaMasivaModal from './CargaMasivaModal';
 
 // Listas compartidas (mantienen sincronizados formulario y filtros)
 const ENFERMEDADES = ['Tuberculosis', 'Varicela', 'Influenza', 'COVID-19', 'Sarampión'];
@@ -116,9 +117,6 @@ function Mapa() {
     const [form, setForm] = useState(FORM_VACIO);
     const [editId, setEditId] = useState(null);
 
-    // CARGA MASIVA
-    const [archivoLote, setArchivoLote] = useState(null);
-    const [errorLote, setErrorLote] = useState('');
 
     // FILTROS
     const [filtroActual, setFiltroActual] = useState({ ciudad: 'Todas', enfermedad: 'Todas' });
@@ -276,7 +274,8 @@ function Mapa() {
             view.animate({ center: fromLonLat([-71, -37]), zoom: 4 }); // Chile completo
         } else {
             const c = getCiudad(filtroActual.ciudad);
-            if (c) view.animate({ center: fromLonLat([c.lng, c.lat]), zoom: 12 });
+            // Acercamos justo al umbral de la grilla para que se dibuje al filtrar
+            if (c) view.animate({ center: fromLonLat([c.lng, c.lat]), zoom: ZOOM_MINIMO_GRILLA });
         }
     }, [filtroActual.ciudad]);
 
@@ -354,10 +353,18 @@ function Mapa() {
     };
 
     // ---------- CARGA MASIVA ----------
-    const ejecutarCargaExitosa = () => {
+    // Modo simulado: cuando el modal termina, "poblamos" el mapa con tantos
+    // casos como registros haya reportado como importados. En la integración
+    // real, este callback recargaría los puntos desde el backend.
+    const poblarDesdeCarga = (result) => {
+        const cantidad = result?.importados || 0;
+        if (cantidad <= 0) {
+            setShowBatchModal(false);
+            return;
+        }
         const ciudadBase = filtroActual.ciudad !== 'Todas' ? filtroActual.ciudad : 'Temuco';
         const ci = getCiudad(ciudadBase);
-        const nuevos = Array.from({ length: 15 }).map(() => {
+        const nuevos = Array.from({ length: cantidad }).map(() => {
             const tratamiento = Math.random() > 0.5;
             const q = snapToQuadrant(ci.lat + jitter() * 2, ci.lng + jitter() * 2);
             return {
@@ -375,19 +382,6 @@ function Mapa() {
             };
         });
         setCasos((prev) => [...prev, ...nuevos]);
-        setShowBatchModal(false);
-        setArchivoLote(null);
-    };
-
-    const handleCargaMasiva = (e) => {
-        e.preventDefault();
-        setErrorLote('');
-        if (!archivoLote) return setErrorLote('Adjunte un archivo.');
-        if (archivoLote.name.toLowerCase().includes('error')) {
-            setErrorLote('Error de validación en el archivo.');
-        } else {
-            ejecutarCargaExitosa();
-        }
     };
 
     // ---------- FILTROS ----------
@@ -691,32 +685,13 @@ function Mapa() {
                 </div>
             )}
 
-            {/* MODAL: CARGA MASIVA */}
+            {/* MODAL: CARGA MASIVA (componente con barra de progreso) */}
             {showBatchModal && (
-                <div className="modal-overlay">
-                    <div className="modal-content">
-                        <div className="modal-header" style={{ backgroundColor: '#1e293b' }}>
-                            <h3>Carga masiva de registros</h3>
-                            <button className="btn-close" onClick={() => setShowBatchModal(false)}>&times;</button>
-                        </div>
-                        <form onSubmit={handleCargaMasiva} className="modal-form">
-                            {errorLote && (
-                                <div className="error-alert">
-                                    <strong> Error de validación</strong>
-                                    <p>{errorLote}</p>
-                                </div>
-                            )}
-                            <div className="form-group file-upload-group">
-                                <label>Archivo de datos (.xlsx, .csv)</label>
-                                <input type="file" accept=".xlsx, .xls, .csv" required onChange={(e) => setArchivoLote(e.target.files[0])} />
-                            </div>
-                            <div className="modal-actions">
-                                <button type="button" className="btn-cancel" onClick={() => setShowBatchModal(false)}>Cancelar</button>
-                                <button type="submit" className="btn-save" style={{ backgroundColor: '#1e293b' }}>Procesar Archivo</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
+                <CargaMasivaModal
+                    simular={true}
+                    onCerrar={() => setShowBatchModal(false)}
+                    onCompletado={poblarDesdeCarga}
+                />
             )}
         </div>
     );
