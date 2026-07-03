@@ -8,10 +8,13 @@ import com.example.sigat.backend.util.JwtUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,17 +39,31 @@ public class AuthController {
     }
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthenticationRequest authReq){
-        UserDetails userDetails=userDetailsService.loadUserByUsername(authReq.email());
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        authReq.email(),
-                        authReq.password()
-                )
-        );
-        Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
-        String role = userDetails.getAuthorities().isEmpty() ? "NO_ROLE" : authorities.iterator().next().toString();
-        String token = jwtUtil.generateToken(userDetails);
-        return new ResponseEntity<>(new AuthenticationResponse(token,userDetails.getUsername(),role),HttpStatus.OK);
+        try {
+            UserDetails userDetails = userDetailsService.loadUserByUsername(authReq.email());
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            authReq.email(),
+                            authReq.password()
+                    )
+            );
+            Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
+            String role = userDetails.getAuthorities().isEmpty() ? "NO_ROLE" : authorities.iterator().next().toString();
+            String token = jwtUtil.generateToken(userDetails);
+            return new ResponseEntity<>(new AuthenticationResponse(token,userDetails.getUsername(),role),HttpStatus.OK);
+        } catch (DisabledException e) {
+            // Cuenta existe pero está inactiva: recién registrada (pendiente de
+            // aprobación) o desactivada por un admin. No se genera token.
+            return new ResponseEntity<>(
+                    Map.of("message", "Tu cuenta aún no ha sido aprobada o se encuentra desactivada."),
+                    HttpStatus.FORBIDDEN);
+        } catch (BadCredentialsException | UsernameNotFoundException e) {
+            // No distinguimos "usuario no existe" de "contraseña incorrecta" en
+            // el mensaje, para no revelar si un correo está o no registrado.
+            return new ResponseEntity<>(
+                    Map.of("message", "Credenciales incorrectas."),
+                    HttpStatus.UNAUTHORIZED);
+        }
     }
 
     @PostMapping("/register")
