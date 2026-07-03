@@ -63,7 +63,7 @@ function Registro() {
             // algunos entornos embebidos) + redirección tras una pausa breve
             // para que la persona alcance a leer la confirmación.
             setExito(true);
-            setTimeout(() => navigate('/login'), 2000);
+            setTimeout(() => navigate('/login'), 6000);
         } catch (err) {
             setErrorMensaje(err.message || 'No se pudo completar el registro.');
             enviandoRef.current = false;
