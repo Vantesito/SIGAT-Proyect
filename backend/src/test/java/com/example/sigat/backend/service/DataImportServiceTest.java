@@ -35,8 +35,12 @@ class DataImportServiceTest {
 
     private static Workbook workbook;
 
+    // Usuario "autor" de la carga en el test (ya no se pasa "" hardcodeado).
+    private static final String USERNAME_TEST = "admin@sigat.cl";
+
     @BeforeAll
     static void loadWorkbook() throws IOException {
+        // El archivo debe estar en src/test/resources para cargarse desde el classpath
         InputStream is = DataImportServiceTest.class.getClassLoader()
                 .getResourceAsStream("happy-path.xlsx");
         assertNotNull(is, "No se encontró happy-path.xlsx en src/test/resources");
@@ -61,7 +65,7 @@ class DataImportServiceTest {
         // La enfermedad de cada fila "existe": devolvemos un id cualquiera
         when(diseaseRepository.findByNameEqualsIgnoreCase(anyString())).thenReturn(1L);
 
-        ImportResult result = dataImportService.importWorkbookData(workbook);
+        ImportResult result = dataImportService.importWorkbookData(workbook, USERNAME_TEST);
 
         // importWorkbookData ya no lanza (captura por fila), así que verificamos el resultado
         assertEquals(0, result.fallidos(), () -> "Errores encontrados: " + result.errores());
