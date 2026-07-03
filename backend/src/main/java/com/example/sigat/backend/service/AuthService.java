@@ -3,11 +3,15 @@ package com.example.sigat.backend.service;
 import com.example.sigat.backend.dto.RegisterRequest;
 import com.example.sigat.backend.model.User;
 import com.example.sigat.backend.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AuthService {
+    private static final Logger log = LoggerFactory.getLogger(AuthService.class);
+
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
@@ -41,7 +45,10 @@ public class AuthService {
         user.setRole(User.Role.USER);
         userRepository.save(user);
 
-        // Correo de "solicitud de registro recibida"
-        emailService.sendRegisterRequestEmail(user.getEmail(), user.getNames());
+        try {
+            emailService.sendRegisterRequestEmail(user.getEmail(), user.getNames());
+        } catch (RuntimeException e) {
+            log.warn("No se pudo enviar el correo de registro a {}: {}", user.getEmail(), e.getMessage());
+        }
     }
 }

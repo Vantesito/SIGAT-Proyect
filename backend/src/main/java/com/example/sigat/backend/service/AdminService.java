@@ -2,12 +2,16 @@ package com.example.sigat.backend.service;
 
 import com.example.sigat.backend.model.User;
 import com.example.sigat.backend.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class AdminService {
+    private static final Logger log = LoggerFactory.getLogger(AdminService.class);
+
     private final UserRepository userRepository;
     private final EmailService emailService;
 
@@ -31,8 +35,9 @@ public class AdminService {
             throw new IllegalArgumentException("El usuario ya está activo");
         }
         user.setActive(true);
-        emailService.sendAcceptedRequestEmail(user.getEmail(), user.getNames());
         userRepository.save(user);
+        enviarCorreoSeguro(() -> emailService.sendAcceptedRequestEmail(user.getEmail(), user.getNames()),
+                user.getEmail());
     }
 
     public void activate(Long id) {
@@ -42,8 +47,9 @@ public class AdminService {
             throw new IllegalArgumentException("El usuario ya está activo");
         }
         user.setActive(true);
-        emailService.sendReactivatedAccountEmail(user.getEmail(), user.getNames());
         userRepository.save(user);
+        enviarCorreoSeguro(() -> emailService.sendReactivatedAccountEmail(user.getEmail(), user.getNames()),
+                user.getEmail());
     }
 
     public void deactivate(Long id) {
@@ -53,8 +59,9 @@ public class AdminService {
             throw new IllegalArgumentException("El usuario ya está desactivado");
         }
         user.setActive(false);
-        emailService.sendDeactivatedAccountEmail(user.getEmail(), user.getNames());
         userRepository.save(user);
+        enviarCorreoSeguro(() -> emailService.sendDeactivatedAccountEmail(user.getEmail(), user.getNames()),
+                user.getEmail());
     }
 
     public void setAdmin(Long id, boolean admin) {
@@ -65,9 +72,11 @@ public class AdminService {
         userRepository.save(user);
 
         if (admin && !eraAdmin) {
-            emailService.sendPromotedToAdminEmail(user.getEmail(), user.getNames());
+            enviarCorreoSeguro(() -> emailService.sendPromotedToAdminEmail(user.getEmail(), user.getNames()),
+                    user.getEmail());
         } else if (!admin && eraAdmin) {
-            emailService.sendRemovedAdminEmail(user.getEmail(), user.getNames());
+            enviarCorreoSeguro(() -> emailService.sendRemovedAdminEmail(user.getEmail(), user.getNames()),
+                    user.getEmail());
         }
     }
 
@@ -75,5 +84,17 @@ public class AdminService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("La id especificada no fue encontrada"));
         userRepository.delete(user);
+    }
+
+    // El correo es informativo, no crítico: si Resend lo rechaza (p. ej. por
+    // las restricciones del modo sandbox, que solo permite enviar a la propia
+    // cuenta verificada) o falla por cualquier otra razón, la acción sobre el
+    // usuario (ya guardada en la base) NO debe reportarse como fallida.
+    private void enviarCorreoSeguro(Runnable envio, String destinatario) {
+        try {
+            envio.run();
+        } catch (RuntimeException e) {
+            log.warn("No se pudo enviar el correo a {}: {}", destinatario, e.getMessage());
+        }
     }
 }
