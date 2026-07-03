@@ -51,17 +51,18 @@ public class GeocodingService {
     // Convierte una dirección de calle en coordenadas [lat, lng] usando Nominatim (OpenStreetMap).
     public double[] geocode(String address, String city) {
         double[] centro = CENTROS_CIUDAD.get(normalizar(city));
+        String direccionNormalizada = normalizarNumeracion(address);
 
         // Intento 1: búsqueda estructurada (calle/ciudad por separado), más
         // precisa que texto libre, acotada a la ciudad si la conocemos.
-        double[] resultado = buscarEstructurado(address, city, centro);
+        double[] resultado = buscarEstructurado(direccionNormalizada, city, centro);
         if (resultado != null) return resultado;
 
         // Intento 2 (fallback): si la búsqueda estructurada estricta no
         // encontró nada (p. ej. domicilio con formato irregular), reintenta
         // con texto libre pero manteniendo la caja geográfica, para que
         // igual quede acotado a la ciudad correcta.
-        return buscarLibre(address, city, centro);
+        return buscarLibre(direccionNormalizada, city, centro);
     }
 
     private double[] buscarEstructurado(String address, String city, double[] centro) {
@@ -131,6 +132,16 @@ public class GeocodingService {
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("la respuesta de geolocalización no fue válida");
         }
+    }
+
+    // Quita ceros a la izquierda de los números de casa (p. ej. "0650" -> "650").
+    // Es una convención de numeración chilena que casi nunca está reflejada
+    // así en OpenStreetMap; con el cero puesto, Nominatim no encuentra el
+    // número exacto y termina emparejando con resultados muy alejados.
+    // No toca palabras (nombres de calle), solo tokens puramente numéricos.
+    private String normalizarNumeracion(String address) {
+        if (address == null) return address;
+        return address.replaceAll("\\b0+(\\d+)\\b", "$1");
     }
 
     private String normalizar(String ciudad) {
