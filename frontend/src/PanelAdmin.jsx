@@ -4,7 +4,7 @@ import './PanelAdmin.css';
 import logosigat from './assets/logosigat.png';
 import * as api from './api';
 import Paginador from './Paginador';
-import { NOMBRES_REGIONES, normalizarTexto } from './chileRegiones.js';
+import { NOMBRES_REGIONES, nombreOficialRegion } from './chileRegiones';
 
 const POR_PAGINA = 10;
 
@@ -175,7 +175,7 @@ function PanelAdmin() {
     const usuariosFiltrados = useMemo(() => {
         const q = busqueda.trim().toLowerCase();
         return usuarios.filter((u) => {
-            const okRegion = !regionSeleccionada || normalizarTexto(u.region) === normalizarTexto(regionSeleccionada);
+            const okRegion = !regionSeleccionada || nombreOficialRegion(u.region) === regionSeleccionada;
             const okBusqueda =
                 !q ||
                 u.nombre.toLowerCase().includes(q) ||
@@ -224,7 +224,7 @@ function PanelAdmin() {
     }, [historial, paginaHistorial]);
     const totalPaginasHistorial = Math.max(1, Math.ceil(historial.length / POR_PAGINA));
 
-    const usuariosPorRegion = (region) => usuarios.filter((u) => normalizarTexto(u.region) === normalizarTexto(region)).length;
+    const usuariosPorRegion = (region) => usuarios.filter((u) => nombreOficialRegion(u.region) === region).length;
 
     const toggleEstado = async (u) => {
         try {
@@ -427,7 +427,7 @@ function PanelAdmin() {
                                                             {u.esAdmin && <span className="badge-admin">Admin</span>}
                                                         </td>
                                                         <td>{u.email}</td>
-                                                        <td>{u.region}</td>
+                                                        <td>{nombreOficialRegion(u.region)}</td>
                                                         <td>{u.ciudad}</td>
                                                         <td>
                                 <span className={u.estado === 'Activo' ? 'badge-activo' : 'badge-inactivo'}>
