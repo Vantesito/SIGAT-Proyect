@@ -3,7 +3,7 @@ import { useState, useRef } from 'react';
 import './Registro.css';
 import logosigat from './assets/logosigat.png';
 import { register } from './api';
-import { NOMBRES_REGIONES, ciudadesDeRegion } from './chileRegiones';
+import { NOMBRES_REGIONES, ciudadesDeRegion } from './chileRegiones.js';
 
 function Registro() {
     const navigate = useNavigate();

@@ -4,7 +4,7 @@ import './PanelAdmin.css';
 import logosigat from './assets/logosigat.png';
 import * as api from './api';
 import Paginador from './Paginador';
-import { NOMBRES_REGIONES, normalizarTexto } from './chileRegiones';
+import { NOMBRES_REGIONES, normalizarTexto } from './chileRegiones.js';
 
 const POR_PAGINA = 10;
 
