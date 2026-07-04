@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import './PanelAdmin.css';
 import logosigat from './assets/logosigat.png';
 import * as api from './api';
+import Paginador from './Paginador';
+
+const POR_PAGINA = 10;
 
 // Ciudades disponibles en la barra lateral de gestión
 const CIUDADES = [
@@ -154,6 +157,24 @@ function PanelAdmin() {
     const [ciudadSeleccionada, setCiudadSeleccionada] = useState(null);
     const [busqueda, setBusqueda] = useState('');
 
+    // Página actual de cada tabla (independientes entre sí)
+    const [paginaSolicitudes, setPaginaSolicitudes] = useState(1);
+    const [paginaUsuarios, setPaginaUsuarios] = useState(1);
+    const [paginaHistorial, setPaginaHistorial] = useState(1);
+
+    // Los siguientes efectos ajustan la página actual de cada tabla cuando la
+    // lista cambia de tamaño (filtro, aprobar/eliminar, nueva carga, etc.).
+    // El aviso de "cascading renders" de esta regla experimental es un falso
+    // positivo aquí: cada ajuste es independiente y solo corrige un número
+    // de página fuera de rango, no encadena renders entre sí.
+    /* eslint-disable react-hooks/set-state-in-effect */
+
+    // Al cambiar de ciudad o búsqueda, vuelve a la página 1 (si no, podrías
+    // quedar "varado" en una página que ya no existe para el nuevo filtro).
+    useEffect(() => {
+        setPaginaUsuarios(1);
+    }, [ciudadSeleccionada, busqueda]);
+
     const usuariosFiltrados = useMemo(() => {
         const q = busqueda.trim().toLowerCase();
         return usuarios.filter((u) => {
@@ -166,6 +187,45 @@ function PanelAdmin() {
             return okCiudad && okBusqueda;
         });
     }, [usuarios, ciudadSeleccionada, busqueda]);
+
+    // Si la lista se acorta (p. ej. al aprobar/eliminar) y la página actual
+    // queda fuera de rango, retrocede automáticamente a la última válida.
+    useEffect(() => {
+        const total = Math.max(1, Math.ceil(solicitudes.length / POR_PAGINA));
+        if (paginaSolicitudes > total) setPaginaSolicitudes(total);
+    }, [solicitudes, paginaSolicitudes]);
+
+    useEffect(() => {
+        const total = Math.max(1, Math.ceil(usuariosFiltrados.length / POR_PAGINA));
+        if (paginaUsuarios > total) setPaginaUsuarios(total);
+    }, [usuariosFiltrados, paginaUsuarios]);
+
+    // Recorte de cada lista a la página actual (10 por página)
+    const solicitudesPagina = useMemo(() => {
+        const inicio = (paginaSolicitudes - 1) * POR_PAGINA;
+        return solicitudes.slice(inicio, inicio + POR_PAGINA);
+    }, [solicitudes, paginaSolicitudes]);
+    const totalPaginasSolicitudes = Math.max(1, Math.ceil(solicitudes.length / POR_PAGINA));
+
+    const usuariosPagina = useMemo(() => {
+        const inicio = (paginaUsuarios - 1) * POR_PAGINA;
+        return usuariosFiltrados.slice(inicio, inicio + POR_PAGINA);
+    }, [usuariosFiltrados, paginaUsuarios]);
+    const totalPaginasUsuarios = Math.max(1, Math.ceil(usuariosFiltrados.length / POR_PAGINA));
+
+    // Guarda de rango también para el historial
+    useEffect(() => {
+        const total = Math.max(1, Math.ceil(historial.length / POR_PAGINA));
+        setPaginaHistorial((p) => (p > total ? total : p));
+    }, [historial]);
+
+    /* eslint-enable react-hooks/set-state-in-effect */
+
+    const historialPagina = useMemo(() => {
+        const inicio = (paginaHistorial - 1) * POR_PAGINA;
+        return historial.slice(inicio, inicio + POR_PAGINA);
+    }, [historial, paginaHistorial]);
+    const totalPaginasHistorial = Math.max(1, Math.ceil(historial.length / POR_PAGINA));
 
     const usuariosPorCiudad = (ciudad) => usuarios.filter((u) => u.ciudad === ciudad).length;
 
@@ -212,7 +272,7 @@ function PanelAdmin() {
         <div className="admin-layout">
             <aside className="admin-sidebar">
                 <div className="admin-brand">
-                    <img src={`${logosigat}`} alt="SIGAT Logo" width={50} height={50} />
+                    <img src={logosigat} alt="SIGAT Logo" width={50} height={50} />
                     <div>
                         <h2>Panel de administración</h2>
                     </div>
@@ -275,7 +335,7 @@ function PanelAdmin() {
                                             <td colSpan="6" className="empty-state">No hay solicitudes pendientes.</td>
                                         </tr>
                                     ) : (
-                                        solicitudes.map((user) => (
+                                        solicitudesPagina.map((user) => (
                                             <tr key={user.id}>
                                                 <td>{user.rut}</td>
                                                 <td><strong>{user.nombre}</strong></td>
@@ -291,6 +351,11 @@ function PanelAdmin() {
                                     )}
                                     </tbody>
                                 </table>
+                                <Paginador
+                                    pagina={paginaSolicitudes}
+                                    totalPaginas={totalPaginasSolicitudes}
+                                    onCambiar={setPaginaSolicitudes}
+                                />
                             </div>
                         </section>
                     </>
@@ -356,7 +421,7 @@ function PanelAdmin() {
                                                     <td colSpan="6" className="empty-state">No se encontraron usuarios.</td>
                                                 </tr>
                                             ) : (
-                                                usuariosFiltrados.map((u) => (
+                                                usuariosPagina.map((u) => (
                                                     <tr key={u.id}>
                                                         <td>{u.rut}</td>
                                                         <td>
@@ -384,6 +449,11 @@ function PanelAdmin() {
                                             )}
                                             </tbody>
                                         </table>
+                                        <Paginador
+                                            pagina={paginaUsuarios}
+                                            totalPaginas={totalPaginasUsuarios}
+                                            onCambiar={setPaginaUsuarios}
+                                        />
                                     </div>
                                 )}
                             </div>
@@ -416,7 +486,7 @@ function PanelAdmin() {
                                             <td colSpan="5" className="empty-state">No hay acciones registradas.</td>
                                         </tr>
                                     ) : (
-                                        historial.map((h) => (
+                                        historialPagina.map((h) => (
                                             <tr key={h.id}>
                                                 <td><strong>{h.usuario}</strong></td>
                                                 <td>
@@ -438,6 +508,11 @@ function PanelAdmin() {
                                     )}
                                     </tbody>
                                 </table>
+                                <Paginador
+                                    pagina={paginaHistorial}
+                                    totalPaginas={totalPaginasHistorial}
+                                    onCambiar={setPaginaHistorial}
+                                />
                             </div>
                         </section>
                     </>
