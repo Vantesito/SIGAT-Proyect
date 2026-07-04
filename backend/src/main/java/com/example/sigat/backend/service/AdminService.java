@@ -52,12 +52,20 @@ public class AdminService {
                 user.getEmail());
     }
 
-    public void deactivate(Long id) {
+    // Recibe también el email de quien ejecuta la acción, para impedir que
+    // un admin se desactive a sí mismo (quedaría sin poder volver a entrar,
+    // y si era el único admin activo, nadie podría reactivarlo).
+    public void deactivate(Long id, String actingUserEmail) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("La id especificada no fue encontrada"));
         if (!user.isActive()) {
             throw new IllegalArgumentException("El usuario ya está desactivado");
         }
+
+        if (user.getEmail().equalsIgnoreCase(actingUserEmail)) {
+            throw new IllegalArgumentException("No puedes desactivar tu propia cuenta");
+        }
+
         user.setActive(false);
         userRepository.save(user);
         enviarCorreoSeguro(() -> emailService.sendDeactivatedAccountEmail(user.getEmail(), user.getNames()),
