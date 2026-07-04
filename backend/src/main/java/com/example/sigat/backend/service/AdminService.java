@@ -64,10 +64,19 @@ public class AdminService {
                 user.getEmail());
     }
 
-    public void setAdmin(Long id, boolean admin) {
+    // Ahora recibe el email de quien EJECUTA la acción (viene del token JWT
+    // en el controller, no de nada que el frontend pueda enviar mal o
+    // dejar de enviar). Es la defensa real, independiente de caché o
+    // sessionStorage del navegador.
+    public void setAdmin(Long id, boolean admin, String actingUserEmail) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("La id especificada no fue encontrada"));
         boolean eraAdmin = user.getRole() == User.Role.ADMIN;
+
+        if (!admin && eraAdmin && user.getEmail().equalsIgnoreCase(actingUserEmail)) {
+            throw new IllegalArgumentException("No puedes quitarte el rol de administrador a ti mismo");
+        }
+
         user.setRole(admin ? User.Role.ADMIN : User.Role.USER);
         userRepository.save(user);
 
@@ -80,9 +89,14 @@ public class AdminService {
         }
     }
 
-    public void delete(Long id) {
+    public void delete(Long id, String actingUserEmail) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("La id especificada no fue encontrada"));
+
+        if (user.getEmail().equalsIgnoreCase(actingUserEmail)) {
+            throw new IllegalArgumentException("No puedes eliminar tu propia cuenta");
+        }
+
         userRepository.delete(user);
     }
 

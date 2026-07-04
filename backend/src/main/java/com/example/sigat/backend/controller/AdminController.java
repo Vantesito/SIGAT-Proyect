@@ -64,22 +64,29 @@ public class AdminController {
         }
     }
 
-    // Dar / quitar privilegios de administrador
+    // Dar / quitar privilegios de administrador. Ahora recibe quién ejecuta
+    // la acción (@AuthenticationPrincipal) para que el service pueda impedir
+    // que alguien se quite el rol de admin a sí mismo, sin depender del
+    // frontend.
     @PutMapping("/users/{id}/role")
-    public ResponseEntity<?> setRole(@PathVariable(name = "id") Long id, @RequestBody RoleChangeRequest req) {
+    public ResponseEntity<?> setRole(@AuthenticationPrincipal UserDetails ap,
+                                     @PathVariable(name = "id") Long id,
+                                     @RequestBody RoleChangeRequest req) {
         try {
-            adminService.setAdmin(id, req.admin());
+            adminService.setAdmin(id, req.admin(), ap.getUsername());
             return new ResponseEntity<>(Map.of("message", "exitoso"), HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(Map.of("message", e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 
-    // Eliminar usuario
+    // Eliminar usuario. Mismo criterio: el backend impide auto-eliminación
+    // sin importar lo que muestre el frontend.
     @DeleteMapping("/users/{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable(name = "id") Long id) {
+    public ResponseEntity<?> deleteUser(@AuthenticationPrincipal UserDetails ap,
+                                        @PathVariable(name = "id") Long id) {
         try {
-            adminService.delete(id);
+            adminService.delete(id, ap.getUsername());
             return new ResponseEntity<>(Map.of("message", "exitoso"), HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(Map.of("message", e.getMessage()), HttpStatus.BAD_REQUEST);
