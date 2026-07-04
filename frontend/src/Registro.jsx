@@ -3,6 +3,7 @@ import { useState, useRef } from 'react';
 import './Registro.css';
 import logosigat from './assets/logosigat.png';
 import { register } from './api';
+import { NOMBRES_REGIONES, ciudadesDeRegion } from './chileRegiones';
 
 function Registro() {
     const navigate = useNavigate();
@@ -15,7 +16,7 @@ function Registro() {
         confirmPassword: '',
         telefono: '',
         rut: '',
-        pais: '',
+        pais: 'Chile',
         region: '',
         ciudad: '',
         institucion: ''
@@ -31,6 +32,13 @@ function Registro() {
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    // Al cambiar de región, la ciudad seleccionada podría no pertenecer a la
+    // región nueva; reiniciamos la ciudad para forzar una elección válida.
+    const handleRegionChange = (e) => {
+        const region = e.target.value;
+        setFormData((prev) => ({ ...prev, region, ciudad: '' }));
     };
 
     const handleRegistro = async (e) => {
@@ -63,7 +71,7 @@ function Registro() {
             // algunos entornos embebidos) + redirección tras una pausa breve
             // para que la persona alcance a leer la confirmación.
             setExito(true);
-            setTimeout(() => navigate('/login'), 6000);
+            setTimeout(() => navigate('/login'), 6000); // más tiempo para leer el mensaje
         } catch (err) {
             setErrorMensaje(err.message || 'No se pudo completar el registro.');
             enviandoRef.current = false;
@@ -82,7 +90,10 @@ function Registro() {
                     <div className="registro-exito">
                         <p>Tu solicitud de registro fue enviada con éxito.</p>
                         <p>Un administrador debe aprobarla antes de que puedas iniciar sesión.</p>
-                        <p className="registro-exito-redirigiendo">Redirigiendo al inicio de sesión…</p>
+                        <p className="registro-exito-redirigiendo">Serás redirigido al inicio de sesión en unos segundos…</p>
+                        <button type="button" className="btn-registro-submit" onClick={() => navigate('/login')}>
+                            Ir a iniciar sesión ahora
+                        </button>
                     </div>
                 </div>
             </div>
@@ -134,15 +145,30 @@ function Registro() {
                         </div>
                         <div className="input-group-grid">
                             <label>País</label>
-                            <input type="text" name="pais" required value={formData.pais} onChange={handleChange} disabled={enviando} />
+                            {/* Por ahora solo Chile; se deja como select para agregar más países a futuro sin cambiar el formulario. */}
+                            <select name="pais" required value={formData.pais || 'Chile'} onChange={handleChange} disabled={enviando}>
+                                <option value="Chile">Chile</option>
+                            </select>
                         </div>
                         <div className="input-group-grid">
                             <label>Región</label>
-                            <input type="text" name="region" required value={formData.region} onChange={handleChange} disabled={enviando} />
+                            <select name="region" required value={formData.region} onChange={handleRegionChange} disabled={enviando}>
+                                <option value="" disabled>Selecciona una región</option>
+                                {NOMBRES_REGIONES.map((r) => (
+                                    <option key={r} value={r}>{r}</option>
+                                ))}
+                            </select>
                         </div>
                         <div className="input-group-grid">
                             <label>Ciudad</label>
-                            <input type="text" name="ciudad" required value={formData.ciudad} onChange={handleChange} disabled={enviando} />
+                            <select name="ciudad" required value={formData.ciudad} onChange={handleChange} disabled={enviando || !formData.region}>
+                                <option value="" disabled>
+                                    {formData.region ? 'Selecciona una ciudad' : 'Primero selecciona una región'}
+                                </option>
+                                {ciudadesDeRegion(formData.region).map((c) => (
+                                    <option key={c} value={c}>{c}</option>
+                                ))}
+                            </select>
                         </div>
                         <div className="input-group-grid">
                             <label>Institución</label>

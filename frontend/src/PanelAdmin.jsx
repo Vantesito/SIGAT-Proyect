@@ -4,15 +4,11 @@ import './PanelAdmin.css';
 import logosigat from './assets/logosigat.png';
 import * as api from './api';
 import Paginador from './Paginador';
+import { NOMBRES_REGIONES, normalizarTexto } from './chileRegiones';
 
 const POR_PAGINA = 10;
 
 // Ciudades disponibles en la barra lateral de gestión
-const CIUDADES = [
-    'Arica', 'Iquique', 'Antofagasta', 'La Serena', 'Valparaíso', 'Santiago',
-    'Rancagua', 'Talca', 'Concepción', 'Temuco', 'Valdivia', 'Puerto Montt', 'Punta Arenas',
-];
-
 // Formatea una fecha ISO a algo legible
 const fmtFecha = (iso) => {
     const d = new Date(iso);
@@ -30,6 +26,7 @@ const mapearUsuario = (u) => ({
     email: u.email,
     institucion: u.institution,
     ciudad: u.city,
+    region: u.region,
     estado: u.active ? 'Activo' : 'Desactivado',
     esAdmin: u.role === 'ADMIN',
 });
@@ -154,7 +151,7 @@ function PanelAdmin() {
     }, []);
     /* eslint-enable react-hooks/set-state-in-effect */
 
-    const [ciudadSeleccionada, setCiudadSeleccionada] = useState(null);
+    const [regionSeleccionada, setRegionSeleccionada] = useState(null);
     const [busqueda, setBusqueda] = useState('');
 
     // Página actual de cada tabla (independientes entre sí)
@@ -173,20 +170,20 @@ function PanelAdmin() {
     // quedar "varado" en una página que ya no existe para el nuevo filtro).
     useEffect(() => {
         setPaginaUsuarios(1);
-    }, [ciudadSeleccionada, busqueda]);
+    }, [regionSeleccionada, busqueda]);
 
     const usuariosFiltrados = useMemo(() => {
         const q = busqueda.trim().toLowerCase();
         return usuarios.filter((u) => {
-            const okCiudad = !ciudadSeleccionada || u.ciudad === ciudadSeleccionada;
+            const okRegion = !regionSeleccionada || normalizarTexto(u.region) === normalizarTexto(regionSeleccionada);
             const okBusqueda =
                 !q ||
                 u.nombre.toLowerCase().includes(q) ||
                 u.email.toLowerCase().includes(q) ||
                 (u.rut || '').toLowerCase().includes(q);
-            return okCiudad && okBusqueda;
+            return okRegion && okBusqueda;
         });
-    }, [usuarios, ciudadSeleccionada, busqueda]);
+    }, [usuarios, regionSeleccionada, busqueda]);
 
     // Si la lista se acorta (p. ej. al aprobar/eliminar) y la página actual
     // queda fuera de rango, retrocede automáticamente a la última válida.
@@ -227,7 +224,7 @@ function PanelAdmin() {
     }, [historial, paginaHistorial]);
     const totalPaginasHistorial = Math.max(1, Math.ceil(historial.length / POR_PAGINA));
 
-    const usuariosPorCiudad = (ciudad) => usuarios.filter((u) => u.ciudad === ciudad).length;
+    const usuariosPorRegion = (region) => usuarios.filter((u) => normalizarTexto(u.region) === normalizarTexto(region)).length;
 
     const toggleEstado = async (u) => {
         try {
@@ -369,23 +366,23 @@ function PanelAdmin() {
                             <p>Selecciona una ciudad para ver sus usuarios o busca uno específico.</p>
                         </header>
                         <section className="admin-content gestion-layout">
-                            {/* Barra de ciudades */}
+                            {/* Barra de regiones */}
                             <div className="ciudades-bar">
-                                <h4>Ciudades</h4>
+                                <h4>Regiones</h4>
                                 <button
-                                    className={`ciudad-item ${ciudadSeleccionada === null ? 'active' : ''}`}
-                                    onClick={() => setCiudadSeleccionada(null)}
+                                    className={`ciudad-item ${regionSeleccionada === null ? 'active' : ''}`}
+                                    onClick={() => setRegionSeleccionada(null)}
                                 >
                                     Todas
                                 </button>
-                                {CIUDADES.map((c) => (
+                                {NOMBRES_REGIONES.map((r) => (
                                     <button
-                                        key={c}
-                                        className={`ciudad-item ${ciudadSeleccionada === c ? 'active' : ''}`}
-                                        onClick={() => setCiudadSeleccionada(c)}
+                                        key={r}
+                                        className={`ciudad-item ${regionSeleccionada === r ? 'active' : ''}`}
+                                        onClick={() => setRegionSeleccionada(r)}
                                     >
-                                        {c}
-                                        <span className="ciudad-count">{usuariosPorCiudad(c)}</span>
+                                        {r}
+                                        <span className="ciudad-count">{usuariosPorRegion(r)}</span>
                                     </button>
                                 ))}
                             </div>
@@ -400,8 +397,8 @@ function PanelAdmin() {
                                     onChange={(e) => setBusqueda(e.target.value)}
                                 />
 
-                                {!ciudadSeleccionada && !busqueda.trim() ? (
-                                    <div className="prompt-vacio">Selecciona una ciudad o escribe una búsqueda.</div>
+                                {!regionSeleccionada && !busqueda.trim() ? (
+                                    <div className="prompt-vacio">Selecciona una región o escribe una búsqueda.</div>
                                 ) : (
                                     <div className="table-container">
                                         <table className="admin-table">
@@ -410,6 +407,7 @@ function PanelAdmin() {
                                                 <th>RUT</th>
                                                 <th>Profesional</th>
                                                 <th>Email</th>
+                                                <th>Región</th>
                                                 <th>Ciudad</th>
                                                 <th>Estado</th>
                                                 <th>Acciones</th>
@@ -418,7 +416,7 @@ function PanelAdmin() {
                                             <tbody>
                                             {usuariosFiltrados.length === 0 ? (
                                                 <tr>
-                                                    <td colSpan="6" className="empty-state">No se encontraron usuarios.</td>
+                                                    <td colSpan="7" className="empty-state">No se encontraron usuarios.</td>
                                                 </tr>
                                             ) : (
                                                 usuariosPagina.map((u) => (
@@ -429,6 +427,7 @@ function PanelAdmin() {
                                                             {u.esAdmin && <span className="badge-admin">Admin</span>}
                                                         </td>
                                                         <td>{u.email}</td>
+                                                        <td>{u.region}</td>
                                                         <td>{u.ciudad}</td>
                                                         <td>
                                 <span className={u.estado === 'Activo' ? 'badge-activo' : 'badge-inactivo'}>
