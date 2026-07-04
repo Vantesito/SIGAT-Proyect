@@ -58,11 +58,26 @@ public class GeocodingService {
         double[] resultado = buscarEstructurado(direccionNormalizada, city, centro);
         if (resultado != null) return resultado;
 
-        // Intento 2 (fallback): si la búsqueda estructurada estricta no
-        // encontró nada (p. ej. domicilio con formato irregular), reintenta
-        // con texto libre pero manteniendo la caja geográfica, para que
-        // igual quede acotado a la ciudad correcta.
-        return buscarLibre(direccionNormalizada, city, centro);
+        // Intento 2: si la búsqueda estructurada estricta no encontró nada
+        // (p. ej. domicilio con formato irregular), reintenta con texto
+        // libre pero manteniendo la caja geográfica.
+        resultado = buscarLibreSinLanzar(direccionNormalizada, city, centro);
+        if (resultado != null) return resultado;
+
+        // Intento 3 (último recurso): la calle existe pero Nominatim no
+        // tiene indexado ese número de casa exacto (frecuente en calles
+        // reales de ciudades chilenas, fuera del centro). Se
+        // reintenta solo con el nombre de la calle, sin el número. Se pierde
+        // precisión de "la casa exacta", pero como igual se colapsa a un
+        // cuadrante de 50m, ubicar la calle correcta es preferible a
+        // rechazar la fila por completo.
+        String sinNumero = quitarNumero(direccionNormalizada);
+        if (!sinNumero.equals(direccionNormalizada)) {
+            resultado = buscarLibreSinLanzar(sinNumero, city, centro);
+            if (resultado != null) return resultado;
+        }
+
+        throw new IllegalArgumentException("no se encontró la dirección ingresada");
     }
 
     private double[] buscarEstructurado(String address, String city, double[] centro) {
@@ -79,7 +94,7 @@ public class GeocodingService {
         return ejecutar(builder);
     }
 
-    private double[] buscarLibre(String address, String city, double[] centro) {
+    private double[] buscarLibreSinLanzar(String address, String city, double[] centro) {
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(NOMINATIM_URL)
                 .queryParam("format", "json")
                 .queryParam("limit", 1)
@@ -88,11 +103,15 @@ public class GeocodingService {
 
         aplicarCaja(builder, centro);
 
-        double[] resultado = ejecutar(builder);
-        if (resultado == null) {
-            throw new IllegalArgumentException("no se encontró la dirección ingresada");
-        }
-        return resultado;
+        return ejecutar(builder);
+    }
+
+    // Quita el número de casa al final de la dirección (formato típico
+    // chileno "Calle NNNN"). Si no hay número al final, devuelve la
+    // dirección sin cambios (para que el llamador sepa que no vale la pena
+    // reintentar con esta variante).
+    private String quitarNumero(String address) {
+        return address.replaceAll("\\s+\\d+\\s*$", "").trim();
     }
 
     // Restringe la búsqueda a una caja alrededor del centro de la ciudad
