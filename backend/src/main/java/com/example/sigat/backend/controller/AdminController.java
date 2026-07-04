@@ -54,10 +54,14 @@ public class AdminController {
         }
     }
 
+    // Recibe quién ejecuta la acción para impedir que alguien se desactive
+    // a sí mismo (quedaría bloqueado, y si era el único admin, sin forma de
+    // revertirlo).
     @PutMapping("/users/{id}/deactivate")
-    public ResponseEntity<?> deactivateUser(@PathVariable(name = "id") Long id) {
+    public ResponseEntity<?> deactivateUser(@AuthenticationPrincipal UserDetails ap,
+                                            @PathVariable(name = "id") Long id) {
         try {
-            adminService.deactivate(id);
+            adminService.deactivate(id, ap.getUsername());
             return new ResponseEntity<>(Map.of("message", "exitoso"), HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(Map.of("message", e.getMessage()), HttpStatus.BAD_REQUEST);

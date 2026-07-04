@@ -451,7 +451,12 @@ function PanelAdmin() {
                                 </span>
                                                         </td>
                                                         <td className="action-cells">
-                                                            <button className="btn-toggle" onClick={() => toggleEstado(u)}>
+                                                            <button
+                                                                className="btn-toggle"
+                                                                onClick={() => toggleEstado(u)}
+                                                                disabled={esUsuarioActual(u) && u.estado === 'Activo'}
+                                                                title={esUsuarioActual(u) && u.estado === 'Activo' ? 'No puedes desactivar tu propia cuenta' : undefined}
+                                                            >
                                                                 {u.estado === 'Activo' ? 'Desactivar' : 'Activar'}
                                                             </button>
                                                             <button
