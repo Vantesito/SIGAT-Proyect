@@ -239,7 +239,19 @@ function PanelAdmin() {
         }
     };
 
+    // Compara el email de una fila con el de la sesión actual (sin importar
+    // mayúsculas), para bloquear que un admin se quite el rol o se elimine a
+    // sí mismo por error.
+    const esUsuarioActual = (u) => {
+        const correoActual = api.obtenerCorreo();
+        return !!correoActual && !!u.email && u.email.toLowerCase() === correoActual.toLowerCase();
+    };
+
     const toggleAdmin = async (u) => {
+        if (esUsuarioActual(u) && u.esAdmin) {
+            alert('No puedes quitarte el rol de administrador a ti mismo.');
+            return;
+        }
         try {
             await api.cambiarRolUsuario(u.id, !u.esAdmin); // correo de promoción/remoción
             await cargarUsuarios();
@@ -248,7 +260,11 @@ function PanelAdmin() {
         }
     };
 
-    const eliminarUsuario = async (id) => {
+    const eliminarUsuario = async (id, esActual) => {
+        if (esActual) {
+            alert('No puedes eliminar tu propia cuenta.');
+            return;
+        }
         if (!window.confirm('¿Eliminar definitivamente a este usuario?')) return;
         try {
             await api.eliminarUsuario(id);
@@ -438,10 +454,22 @@ function PanelAdmin() {
                                                             <button className="btn-toggle" onClick={() => toggleEstado(u)}>
                                                                 {u.estado === 'Activo' ? 'Desactivar' : 'Activar'}
                                                             </button>
-                                                            <button className="btn-admin" onClick={() => toggleAdmin(u)}>
+                                                            <button
+                                                                className="btn-admin"
+                                                                onClick={() => toggleAdmin(u)}
+                                                                disabled={esUsuarioActual(u) && u.esAdmin}
+                                                                title={esUsuarioActual(u) && u.esAdmin ? 'No puedes quitarte el rol de admin a ti mismo' : undefined}
+                                                            >
                                                                 {u.esAdmin ? 'Quitar admin' : 'Dar admin'}
                                                             </button>
-                                                            <button className="btn-reject" onClick={() => eliminarUsuario(u.id)}>Eliminar</button>
+                                                            <button
+                                                                className="btn-reject"
+                                                                onClick={() => eliminarUsuario(u.id, esUsuarioActual(u))}
+                                                                disabled={esUsuarioActual(u)}
+                                                                title={esUsuarioActual(u) ? 'No puedes eliminar tu propia cuenta' : undefined}
+                                                            >
+                                                                Eliminar
+                                                            </button>
                                                         </td>
                                                     </tr>
                                                 ))

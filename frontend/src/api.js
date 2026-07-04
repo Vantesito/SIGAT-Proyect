@@ -5,6 +5,7 @@ const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
 const TOKEN_KEY = 'sigat_token';
 const ROL_KEY = 'sigat_rol';
+const CORREO_KEY = 'sigat_correo';
 
 // --- Manejo del token (sessionStorage: dura mientras la pestaña esté abierta) ---
 export const guardarToken = (token) => sessionStorage.setItem(TOKEN_KEY, token);
@@ -17,6 +18,11 @@ export const guardarRol = (rol) => sessionStorage.setItem(ROL_KEY, rol || '');
 export const obtenerRol = () => sessionStorage.getItem(ROL_KEY) || '';
 export const esAdmin = () => obtenerRol().includes('ADMIN');
 export const borrarRol = () => sessionStorage.removeItem(ROL_KEY);
+
+// --- Correo de la sesión actual (para comparar "soy yo mismo" en el panel admin) ---
+export const guardarCorreo = (correo) => sessionStorage.setItem(CORREO_KEY, correo || '');
+export const obtenerCorreo = () => sessionStorage.getItem(CORREO_KEY) || '';
+export const borrarCorreo = () => sessionStorage.removeItem(CORREO_KEY);
 
 // Helper central: agrega la URL base, el token y maneja errores de forma uniforme.
 async function apiFetch(path, { method = 'GET', body, auth = true, isForm = false } = {}) {
@@ -63,12 +69,14 @@ export async function login(email, password) {
     });
     if (data?.token) guardarToken(data.token);
     if (data?.rol) guardarRol(data.rol);
+    if (data?.correo) guardarCorreo(data.correo);
     return data; // { token, correo, rol }
 }
 
 export function logout() {
     borrarToken();
     borrarRol();
+    borrarCorreo();
 }
 
 // datos debe traer las claves que espera RegisterRequest (snake_case):

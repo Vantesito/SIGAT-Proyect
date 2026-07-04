@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,7 +24,8 @@ public class DataImportController {
     private final DataValidationService dataValidationService;
 
     @PostMapping("/upload")
-    public ResponseEntity<?> upload(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<?> upload(@AuthenticationPrincipal UserDetails ap,
+                                    @RequestParam("file") MultipartFile file) {
         try {
             // Validamos la extensión por el NOMBRE, sin exigir un File físico.
             dataValidationService.validateExtension(file.getOriginalFilename());
@@ -30,7 +33,10 @@ public class DataImportController {
             // try-with-resources: el Workbook se cierra solo al terminar,
             // aunque el import lance, evitando fugas de memoria con archivos grandes.
             try (Workbook workbook = dataValidationService.parseWorkbook(file.getInputStream())) {
-                ImportResult result = dataImportService.importWorkbookData(workbook);
+                // Los puntos creados por la carga masiva quedan atribuidos al
+                // usuario autenticado que la ejecuta (igual que la creación
+                // individual de puntos), no a un placeholder vacío.
+                ImportResult result = dataImportService.importWorkbookData(workbook, ap.getUsername());
                 return new ResponseEntity<>(result, HttpStatus.OK);
             }
         } catch (UnsupportedFileException | IllegalArgumentException e) {

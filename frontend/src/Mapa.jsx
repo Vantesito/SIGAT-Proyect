@@ -684,7 +684,7 @@ function Mapa() {
                 <CargaMasivaModal
                     simular={false}
                     onCerrar={() => setShowBatchModal(false)}
-                    onCompletado={() => { setShowBatchModal(false); void cargarPuntos(); }}
+                    onCompletado={() => void cargarPuntos()}
                 />
             )}
         </div>
