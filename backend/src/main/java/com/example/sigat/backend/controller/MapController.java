@@ -7,6 +7,7 @@ import com.example.sigat.backend.model.Point;
 import com.example.sigat.backend.service.MapService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,7 +22,11 @@ import java.util.Map;
 public class MapController {
     @ExceptionHandler
     public ResponseEntity<Map<String,String>> handleIllegalArgument(IllegalArgumentException e){
-        return new ResponseEntity<>(Map.of("message",e.getMessage()),HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(Map.of("message",e.getMessage()),HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+    @ExceptionHandler(exception = HttpMessageNotReadableException.class)
+    public ResponseEntity<Map<String,String>> handleHttpMessageNotReadable(){
+        return new ResponseEntity<>(Map.of("message", "El objeto no tiene formato json válido"),HttpStatus.BAD_REQUEST);
     }
 
     private final MapService mapService;
