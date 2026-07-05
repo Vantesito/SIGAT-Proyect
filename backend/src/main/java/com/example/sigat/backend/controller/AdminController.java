@@ -25,6 +25,7 @@ public class AdminController {
     private final AdminService adminService;
     private final HistoryService historyService;
     private final NotificationService notificationService;
+    private final String SUCCESS="exitoso";
 
     public AdminController(AdminService adminService, HistoryService historyService, NotificationService notificationService) {
         this.adminService = adminService;
@@ -48,7 +49,7 @@ public class AdminController {
     public ResponseEntity<?> approveUser(@PathVariable(name = "id") Long id) {
         try {
             adminService.approve(id);
-            return new ResponseEntity<>(Map.of("message", "exitoso"), HttpStatus.OK);
+            return new ResponseEntity<>(Map.of("message", SUCCESS), HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(Map.of("message", e.getMessage()), HttpStatus.BAD_REQUEST);
         }
@@ -62,7 +63,7 @@ public class AdminController {
                                             @PathVariable(name = "id") Long id) {
         try {
             adminService.deactivate(id, ap.getUsername());
-            return new ResponseEntity<>(Map.of("message", "exitoso"), HttpStatus.OK);
+            return new ResponseEntity<>(Map.of("message", SUCCESS), HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(Map.of("message", e.getMessage()), HttpStatus.BAD_REQUEST);
         }
@@ -78,7 +79,7 @@ public class AdminController {
                                      @RequestBody RoleChangeRequest req) {
         try {
             adminService.setAdmin(id, req.admin(), ap.getUsername());
-            return new ResponseEntity<>(Map.of("message", "exitoso"), HttpStatus.OK);
+            return new ResponseEntity<>(Map.of("message", SUCCESS), HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(Map.of("message", e.getMessage()), HttpStatus.BAD_REQUEST);
         }
@@ -91,7 +92,7 @@ public class AdminController {
                                         @PathVariable(name = "id") Long id) {
         try {
             adminService.delete(id, ap.getUsername());
-            return new ResponseEntity<>(Map.of("message", "exitoso"), HttpStatus.OK);
+            return new ResponseEntity<>(Map.of("message", SUCCESS), HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(Map.of("message", e.getMessage()), HttpStatus.BAD_REQUEST);
         }
@@ -124,7 +125,7 @@ public class AdminController {
     public ResponseEntity<?> activateUser(@PathVariable(name = "id") Long id) {
         try {
             adminService.activate(id);
-            return new ResponseEntity<>(Map.of("message", "exitoso"), HttpStatus.OK);
+            return new ResponseEntity<>(Map.of("message", SUCCESS), HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(Map.of("message", e.getMessage()), HttpStatus.BAD_REQUEST);
         }
