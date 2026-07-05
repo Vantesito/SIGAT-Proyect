@@ -61,6 +61,9 @@ public class MapService {
         if (!diseaseRepository.existsById(pcr.disease_id())) {
             throw new IllegalArgumentException("la enfermedad asociada al punto no existe");
         }
+        if (pcr.in_treatment()&&(pcr.treatment_start()==null||pcr.next_control()==null)){
+            throw new IllegalArgumentException("no se incluye el inicio del tratamiento o fecha del siguiente tratamiento");
+        }
 
         // 1. Calle -> coordenada (la dirección NO se guarda)
         double[] coords = geocodingService.geocode(pcr.address(), pcr.city());
