@@ -7,6 +7,7 @@ import com.example.sigat.backend.service.AuthService;
 import com.example.sigat.backend.util.JwtUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -15,10 +16,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 import java.util.Map;
@@ -30,6 +28,16 @@ public class AuthController {
     UserDetailsService userDetailsService;
     JwtUtil jwtUtil;
     AuthService authService;
+
+    @ExceptionHandler
+    public ResponseEntity<Map<String,String>> handleIllegalArgument(IllegalArgumentException e){
+        return new ResponseEntity<>(Map.of("message",e.getMessage()),HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+    @ExceptionHandler(exception = HttpMessageNotReadableException.class)
+    public ResponseEntity<Map<String,String>> handleHttpMessageNotReadable(){
+        return new ResponseEntity<>(Map.of("message", "El objeto JSON no tiene el formato correcto"), HttpStatus.BAD_REQUEST);
+    }
+
     public AuthController(AuthenticationManager authenticationManager, UserDetailsService userDetailsService,
                           JwtUtil jwtUtil, AuthService authService){
         this.authenticationManager=authenticationManager;
@@ -67,12 +75,8 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterRequest request){
-        try {
-            authService.register(request);
-            return new ResponseEntity<>(HttpStatus.CREATED);
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>( Map.of("message",e.getMessage()),HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<Void> register(@RequestBody RegisterRequest request){
+        authService.register(request);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }

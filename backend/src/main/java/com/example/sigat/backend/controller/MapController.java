@@ -12,6 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.List;
 import java.util.Map;
@@ -26,7 +27,11 @@ public class MapController {
     }
     @ExceptionHandler(exception = HttpMessageNotReadableException.class)
     public ResponseEntity<Map<String,String>> handleHttpMessageNotReadable(){
-        return new ResponseEntity<>(Map.of("message", "La id del punto debe ser un número"), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(Map.of("message", "El objeto JSON no tiene el formato correcto"), HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(exception = MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<Map<String,String>> handleIllegalArgument(){
+        return new ResponseEntity<>(Map.of("message","La id del punto debe ser un número"),HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
     private final MapService mapService;
