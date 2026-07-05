@@ -24,7 +24,6 @@ public class MapController {
     public ResponseEntity<Map<String,String>> handleIllegalArgument(IllegalArgumentException e){
         return new ResponseEntity<>(Map.of("message",e.getMessage()),HttpStatus.UNPROCESSABLE_ENTITY);
     }
-    @ExceptionHandler(exception = HttpMessageNotReadableException.class)
     public ResponseEntity<Map<String,String>> handleHttpMessageNotReadable(HttpMessageNotReadableException e){
         if (e.getMessage().contains("For input string")){
             return new ResponseEntity<>(Map.of("message", "La id del punto debe ser un número"), HttpStatus.BAD_REQUEST);
