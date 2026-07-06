@@ -34,7 +34,7 @@ public class JwtUtil {
     }
     public String generateToken(UserDetails userDetails){
         return Jwts.builder().subject(userDetails.getUsername()).issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis()*1000*60*60*10))
+                .expiration(new Date(System.currentTimeMillis() + 1000L*60*60*10))
                 .signWith(getSigningKey()).compact();
     }
     public boolean validateToken(String token, UserDetails userDetails){

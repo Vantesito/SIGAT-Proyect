@@ -26,10 +26,14 @@ public class PointAction {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "point_modification_values_id")
     private PointModificationValues pointModificationValues;
-    @OneToOne
+
+
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-    @OneToOne
+
+
+    @ManyToOne
     @JoinColumn(name = "point_id")
     private Point point;
 

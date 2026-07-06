@@ -1,0 +1,330 @@
+.admin-layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f1f5f9;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.admin-sidebar {
+  width: 320px;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  padding: 40px 25px;
+  box-sizing: border-box;
+  box-shadow: 2px 0 15px rgba(0,0,0,0.03);
+  z-index: 10;
+  border-right: 1px solid #e2e8f0;
+}
+
+.admin-brand {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 40px;
+  padding-bottom: 20px;
+}
+
+.admin-brand h2 {
+  margin: 0;
+  font-size: 1.3rem;
+  color: #1e293b;
+  font-weight: 700;
+}
+
+.admin-brand span {
+  font-size: 0.9rem;
+  color: #64748b;
+}
+
+.admin-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex-grow: 1;
+}
+
+.nav-item {
+  background-color: #ffffff;
+  color: #1e293b;
+  border: 1px solid #1e293b;
+  padding: 12px 15px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.nav-item:hover {
+  background-color: #f8fafc;
+}
+
+.nav-item.active {
+  background-color: #1e293b;
+  color: #ffffff;
+}
+
+.btn-logout-admin {
+  background-color: #ffffff;
+  color: #ef4444; 
+  border: 1px solid #ef4444;
+  padding: 14px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.btn-logout-admin:hover {
+  background-color: #fef2f2;
+}
+
+.admin-main {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-header {
+  background-color: #ffffff;
+  padding: 30px 50px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.admin-header h1 {
+  margin: 0 0 5px 0;
+  color: #0f172a;
+  font-size: 1.8rem;
+}
+
+.admin-header p {
+  margin: 0;
+  color: #64748b;
+  font-size: 1rem;
+}
+
+.admin-content {
+  padding: 40px 50px;
+  flex-grow: 1;
+}
+
+.table-container {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.admin-table th {
+  background-color: #f8fafc;
+  color: #475569;
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 16px 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.admin-table td {
+  padding: 16px 20px;
+  border-bottom: 1px solid #e2e8f0;
+  color: #334155;
+  font-size: 0.95rem;
+}
+
+.admin-table tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-table tr:hover {
+  background-color: #f1f5f9;
+}
+
+.badge-warning {
+  background-color: #fef3c7;
+  color: #d97706;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.action-cells {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-approve {
+  background-color: #10b981;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-approve:hover { background-color: #059669; }
+
+.btn-reject {
+  background-color: transparent;
+  color: #ef4444;
+  border: 1px solid #ef4444;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-reject:hover { background-color: #fef2f2; }
+
+.empty-state {
+  text-align: center;
+  padding: 40px !important;
+  color: #94a3b8 !important;
+}
+/* Botón "Ir al mapa" en la navegación */
+.nav-item-map {
+    margin-top: 20px;
+    background-color: #1e293b;
+    color: #fff;
+    border-color: #1e293b;
+}
+.nav-item-map:hover { background-color: #1e293b; }
+
+/* ---- Gestión de usuarios: layout barra ciudades + panel ---- */
+.gestion-layout {
+    display: flex;
+    gap: 25px;
+    align-items: flex-start;
+}
+
+.ciudades-bar {
+    width: 200px;
+    flex-shrink: 0;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.ciudades-bar h4 {
+    margin: 0 0 8px;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #94a3b8;
+}
+.ciudad-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: none;
+    border: none;
+    text-align: left;
+    padding: 9px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    color: #334155;
+    font-size: 0.9rem;
+    transition: all 0.15s ease;
+}
+.ciudad-item:hover { background: #f1f5f9; }
+.ciudad-item.active { background: #1e293b; color: #fff; font-weight: 600; }
+.ciudad-count {
+    background: #e2e8f0;
+    color: #475569;
+    border-radius: 10px;
+    padding: 1px 8px;
+    font-size: 0.75rem;
+}
+.ciudad-item.active .ciudad-count { background: #475569; color: #fff; }
+
+.usuarios-panel { flex: 1; }
+
+.search-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px 15px;
+    border: 1px solid #cbd5e0;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    margin-bottom: 18px;
+}
+.search-input:focus {
+    outline: none;
+    border-color: #2b7bbc;
+    box-shadow: 0 0 0 2px rgba(43, 123, 188, 0.15);
+}
+
+.prompt-vacio {
+    text-align: center;
+    color: #94a3b8;
+    padding: 60px 20px;
+    background: #fff;
+    border: 1px dashed #cbd5e0;
+    border-radius: 8px;
+}
+
+/* Badges de estado / rol */
+.badge-activo { background: #dcfce7; color: #16a34a; padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; }
+.badge-inactivo { background: #f1f5f9; color: #64748b; padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; }
+.badge-admin { background: #ede9fe; color: #7c3aed; padding: 3px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; margin-left: 8px; }
+
+/* Botones de acción de usuario */
+.btn-toggle {
+    background: #fff; color: #d97706; border: 1px solid #d97706;
+    padding: 8px 12px; border-radius: 4px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s;
+}
+.btn-toggle:hover { background: #fffbeb; }
+.btn-admin {
+    background: #fff; color: #7c3aed; border: 1px solid #7c3aed;
+    padding: 8px 12px; border-radius: 4px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s;
+}
+.btn-admin:hover { background: #f5f3ff; }
+
+/* Badges del historial */
+.badge-add { background: #dcfce7; color: #16a34a; padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; }
+.badge-del { background: #fee2e2; color: #dc2626; padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; }
+.badge-mod { background: #dbeafe; color: #2563eb; padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; }
+
+/* Modal de informe */
+.modal-overlay-admin {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px);
+    display: flex; justify-content: center; align-items: center; z-index: 1000;
+}
+.modal-content-admin {
+    background: #fff; width: 90%; max-width: 480px; border-radius: 12px; overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+}
+.modal-header-admin {
+    background: #1e293b; color: #fff; padding: 18px 22px;
+    display: flex; justify-content: space-between; align-items: center;
+}
+.modal-header-admin h3 { margin: 0; font-size: 1.15rem; }
+.btn-close-admin { background: none; border: none; color: #fff; font-size: 1.6rem; cursor: pointer; }
+.modal-body-admin { padding: 22px; color: #334155; }
+.modal-body-admin p { margin: 6px 0; }
+.modal-body-admin hr { border: none; border-top: 1px solid #e2e8f0; margin: 16px 0; }
+.modal-body-admin h4 { margin: 0 0 10px; color: #1e293b; }
+.informe-detalle { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.informe-detalle li { background: #f8fafc; padding: 8px 12px; border-radius: 6px; font-size: 0.9rem; }
+.informe-clave { font-weight: 700; color: #475569; text-transform: capitalize; }

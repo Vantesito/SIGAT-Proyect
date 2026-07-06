@@ -1,4 +1,3 @@
-/* Estructura general del dashboard */
 .mapa-dashboard {
   display: flex;
   height: 100vh;
@@ -8,70 +7,136 @@
 
 /* Sidebar */
 .mapa-sidebar {
-  width: 300px;
+  width: 320px;
   background-color: #ffffff;
-  padding: 30px;
-  box-shadow: 2px 0 10px rgba(0,0,0,0.05);
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  justify-content: space-between;
+  padding: 40px 25px;
+  box-shadow: 2px 0 15px rgba(0,0,0,0.03);
   z-index: 10;
+  border-right: 1px solid #f1f5f9;
 }
 
-.mapa-sidebar h2 {
-  color: #008080;
-  font-size: 1.2rem;
-  margin-bottom: 10px;
-}
-
-.stats-card {
-  background-color: #e6f2f2;
-  padding: 15px;
-  border-radius: 8px;
+.sidebar-top {
   display: flex;
   flex-direction: column;
+  gap: 30px;
 }
 
-.stats-card span {
-  font-size: 0.8rem;
-  color: #4a5568;
-  text-transform: uppercase;
+.sidebar-header {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 
-.stats-card strong {
-  font-size: 1.5rem;
-  color: #005959;
+.sidebar-header h2 {
+  color: #1e293b;
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0;
 }
 
-.privacy-note {
-  font-size: 0.75rem;
-  color: #718096;
-  font-style: italic;
-  margin-top: auto;
+.user-role {
+  color: #64748b;
+  font-size: 0.9rem;
 }
 
-.btn-add-data {
-  background-color: #008080;
-  color: white;
-  border: none;
-  padding: 12px;
-  border-radius: 6px;
+.stats-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.stat-card {
+  background-color: #e6f2fd;
+  border-radius: 8px;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stat-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stat-label {
+  color: #475569;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.stat-value {
+  color: #0f172a;
+  font-size: 1.4rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.stat-btn-icon {
+  background-color: transparent;
+  border: 1px solid #94a3b8;
+  color: #64748b;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   cursor: pointer;
-  font-weight: bold;
+  font-size: 0.6rem;
+  padding-left: 2px; 
+  transition: all 0.2s ease;
 }
 
-.btn-logout {
-  background-color: rgb(255, 0, 0);
-  color: #ffffff;
-  border: none;
-  padding: 12px;
+.stat-btn-icon:hover {
+  background-color: #dbeafe;
+  color: #3b82f6;
+  border-color: #3b82f6;
+}
+
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.btn-outline-dark {
+  background-color: #ffffff;
+  color: #1e293b;
+  border: 1px solid #1e293b;
+  padding: 12px 15px;
   border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.9rem;
   cursor: pointer;
-  font-weight: bold;
+  transition: all 0.2s ease;
+  text-align: center;
 }
 
-.btn-add-data:hover {
-  background-color: #005959;
+.btn-outline-dark:hover {
+  background-color: #f8fafc;
+}
+
+.btn-logout-outline {
+  background-color: #ffffff;
+  color: #ef4444;
+  border: 1px solid #ef4444;
+  padding: 14px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.btn-logout-outline:hover {
+  background-color: #fef2f2;
 }
 
 /* ESTILOS DEL MAPA SIMULADO */
@@ -82,10 +147,9 @@
   overflow: hidden;
 }
 
-.mock-map {
-  width: 100%;
-  height: 100%;
-  position: relative;
+.ol-map-container {
+    width: 100%;
+    height: 100%;
 }
 
 /* Patrón de cuadrícula para simular cuadras/calles */
@@ -103,9 +167,9 @@
 .heat-spot {
   position: absolute;
   border-radius: 50%;
-  transform: translate(-50%, -50%); /* Asegura que el centro del círculo esté en la coordenada exacta */
-  filter: blur(12px); /* Difuminación bordes */
-  pointer-events: none; /* Click a través de los puntos */
+  transform: translate(-50%, -50%); 
+  filter: blur(12px);
+  pointer-events: none;
   animation: pulseHeat 4s infinite alternate ease-in-out; /* PAnimación de pulso */
 }
 
@@ -137,7 +201,7 @@
   right: 0;
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(4px); /* Efecto de desenfoque al fondo */
+  backdrop-filter: blur(4px);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -262,7 +326,7 @@
 }
 
 .btn-batch-data:hover {
-  background-color: #e6f2f2; /* Fondo muy suave al pasar el mouse */
+  background-color: #e6f2f2;
 }
 
 /* Estilo para el input de archivo (Excel) */
@@ -279,5 +343,180 @@
 .file-upload-group input[type="file"]:hover {
   border-color: #2b6cb0;
   background-color: #ebf8ff;
+}
+/* Flecha del stat-card girada cuando el panel está abierto */
+.stat-btn-icon.open {
+    transform: rotate(90deg);
+    background-color: #1e293b;
+    color: #fff;
+    border-color: #1e293b;
+}
+
+/* Panel desplegable con tablas (sobre el mapa) */
+.data-panel {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 680px;
+    max-width: 92%;
+    background: #ffffff;
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.12);
+    display: flex;
+    flex-direction: column;
+    z-index: 500;
+    animation: slideInRight 0.25s ease-out;
+}
+
+@keyframes slideInRight {
+    from { transform: translateX(30px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+.data-panel-header {
+    background-color: #1e293b;
+    color: #fff;
+    padding: 18px 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.data-panel-header h3 { margin: 0; font-size: 1.1rem; }
+
+.btn-close-panel {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 1.6rem;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.data-panel-body {
+    padding: 18px 22px;
+    overflow-y: auto;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+
+.data-table th {
+    text-align: left;
+    background-color: #f8fafc;
+    color: #475569;
+    font-weight: 600;
+    padding: 10px;
+    border-bottom: 1px solid #e2e8f0;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.04em;
+}
+
+.data-table td {
+    padding: 10px;
+    border-bottom: 1px solid #eef2f6;
+    color: #334155;
+}
+
+.data-table tr:hover td { background-color: #f8fafc; }
+
+.tabla-vacia {
+    text-align: center;
+    color: #94a3b8;
+    padding: 30px 10px !important;
+}
+
+/* Fila en alerta (próximo control vencido o ≤ 2 días) */
+.fila-alerta td {
+    background-color: #fef2f2 !important;
+    color: #b91c1c;
+    font-weight: 600;
+}
+
+.alerta-leyenda {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+    color: #64748b;
+    margin-bottom: 12px;
+}
+
+.dot-red {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #dc2626;
+    display: inline-block;
+}
+
+/* Botones de acción en las filas */
+.acciones-celda { display: flex; gap: 6px; }
+
+.btn-mini-edit, .btn-mini-del {
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-mini-edit { background-color: #e2e8f0; color: #1e293b; }
+.btn-mini-edit:hover { background-color: #cbd5e0; }
+.btn-mini-del { background-color: transparent; color: #ef4444; border: 1px solid #ef4444; }
+.btn-mini-del:hover { background-color: #fef2f2; }
+
+/* Checkbox de tratamiento */
+.checkbox-group { margin-bottom: 12px; }
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #334155;
+    cursor: pointer;
+}
+.checkbox-label input { width: 18px; height: 18px; cursor: pointer; }
+
+.fechas-tratamiento {
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 18px;
+}
+.fechas-tratamiento .form-group:last-child { margin-bottom: 0; }
+/* La tabla ocupa toda la banda  */
+.data-panel-body {
+    overflow-x: hidden;
+}
+
+.data-table {
+    table-layout: fixed;   /* reparte el ancho de forma pareja */
+    width: 100%;
+}
+
+.data-table th,
+.data-table td {
+    white-space: normal;   /* permite que el texto baje de línea en vez de empujar */
+    word-break: break-word;
+    padding: 8px;
+}
+
+/* Botones de acción: que no se corten y bajen juntos si hace falta */
+.acciones-celda {
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.btn-mini-edit,
+.btn-mini-del {
+    white-space: nowrap;
 }
 

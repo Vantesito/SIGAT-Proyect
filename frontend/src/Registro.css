@@ -1,103 +1,130 @@
-.registro-wrapper {
+.registro-wrapper-wide {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background-color: #cde4fa;
-  padding: 20px;
+  background-color: #d4e5f9;
+  padding: 40px 20px;
   box-sizing: border-box;
-  font-family: 'Inter', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
-/* Tarjeta blanca central con la línea superior de acento */
-.registro-card {
+.registro-card-wide {
   background-color: #ffffff;
-  padding: 40px;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   width: 100%;
-  max-width: 400px;
-  text-align: center;
-  border-top: 4px solid #008080;
+  max-width: 1100px;
+  border-radius: 12px;
+  padding: 40px 50px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  border-top: 4px solid #1a365d;
 }
 
-/* Títulos y textos */
-.registro-card h2 {
-  color: #1a202c;
-  margin-top: 0;
-  margin-bottom: 10px;
-  font-size: 1.4rem;
-  font-weight: bold;
+.registro-header-wide {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 40px;
 }
 
-.registro-card p {
-  color: #718096;
-  font-size: 0.85rem;
-  margin-bottom: 30px;
+.registro-header-wide h2 {
+  color: #203554;
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
 }
 
-/* Contenedores de los inputs */
-.input-group-med {
+
+.registro-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 50px; 
+}
+
+/* Estilo para las columnas de inputs */
+.form-column {
   display: flex;
   flex-direction: column;
-  text-align: left;
-  margin-bottom: 16px;
+  gap: 15px;
 }
 
-.input-group-med label {
+/* Estilos de los inputs */
+.input-group-grid {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-group-grid label {
   font-size: 0.8rem;
-  font-weight: 700; 
-  color: #2d3748;
+  font-weight: 700;
+  color: #334155;
   margin-bottom: 6px;
 }
 
-.input-group-med input {
-  padding: 12px;
+.input-group-grid input {
+  padding: 10px 12px;
   border: 1px solid #e2e8f0;
-  border-radius: 4px;
+  border-radius: 6px;
   font-size: 0.95rem;
-  background-color: #ffffff;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: all 0.2s ease;
+  height: 40px;
 }
 
-/* Efecto al seleccionar un input */
-.input-group-med input:focus {
+.input-group-grid input:focus {
   outline: none;
-  border-color: #008080;
-  box-shadow: 0 0 0 2px rgba(0, 128, 128, 0.15);
+  border-color: #2b7bbc;
+  box-shadow: 0 0 0 2px rgba(43, 123, 188, 0.15);
 }
 
-/* Botón principal verde/teal */
-.btn-submit-med {
-  width: 100%;
-  background-color: #008080;
+.action-column {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding-top: 25px;
+}
+
+.disclaimer-text {
+  color: #475569;
+  font-size: 1rem;
+  line-height: 1.5;
+  margin-bottom: 30px;
+}
+
+.btn-registro-submit {
+  background-color: #2874ba;
   color: white;
   border: none;
+  border-radius: 6px;
   padding: 12px;
-  border-radius: 4px;
-  font-size: 0.95rem;
-  font-weight: bold;
+  font-size: 1rem;
+  font-weight: 700;
   cursor: pointer;
-  margin-top: 10px;
   transition: background-color 0.2s ease;
 }
 
-.btn-submit-med:hover {
-  background-color: #006666;
+.btn-registro-submit:hover {
+  background-color: #1e5a92;
 }
 
-/* Volver al login */
-.btn-back-med {
-  background: none;
-  border: none;
-  color: #008080;
+.divider-circle {
+  text-align: center;
+  color: #94a3b8;
   font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-  margin-top: 25px;
-  text-decoration: underline;
+  margin: 15px 0;
 }
 
-.btn-back-med:hover {
-  color: #005959;
+.btn-registro-volver {
+  background-color: #ffffff;
+  color: #94a3b8;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 12px;
+  font-size: 1rem;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: all 0.2s ease;
+}
+
+.btn-registro-volver:hover {
+  background-color: #f8fafc;
+  color: #64748b;
 }

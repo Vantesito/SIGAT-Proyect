@@ -14,7 +14,7 @@ function Landing() {
         </div>
         
         <nav className="nav-links">
-          <a href="#">Mapeo Epidemiológico</a>
+          <a href="#">Mapeo epidemiológico</a>
           <a href="#">Alertas de tratamiento</a>
           <a href="#">Privacidad de datos</a>
         </nav>
@@ -35,7 +35,7 @@ function Landing() {
           </p>
           <ul className="feature-list">
             <li>Mapas de calor anonimizados por cuadrantes</li>
-            <li>Carga de pacientes mediante integración en lote (Excel)</li> 
+            <li>Carga de pacientes mediante integración en lote</li> 
           </ul>
           <button className="btn-primary" onClick={() => navigate('/login')}>
             Ingresar al sistema

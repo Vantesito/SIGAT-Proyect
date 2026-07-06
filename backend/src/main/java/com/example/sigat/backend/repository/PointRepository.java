@@ -9,6 +9,5 @@ import java.util.List;
 @Repository
 public interface PointRepository extends JpaRepository<Point,Long> {
     List<Point> findByDisease_IdAndActiveIsTrue(Long id);
-    @Override
-    <S extends Point> S save(S entity);
+    List<Point> findByActiveIsTrue();
 }
