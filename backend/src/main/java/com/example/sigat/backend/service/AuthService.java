@@ -40,11 +40,15 @@ public class AuthService {
         user.setCity(request.city());
         user.setEmail(request.email());
         user.setInstitution(request.institution());
+        user.setRut(request.rut());
         user.setActive(false);
         user.setPassword(passwordEncoder.encode(request.password()));
         user.setRole(User.Role.USER);
         userRepository.save(user);
 
+        // El correo es informativo, no crítico: si falla el envío (p. ej. por
+        // las restricciones de Resend en modo sandbox), el registro NO debe
+        // fallar. El usuario ya quedó guardado correctamente en la base.
         try {
             emailService.sendRegisterRequestEmail(user.getEmail(), user.getNames());
         } catch (RuntimeException e) {
