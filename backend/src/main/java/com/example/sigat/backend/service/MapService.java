@@ -14,7 +14,7 @@ import com.example.sigat.backend.util.QuadrantUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+//
 @Service
 public class MapService {
     private final PointRepository pointRepository;
@@ -23,16 +23,19 @@ public class MapService {
     private final NotificationService notificationService;
     private final GeocodingService geocodingService;
     private final QuadrantRepository quadrantRepository;
+    private final DataValidationService dataValidationService;
 
     public MapService(PointRepository pointRepository, DiseaseRepository diseaseRepository,
                       HistoryService historyService, NotificationService notificationService,
-                      GeocodingService geocodingService, QuadrantRepository quadrantRepository) {
+                      GeocodingService geocodingService, QuadrantRepository quadrantRepository,
+                      DataValidationService dataValidationService) {
         this.pointRepository = pointRepository;
         this.diseaseRepository = diseaseRepository;
         this.historyService = historyService;
         this.notificationService = notificationService;
         this.geocodingService = geocodingService;
         this.quadrantRepository = quadrantRepository;
+        this.dataValidationService = dataValidationService;
     }
 
     // Reutiliza el cuadrante si ya existe; si no, lo crea.
@@ -57,7 +60,30 @@ public class MapService {
         return pointRepository.findByActiveIsTrue();
     }
 
+    // Valida los datos de un punto ANTES de gastar una llamada a geocodificación.
+    // Centralizada aquí para que la creación individual (MapController) y la
+    // carga masiva (DataImportService) apliquen exactamente las mismas reglas:
+    // antes, solo la carga masiva validaba RUT/fechas/campos, y la creación
+    // individual (POST /points/new) dejaba pasar RUTs inválidos, vacíos, o
+    // tratamientos activos sin fechas.
+    private void validarDatosPunto(PointCreationRequest pcr) {
+        dataValidationService.validateRut(pcr.rut());
+
+        if (pcr.city() == null || pcr.city().isBlank()) {
+            throw new IllegalArgumentException("la ciudad está vacía");
+        }
+        if (pcr.address() == null || pcr.address().isBlank()) {
+            throw new IllegalArgumentException("el domicilio está vacío");
+        }
+        if (pcr.in_treatment() && (pcr.treatment_start() == null || pcr.next_control() == null)) {
+            throw new IllegalArgumentException(
+                    "está en tratamiento pero falta la fecha de inicio o de próximo control");
+        }
+    }
+
     public void createPoint(PointCreationRequest pcr, String username) {
+        validarDatosPunto(pcr);
+
         if (!diseaseRepository.existsById(pcr.disease_id())) {
             throw new IllegalArgumentException("la enfermedad asociada al punto no existe");
         }
