@@ -1,0 +1,856 @@
+{
+  "info": {
+    "name": "SIGAT - Casos de manejo de errores",
+    "description": "Casos de prueba de manejo de errores para Registro, Login, Creación de punto y Carga masiva. Basado en ErrorHandlingTestCases.md.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://sigat-backend-production.up.railway.app",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Registro",
+      "item": [
+        {
+          "name": "R1 - Email y confirmacion no coinciden (422)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/auth/register",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"casoR1@ejemplo.cl\",\n  \"confirmation_email\": \"otro@ejemplo.cl\",\n  \"names\": \"Test\",\n  \"surnames\": \"R1\",\n  \"password\": \"clave1234\",\n  \"phone_number\": \"+56911111111\",\n  \"rut\": \"11.223.344-K\",\n  \"country\": \"Chile\",\n  \"region\": \"La Araucanía\",\n  \"city\": \"Temuco\",\n  \"institution\": \"Test\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code es uno de [422]', function () {",
+                  "    pm.expect([422]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "R2 - Email ya en uso (422)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/auth/register",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"delivered+johndoe@resend.dev\",\n  \"confirmation_email\": \"delivered+johndoe@resend.dev\",\n  \"names\": \"Test\",\n  \"surnames\": \"R2\",\n  \"password\": \"clave1234\",\n  \"phone_number\": \"+56911111111\",\n  \"rut\": \"22.334.455-0\",\n  \"country\": \"Chile\",\n  \"region\": \"La Araucanía\",\n  \"city\": \"Temuco\",\n  \"institution\": \"Test\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code es uno de [422]', function () {",
+                  "    pm.expect([422]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "R3 - RUT ya en uso (422)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/auth/register",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"casoR3-nuevo@ejemplo.cl\",\n  \"confirmation_email\": \"casoR3-nuevo@ejemplo.cl\",\n  \"names\": \"Test\",\n  \"surnames\": \"R3\",\n  \"password\": \"clave1234\",\n  \"phone_number\": \"+56911111111\",\n  \"rut\": \"21.012.882-3\",\n  \"country\": \"Chile\",\n  \"region\": \"La Araucanía\",\n  \"city\": \"Temuco\",\n  \"institution\": \"Test\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code es uno de [422]', function () {",
+                  "    pm.expect([422]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "R4 - Registro valido (201)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/auth/register",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{correoGenerado}}\",\n  \"confirmation_email\": \"{{correoGenerado}}\",\n  \"names\": \"Test\",\n  \"surnames\": \"R4\",\n  \"password\": \"clave1234\",\n  \"phone_number\": \"+56911111111\",\n  \"rut\": \"{{rutGenerado}}\",\n  \"country\": \"Chile\",\n  \"region\": \"La Araucanía\",\n  \"city\": \"Temuco\",\n  \"institution\": \"Test\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "function calcularDV(cuerpo) {",
+                  "    let suma = 0, factor = 2;",
+                  "    for (let i = cuerpo.length - 1; i >= 0; i--) {",
+                  "        suma += parseInt(cuerpo[i]) * factor;",
+                  "        factor = (factor === 7) ? 2 : factor + 1;",
+                  "    }",
+                  "    const resto = 11 - (suma % 11);",
+                  "    if (resto === 11) return '0';",
+                  "    if (resto === 10) return 'K';",
+                  "    return String(resto);",
+                  "}",
+                  "const cuerpo = String(Math.floor(10000000 + Math.random() * 15000000));",
+                  "const dv = calcularDV(cuerpo);",
+                  "pm.variables.set('rutGenerado', cuerpo + '-' + dv);",
+                  "pm.variables.set('correoGenerado', 'caso' + Date.now() + Math.floor(Math.random() * 10000) + '@ejemplo.cl');"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code es uno de [201]', function () {",
+                  "    pm.expect([201]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "R5 - Correo puede fallar sin bloquear el registro (201)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/auth/register",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{correoGenerado}}\",\n  \"confirmation_email\": \"{{correoGenerado}}\",\n  \"names\": \"Test\",\n  \"surnames\": \"R5\",\n  \"password\": \"clave1234\",\n  \"phone_number\": \"+56911111111\",\n  \"rut\": \"{{rutGenerado}}\",\n  \"country\": \"Chile\",\n  \"region\": \"La Araucanía\",\n  \"city\": \"Temuco\",\n  \"institution\": \"Test\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "function calcularDV(cuerpo) {",
+                  "    let suma = 0, factor = 2;",
+                  "    for (let i = cuerpo.length - 1; i >= 0; i--) {",
+                  "        suma += parseInt(cuerpo[i]) * factor;",
+                  "        factor = (factor === 7) ? 2 : factor + 1;",
+                  "    }",
+                  "    const resto = 11 - (suma % 11);",
+                  "    if (resto === 11) return '0';",
+                  "    if (resto === 10) return 'K';",
+                  "    return String(resto);",
+                  "}",
+                  "const cuerpo = String(Math.floor(10000000 + Math.random() * 15000000));",
+                  "const dv = calcularDV(cuerpo);",
+                  "pm.variables.set('rutGenerado', cuerpo + '-' + dv);",
+                  "pm.variables.set('correoGenerado', 'caso' + Date.now() + Math.floor(Math.random() * 10000) + '@ejemplo.cl');"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code es uno de [201]', function () {",
+                  "    pm.expect([201]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2. Login",
+      "item": [
+        {
+          "name": "L1 - Contrasena incorrecta (401)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"delivered+johndoe@resend.dev\",\n  \"password\": \"contrasena_incorrecta\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code es uno de [401]', function () {",
+                  "    pm.expect([401]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "L2 - Email inexistente (401)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"noexiste-{{$randomInt}}@ejemplo.cl\",\n  \"password\": \"cualquiera\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code es uno de [401]', function () {",
+                  "    pm.expect([401]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "L3 - Cuenta pendiente de aprobacion (403)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"j.rivera13@ufromail.cl\",\n  \"password\": \"cualquiera\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code es uno de [403]', function () {",
+                  "    pm.expect([403]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "L4 - Cuenta desactivada por admin (403)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"example.exampleman@example.com\",\n  \"password\": \"cualquiera\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code es uno de [403]', function () {",
+                  "    pm.expect([403]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "L5 - Login valido (200) - guarda token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code es uno de [200]', function () {",
+                  "    pm.expect([200]).to.include(pm.response.code);",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "    const data = pm.response.json();",
+                  "    pm.collectionVariables.set('token', data.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"joseriverbustos@gmail.com\",\n  \"password\": \"1234\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Crear punto",
+      "item": [
+        {
+          "name": "P1 - Sin token (401/403)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/user/map/points/new",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rut\": \"11.223.344-K\",\n  \"disease_id\": 1,\n  \"city\": \"Temuco\",\n  \"address\": \"Avenida Alemania 0450\",\n  \"in_treatment\": false,\n  \"treatment_start\": null,\n  \"next_control\": null\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code es uno de [401, 403]', function () {",
+                  "    pm.expect([401, 403]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "P2 - RUT ausente (422)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/user/map/points/new",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"disease_id\": 1,\n  \"city\": \"Temuco\",\n  \"address\": \"Avenida Alemania 0450\",\n  \"in_treatment\": false,\n  \"treatment_start\": null,\n  \"next_control\": null\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code es uno de [422]', function () {",
+                  "    pm.expect([422]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "P3 - RUT con DV incorrecto (422)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/user/map/points/new",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rut\": \"12.345.678-9\",\n  \"disease_id\": 1,\n  \"city\": \"Temuco\",\n  \"address\": \"Avenida Alemania 0450\",\n  \"in_treatment\": false,\n  \"treatment_start\": null,\n  \"next_control\": null\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code es uno de [422]', function () {",
+                  "    pm.expect([422]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "P4 - Enfermedad inexistente (422)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/user/map/points/new",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rut\": \"11.223.344-K\",\n  \"disease_id\": 9999,\n  \"city\": \"Temuco\",\n  \"address\": \"Avenida Alemania 0450\",\n  \"in_treatment\": false,\n  \"treatment_start\": null,\n  \"next_control\": null\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code es uno de [422]', function () {",
+                  "    pm.expect([422]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "P5 - Ciudad vacia (422)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/user/map/points/new",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rut\": \"11.223.344-K\",\n  \"disease_id\": 1,\n  \"city\": \"\",\n  \"address\": \"Avenida Alemania 0450\",\n  \"in_treatment\": false,\n  \"treatment_start\": null,\n  \"next_control\": null\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code es uno de [422]', function () {",
+                  "    pm.expect([422]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "P6 - Domicilio vacio (422)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/user/map/points/new",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rut\": \"11.223.344-K\",\n  \"disease_id\": 1,\n  \"city\": \"Temuco\",\n  \"address\": \"\",\n  \"in_treatment\": false,\n  \"treatment_start\": null,\n  \"next_control\": null\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code es uno de [422]', function () {",
+                  "    pm.expect([422]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "P7 - En tratamiento sin fechas (422)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/user/map/points/new",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rut\": \"11.223.344-K\",\n  \"disease_id\": 1,\n  \"city\": \"Temuco\",\n  \"address\": \"Avenida Alemania 0450\",\n  \"in_treatment\": true,\n  \"treatment_start\": null,\n  \"next_control\": null\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code es uno de [422]', function () {",
+                  "    pm.expect([422]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "P8 - Direccion no geocodificable (422)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/user/map/points/new",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rut\": \"11.223.344-K\",\n  \"disease_id\": 1,\n  \"city\": \"Temuco\",\n  \"address\": \"Xxxxxxx Inexistente 99999\",\n  \"in_treatment\": false,\n  \"treatment_start\": null,\n  \"next_control\": null\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code es uno de [422]', function () {",
+                  "    pm.expect([422]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "P10 - Peticion valida (201)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/user/map/points/new",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rut\": \"22.334.455-0\",\n  \"disease_id\": 1,\n  \"city\": \"Temuco\",\n  \"address\": \"Avenida Pablo Neruda 1200\",\n  \"in_treatment\": true,\n  \"treatment_start\": \"2026-06-10\",\n  \"next_control\": \"2026-07-20\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code es uno de [201]', function () {",
+                  "    pm.expect([201]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "4. Carga masiva",
+      "item": [
+        {
+          "name": "U1 - Extension no permitida (400) - adjuntar un .txt",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/data/upload",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": [],
+                  "description": "Adjunta cualquier archivo .txt o .csv"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code es uno de [400]', function () {",
+                  "    pm.expect([400]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "U2 - No es un Excel real (400) - adjuntar .xlsx falso",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/data/upload",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": [],
+                  "description": "Renombra un .pdf o .txt a .xlsx y adjuntalo aqui"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code es uno de [400]', function () {",
+                  "    pm.expect([400]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "U3 - Falta columna requerida (400) - adjuntar falta-columna-enfermedad.xlsx",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/data/upload",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": [],
+                  "description": "Adjuntar falta-columna-enfermedad.xlsx"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code es uno de [400]', function () {",
+                  "    pm.expect([400]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "U4-U7 - Fallos por fila (200 con errores) - adjuntar carga-masiva-errores-mixtos.xlsx",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/data/upload",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": [],
+                  "description": "Adjuntar carga-masiva-errores-mixtos.xlsx (RUT invalido, enfermedad inexistente, tratamiento sin fechas, direccion no geocodificable, y una fila valida de control)"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code es uno de [200]', function () {",
+                  "    pm.expect([200]).to.include(pm.response.code);",
+                  "});",
+                  "pm.test('El reporte incluye filas con error', function () {",
+                  "    const data = pm.response.json();",
+                  "    pm.expect(data.fallidos).to.be.above(0);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "U10 - Carga totalmente valida (200) - adjuntar carga-masiva-temuco-test-11.xlsx",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/data/upload",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": [],
+                  "description": "Adjuntar carga-masiva-temuco-test-11.xlsx"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code es uno de [200]', function () {",
+                  "    pm.expect([200]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
