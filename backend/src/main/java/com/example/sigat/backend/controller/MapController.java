@@ -7,19 +7,32 @@ import com.example.sigat.backend.model.Point;
 import com.example.sigat.backend.service.MapService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api/user/map")
-@CrossOrigin(origins = "*")
 @PreAuthorize("hasAnyRole('USER','ADMIN')")
 public class MapController {
+    @ExceptionHandler
+    public ResponseEntity<Map<String,String>> handleIllegalArgument(IllegalArgumentException e){
+        return new ResponseEntity<>(Map.of("message",e.getMessage()),HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+    @ExceptionHandler(exception = HttpMessageNotReadableException.class)
+    public ResponseEntity<Map<String,String>> handleHttpMessageNotReadable(){
+        return new ResponseEntity<>(Map.of("message", "El objeto JSON no tiene el formato correcto"), HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(exception = MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<Map<String,String>> handleIllegalArgument(){
+        return new ResponseEntity<>(Map.of("message","La id del punto debe ser un número"),HttpStatus.UNPROCESSABLE_ENTITY);
+    }
 
     private final MapService mapService;
 
@@ -28,58 +41,38 @@ public class MapController {
     }
 
     @GetMapping("points/active")
-    public ResponseEntity<?> getPointsByDisease(@RequestParam Long disease){
+    public ResponseEntity<List<Point>> getPointsByDisease(@RequestParam Long disease){
         List<Point> points = mapService.getActivePointsByDisease(disease);
         return new ResponseEntity<>(points, HttpStatus.OK);
     }
     @GetMapping("points/active/all")
-    public ResponseEntity<?> getAllActivePoints() {
+    public ResponseEntity<List<Point>> getAllActivePoints() {
         List<Point> points = mapService.getAllActivePoints();
         return new ResponseEntity<>(points, HttpStatus.OK);
     }
     @PostMapping("points/new")
-    public ResponseEntity<?> createPoint(@AuthenticationPrincipal UserDetails ap,@RequestBody PointCreationRequest pcr){
-        try {
-            mapService.createPoint(pcr,ap.getUsername());
-            return new ResponseEntity<>(HttpStatus.CREATED);
-        } catch (IllegalArgumentException e){
-            return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<Void> createPoint(@AuthenticationPrincipal UserDetails ap,@RequestBody PointCreationRequest pcr){
+        mapService.createPoint(pcr,ap.getUsername());
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
     @PatchMapping("points/{id}/disease")
-    public ResponseEntity<?> modifyPoint(@AuthenticationPrincipal UserDetails ap, @PathVariable("id") Long id, @RequestBody PointDiseasePatchRequest request){
-        try {
-            mapService.patchPointDisease(id, request,ap.getUsername());
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (IllegalArgumentException e){
-            return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<Void> modifyPoint(@AuthenticationPrincipal UserDetails ap, @PathVariable("id") Long id, @RequestBody PointDiseasePatchRequest request){
+        mapService.patchPointDisease(id, request,ap.getUsername());
+        return new ResponseEntity<>(HttpStatus.OK);
     }
     @PatchMapping("points/{id}/coordinates")
-    public ResponseEntity<?> modifyPoint(@AuthenticationPrincipal UserDetails ap, @PathVariable("id") Long id, @RequestBody PointCoordPatchRequest request){
-        try {
-            mapService.patchPointCoordinates(id, request, ap.getUsername());
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (IllegalArgumentException e){
-            return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<Void> modifyPoint(@AuthenticationPrincipal UserDetails ap, @PathVariable("id") Long id, @RequestBody PointCoordPatchRequest request){
+        mapService.patchPointCoordinates(id, request, ap.getUsername());
+        return new ResponseEntity<>(HttpStatus.OK);
     }
     @GetMapping("points/{id}")
-    public ResponseEntity<?> getSinglePoint(@PathVariable Long id){
-        try {
-            Point point = mapService.getSinglePoint(id);
-            return new ResponseEntity<>(point, HttpStatus.OK);
-        } catch (IllegalArgumentException e){
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<Point> getSinglePoint(@PathVariable Long id){
+        Point point = mapService.getSinglePoint(id);
+        return new ResponseEntity<>(point, HttpStatus.OK);
     }
     @PutMapping("points/{id}/deactivate")
-    public ResponseEntity<?> deactivatePoint(@AuthenticationPrincipal UserDetails ap, @PathVariable Long id){
-        try {
-            mapService.deactivatePoint(ap.getUsername(),id);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (IllegalArgumentException e){
-            return new ResponseEntity<>(Map.of("message", e.getMessage()),HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<Void> deactivatePoint(@AuthenticationPrincipal UserDetails ap, @PathVariable Long id){
+        mapService.deactivatePoint(ap.getUsername(),id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

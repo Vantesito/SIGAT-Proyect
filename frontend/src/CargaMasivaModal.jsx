@@ -51,9 +51,13 @@ function CargaMasivaModal({ onCerrar, onCompletado, simular = false }) {
       const buf = await f.arrayBuffer();
       const wb = XLSX.read(buf, { type: 'array' });
       const ws = wb.Sheets[wb.SheetNames[0]];
-      const rango = XLSX.utils.decode_range(ws['!ref']);
-      const filasDatos = rango.e.r;
-      setNumFilas(filasDatos > 0 ? filasDatos : 0);
+      // Contamos filas con contenido REAL, no el rango declarado de la hoja
+      // (ws['!ref']): ese rango queda "pegado" al tamaño más grande que tuvo
+      // el archivo alguna vez y no se achica solo al borrar celdas sin
+      // eliminar la fila físicamente, lo que sobreestimaba el conteo.
+      const filas = XLSX.utils.sheet_to_json(ws, { header: 1, blankrows: false });
+      const filasDatos = Math.max(0, filas.length - 1); // -1 por el encabezado
+      setNumFilas(filasDatos);
     } catch {
       setNumFilas(0);
     }

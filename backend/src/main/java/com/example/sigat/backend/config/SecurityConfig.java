@@ -55,7 +55,13 @@ public class SecurityConfig{
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:5173"));
+        // Local (desarrollo) + producción en Railway. Único lugar donde se
+        // definen los orígenes permitidos: los @CrossOrigin sueltos en los
+        // controllers se eliminaron para evitar configuraciones que compitan.
+        config.setAllowedOrigins(List.of(
+                "http://localhost:5173",
+                "https://sigat-frontend-production.up.railway.app"
+        ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
@@ -67,6 +73,7 @@ public class SecurityConfig{
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests((authorize)->
                         authorize.requestMatchers("/api/auth/login","/api/auth/register").permitAll()
+                                .requestMatchers("/api/diseases").permitAll()
                                 .requestMatchers("/api/user/**").hasAnyRole("USER","ADMIN")
                                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                                 .anyRequest().authenticated()

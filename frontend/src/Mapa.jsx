@@ -15,6 +15,7 @@ import { Style, Stroke } from 'ol/style';
 import { fromLonLat, toLonLat } from 'ol/proj';
 import './Mapa.css';
 import CargaMasivaModal from './CargaMasivaModal';
+import Paginador from './Paginador';
 import {
     getPuntosActivos,
     getPuntosPorEnfermedad,
@@ -22,6 +23,7 @@ import {
     crearPunto,
     desactivarPunto,
     logout,
+    esAdmin,
 } from './api';
 
 // Ciudades para el selector y el recentrado del mapa
@@ -52,6 +54,9 @@ const getCiudad = (nombre) => CIUDADES_CHILE.find((c) => c.nombre === nombre);
 const CELL_SIZE_M = 50;
 const M_PER_DEG_LAT = 111320;
 const ZOOM_MINIMO_GRILLA = 16;
+
+// Filas por página en las tablas de "Casos registrados" / "Alertas de tratamiento"
+const POR_PAGINA = 10;
 
 const diasHastaControl = (fecha) => {
     if (!fecha) return null;
@@ -111,6 +116,8 @@ function Mapa() {
 
     // PANEL DE TABLAS
     const [panelAbierto, setPanelAbierto] = useState(null);
+    const [paginaCasos, setPaginaCasos] = useState(1);
+    const [paginaTratamiento, setPaginaTratamiento] = useState(1);
 
     // FORMULARIO DE CREACIÓN
     const [form, setForm] = useState(FORM_VACIO);
@@ -167,6 +174,34 @@ function Mapa() {
         () => enTratamiento.filter((c) => esAlerta(diasHastaControl(c.fechaProximoControl))),
         [enTratamiento]
     );
+
+    // Recorte a la página actual (10 por página) de cada tabla del panel
+    const casosPagina = useMemo(() => {
+        const inicio = (paginaCasos - 1) * POR_PAGINA;
+        return casosFiltrados.slice(inicio, inicio + POR_PAGINA);
+    }, [casosFiltrados, paginaCasos]);
+    const totalPaginasCasos = Math.max(1, Math.ceil(casosFiltrados.length / POR_PAGINA));
+
+    const tratamientoPagina = useMemo(() => {
+        const inicio = (paginaTratamiento - 1) * POR_PAGINA;
+        return enTratamiento.slice(inicio, inicio + POR_PAGINA);
+    }, [enTratamiento, paginaTratamiento]);
+    const totalPaginasTratamiento = Math.max(1, Math.ceil(enTratamiento.length / POR_PAGINA));
+
+    // Si la lista cambia (filtro, carga masiva, eliminar) y la página actual
+    // queda fuera de rango, retrocede sola a la última válida.
+    useEffect(() => {
+        setPaginaCasos((p) => Math.min(p, totalPaginasCasos));
+    }, [totalPaginasCasos]);
+    useEffect(() => {
+        setPaginaTratamiento((p) => Math.min(p, totalPaginasTratamiento));
+    }, [totalPaginasTratamiento]);
+
+    // Al cambiar de filtro (ciudad/enfermedad), ambas tablas vuelven a la página 1
+    useEffect(() => {
+        setPaginaCasos(1);
+        setPaginaTratamiento(1);
+    }, [filtroActual.ciudad, filtroActual.enfermedadId]);
 
     // ---------- GRILLA DE CUADRANTES (solo zoom cercano) ----------
     const dibujarGrilla = () => {
@@ -410,6 +445,11 @@ function Mapa() {
                         <button className="btn-outline-dark" onClick={() => setShowBatchModal(true)}>
                             Carga masiva (Excel)
                         </button>
+                        {esAdmin() && (
+                            <button className="btn-outline-dark" onClick={() => navigate('/panel-admin')}>
+                                Volver al panel admin
+                            </button>
+                        )}
                     </div>
                 </div>
 
@@ -432,38 +472,45 @@ function Mapa() {
 
                         <div className="data-panel-body">
                             {panelAbierto === 'casos' ? (
-                                <table className="data-table">
-                                    <thead>
-                                    <tr>
-                                        <th>RUT</th>
-                                        <th>Enfermedad</th>
-                                        <th>Ciudad</th>
-                                        <th>Tratam.</th>
-                                        <th>Cuadrante</th>
-                                        <th>Acciones</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {casosFiltrados.length === 0 ? (
+                                <>
+                                    <table className="data-table">
+                                        <thead>
                                         <tr>
-                                            <td colSpan="6" className="tabla-vacia">No hay casos para este filtro.</td>
+                                            <th>RUT</th>
+                                            <th>Enfermedad</th>
+                                            <th>Ciudad</th>
+                                            <th>Tratam.</th>
+                                            <th>Cuadrante</th>
+                                            <th>Acciones</th>
                                         </tr>
-                                    ) : (
-                                        casosFiltrados.map((c) => (
-                                            <tr key={c.id}>
-                                                <td>{c.rut}</td>
-                                                <td>{c.enfermedad}</td>
-                                                <td>{c.ciudad}</td>
-                                                <td>{c.enTratamiento ? 'Sí' : 'No'}</td>
-                                                <td>{c.quadrante || '—'}</td>
-                                                <td className="acciones-celda">
-                                                    <button className="btn-mini-del" onClick={() => eliminarCaso(c.id)}>Eliminar</button>
-                                                </td>
+                                        </thead>
+                                        <tbody>
+                                        {casosFiltrados.length === 0 ? (
+                                            <tr>
+                                                <td colSpan="6" className="tabla-vacia">No hay casos para este filtro.</td>
                                             </tr>
-                                        ))
-                                    )}
-                                    </tbody>
-                                </table>
+                                        ) : (
+                                            casosPagina.map((c) => (
+                                                <tr key={c.id}>
+                                                    <td>{c.rut}</td>
+                                                    <td>{c.enfermedad}</td>
+                                                    <td>{c.ciudad}</td>
+                                                    <td>{c.enTratamiento ? 'Sí' : 'No'}</td>
+                                                    <td>{c.quadrante || '—'}</td>
+                                                    <td className="acciones-celda">
+                                                        <button className="btn-mini-del" onClick={() => eliminarCaso(c.id)}>Eliminar</button>
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        )}
+                                        </tbody>
+                                    </table>
+                                    <Paginador
+                                        pagina={paginaCasos}
+                                        totalPaginas={totalPaginasCasos}
+                                        onCambiar={setPaginaCasos}
+                                    />
+                                </>
                             ) : (
                                 <>
                                     <div className="alerta-leyenda">
@@ -486,7 +533,7 @@ function Mapa() {
                                                 <td colSpan="6" className="tabla-vacia">No hay pacientes en tratamiento.</td>
                                             </tr>
                                         ) : (
-                                            enTratamiento.map((c) => {
+                                            tratamientoPagina.map((c) => {
                                                 const dias = diasHastaControl(c.fechaProximoControl);
                                                 const alerta = esAlerta(dias);
                                                 return (
@@ -505,6 +552,11 @@ function Mapa() {
                                         )}
                                         </tbody>
                                     </table>
+                                    <Paginador
+                                        pagina={paginaTratamiento}
+                                        totalPaginas={totalPaginasTratamiento}
+                                        onCambiar={setPaginaTratamiento}
+                                    />
                                 </>
                             )}
                         </div>
@@ -632,7 +684,7 @@ function Mapa() {
                 <CargaMasivaModal
                     simular={false}
                     onCerrar={() => setShowBatchModal(false)}
-                    onCompletado={() => { setShowBatchModal(false); void cargarPuntos(); }}
+                    onCompletado={() => void cargarPuntos()}
                 />
             )}
         </div>
